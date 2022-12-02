@@ -3,6 +3,7 @@ const User = require("../models/User");
 const userstable = require("../models/UserTable.js");
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
+
 const app=exp()
 var cookieParser = require('cookie-parser');
 const { application } = require("express");
@@ -14,6 +15,8 @@ require('dotenv').config();
 require('../Passport.js')
 const passport = require('passport');
 const cookieSession = require('cookie-session');
+const UserTable = require("../models/UserTable.js");
+const { newvalidation } = require("../utils/UserValidation");
 
 exports.csvAuth = (req, res) => {
     const csvFilePath = 'simple.csv'
@@ -41,7 +44,35 @@ exports.csvAuth = (req, res) => {
 
 
     }
+
 }
+
+
+
+
+exports.manuallyAddUser =( newvalidation,(req, res) => {
+    // const errors = validationResult(req);
+    // console.log("1",errors)
+    // if (!errors.isEmpty()) {
+    //   return res.status(400).json({ errors: errors.array() });
+    // }
+
+   const data=req.body
+   const usertableschema=userstable(data)
+    usertableschema.save((error,data) => {
+        if (error) {
+            res.status(500).json(error)
+        }
+        else {
+            res.send({ "data": data })
+        }
+    })
+})
+
+
+
+
+
 exports.newauth = (req, res) => {
 
     var data = {
@@ -99,7 +130,31 @@ exports.newlogin = async (req, res, next) => {
 
 }
 
+exports.updateUserType= (req,res)=>{
+    const updatemodel= UserTable.findByIdAndUpdate(req.params.id,{$set:req.body},(error,data)=>{
+            if(error){
+                res.send("error")
+            }
+            else{
+                res.send(data)
 
+            }
+        });
+    
+}
+exports.deleteUser= (req,res)=>{
+
+    const updatemodel= UserTable.findByIdAndUpdate(req.params.id,{$set:req.body},(error,data)=>{
+            if(error){
+                res.send(error )
+            }
+            else{
+                res.send(data)
+
+            }
+        });
+    
+}
 
 ///google authentications
 exports.googlelogin = (req, res) => {

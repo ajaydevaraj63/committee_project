@@ -25,6 +25,11 @@ const UserSchema=new moongoose.Schema({
         require:true
 
     }
+    ,
+    Delete:{
+        type:Number,
+        default:0
+    }
     
 },{timestamps:true})
 module.exports=mongoose.model("userstable",UserSchema);

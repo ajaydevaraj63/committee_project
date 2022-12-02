@@ -5,6 +5,8 @@ var app = express();
 require('dotenv').config();
 app.use(cookieParser());
 require('dotenv').config();
+const { body, validationResult } = require('express-validator');
+
 const users = "";
 exports.verifytoken = (req, res, next) => {
     // res.clearCookie('access_token');
