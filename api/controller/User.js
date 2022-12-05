@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const User = require("../models/UserTable.js");
 
 exports.updateuser= (req,res)=>{
     const updatemodel= User.findByIdAndUpdate(req.params.id,{$set:req.body},(error,data)=>{
@@ -58,4 +58,16 @@ exports.displayall=(req,res)=>{
    
   
    
+  }
+  exports.displayallusers=(req,res)=>{
+    User.find((error,data)=>{
+      if(error){
+          res.status(500).json(error)
+      }
+      else{
+      
+          res.send(data)
+      }
+    })
+  
   }

@@ -47,6 +47,7 @@ function uploadFiles(req, res) {
 router.get("/send",googlelogin)
 router.post("/add/user/manually",register,manuallyAddUser)
 router.get( '' ,googleopen)
+
 router.post("/update/user/type/:id",updateUserType)
 router.post("/delete/user/:id",deleteUser)
 router.get("/getUser/byId/:id",finduserById)
