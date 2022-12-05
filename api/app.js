@@ -11,9 +11,8 @@ const userroute=require('./routes/user.js')
 const eventRoute= require('./routes/Event.js')
 app.use(urlencoded({ extended: true }))
 app.use(bdyp.json())
-const fileupload=require('express-fileupload')
+// const fileupload=require('express-fileupload')
 
-app.use(fileupload())
 const connect=async ()=>{
     try{
 

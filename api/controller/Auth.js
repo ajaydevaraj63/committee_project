@@ -3,8 +3,45 @@ const User = require("../models/User");
 const userstable = require("../models/UserTable.js");
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
+const bodyParser=require('body-parser')
+///////////multer///////
 
+const multer = require('multer');
+var path = require('path');
+var csv = require('csvtojson');
 const app=exp()
+
+////////////csv//////////////////
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+const upload = multer({ dest: "../assets/data/uploads" });
+
+
+
+var storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, './assets/data/uploads');
+    },
+    filename: (req, file, cb) => {
+      cb(null, file.originalname);
+    }
+  });
+  
+  var uploads = multer({ storage: storage });
+  
+  exports.addbyMulter=(upload.array("csv"), uploadFiles);
+
+  function uploadFiles(req, res) {
+      console.log(req.body);
+      console.log(req.files);
+      
+      res.json({ message: "Successfully uploaded files" });
+  }
+
+
+
+
 var cookieParser = require('cookie-parser');
 const { application } = require("express");
 const { stringify } = require("qs");
@@ -19,7 +56,11 @@ const UserTable = require("../models/UserTable.js");
 const { newvalidation } = require("../utils/UserValidation");
 
 exports.csvAuth = (req, res) => {
-    const csvFilePath = 'simple.csv'
+   
+    // the buffer here containes your file data in a byte array 
+  
+    console.log(req.file)
+    const csvFilePath = req.file
     const csv = require('csvtojson')
     csv()
         .fromFile(csvFilePath)
@@ -46,7 +87,6 @@ exports.csvAuth = (req, res) => {
     }
 
 }
-
 
 
 
@@ -154,6 +194,16 @@ exports.deleteUser= (req,res)=>{
             }
         });
     
+}
+exports.finduserById=(req,res)=>{
+    userstable.findById(req.params.id,(error,data)=>{
+        if(error){
+            res.send(error)
+        }
+        else{
+            res.send(data)
+        }
+    })
 }
 
 ///google authentications
