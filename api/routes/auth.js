@@ -12,7 +12,7 @@ var storage = multer.diskStorage({
       cb(null, './assets/data/uploads');
     },
     filename: (req, file, cb) => {
-      cb(null, file.originalname);
+      cb(null,new Date()+file.originalname);
     }
   });
   
@@ -34,13 +34,18 @@ router.post("/upload",upload.array("csv"), uploadFiles);
 function uploadFiles(req, res) {
     console.log(req.body);
     console.log(req.files);
-    csv()
-    .fromFile(req.files[0].path)
-    .then((jsonObj) => {
-      console.log("1",jsonObj);
+     csv()
+     .fromFile(req.files[0].path)
+     .then((jsonObj) => {
+       console.log("1",jsonObj);
      res.send(jsonObj)
    
-    });
+     }
+    
+    
+    );
+    // res.send(req.files[0].path)
+
     
 }
 

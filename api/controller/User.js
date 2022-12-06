@@ -23,7 +23,7 @@ exports.deleteuser=(req,res)=>{
     })
 }
 exports.displayall=(req,res)=>{
-    User.find((error,data)=>{
+    User.find.toArray((error,data)=>{
       if(error){
           res.status(500).json(error)
       }
@@ -34,6 +34,18 @@ exports.displayall=(req,res)=>{
     })
   
   }
+  exports.OwnGroupMembers=(req,res)=>{
+    const sort = { GroupRole: 1 };
+   User.find({ $query: { "GroupId": req.body.GroupId}, $orderby: { GroupRole : -1 } },(function(err,result){
+    res.send(result)
+
+   }))
+ 
+}
+  
+  
+
+
 
   exports.FindbyNameAndEmail=(req,res)=>{
     console.log("ecec",req.params.id)
@@ -71,3 +83,13 @@ exports.displayall=(req,res)=>{
     })
   
   }
+  exports.getGropuMembers=(req,res)=>{
+    User.find({"GroupRole":req.body.GroupRole},(error,data)=>{
+        if(error){
+            res.status(500).json(error)
+        }
+        else{
+            res.status(200).send(data)
+        }
+    })
+}

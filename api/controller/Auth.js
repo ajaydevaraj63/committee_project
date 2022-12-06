@@ -59,8 +59,8 @@ exports.csvAuth = (req, res) => {
    
     // the buffer here containes your file data in a byte array 
   
-    console.log(req.file)
-    const csvFilePath = req.file
+    console.log(req.files)
+    const csvFilePath = 'simple.csv'
     const csv = require('csvtojson')
     csv()
         .fromFile(csvFilePath)

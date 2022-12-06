@@ -9,6 +9,7 @@ const gamepointtable=require("./models/GamePointTable.js");
 const authroute=require('./routes/auth.js')
 const userroute=require('./routes/user.js')
 const eventRoute= require('./routes/Event.js')
+const groupRoute= require('./routes/Group.js')
 app.use(urlencoded({ extended: true }))
 app.use(bdyp.json())
 // const fileupload=require('express-fileupload')
@@ -54,14 +55,14 @@ app.get("/api/view",(req,res)=>{
 app.post("/group/create",(req,res)=>{
 
  console.log(req.files.data)
-    res.send(req.files)
+  
     // const groups = new createGroup({
     //     GroupId: req.body.GroupName, GroupImage: "./assets/img1.png" ,GroupType: req.body.GroupType
     // })
 
     // const groups = new posts({
     //     UserId: req.body.UserId,PostImage:"./assets/img2.png",Tags:req.body.Tags
-    //  })
+      
 const groups = new gamepointtable(req.body)
 groups.save((error,data)=>{
     if(error){
@@ -75,9 +76,10 @@ groups.save((error,data)=>{
 })
 //middle
 
-app.use("/auth",authroute);
-app.use("/users",userroute);
+app.use("/Auth",authroute);
+app.use("/Users",userroute);
 app.use("/Event",eventRoute);
+app.use("/Group",groupRoute);
 
 
 

@@ -20,6 +20,10 @@ const UserSchema=new moongoose.Schema({
         type:Number,
         default:false
     },
+    GroupRole:{
+        type:Number,
+        default:0
+    },
     Designation:{
         type:String,
         require:true
@@ -29,6 +33,12 @@ const UserSchema=new moongoose.Schema({
     Delete:{
         type:Number,
         default:0
+    }
+    ,
+    GroupId:{
+        type:String,
+        default:0
+       
     }
     
 },{timestamps:true})

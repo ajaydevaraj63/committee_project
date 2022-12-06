@@ -71,8 +71,9 @@ mongoose.connection.on("connected",()=>{
     console.log("connected")
 })
 
-app.post("/api/getuser",(req,res)=>{
-    res.send("hello")
+app.post("/api/upload/formdata",(req,res)=>{
+   console.log(req.File)
+   res.send(req.body)
 })
 
 
