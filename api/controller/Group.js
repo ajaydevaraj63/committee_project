@@ -53,3 +53,14 @@ exports.FindUsersOfAGroup=(req,res)=>{
         }
     })
 }
+exports.updateGroupDetails=(req,res)=>{
+    GroupSchema.findByIdAndUpdate(req.params.id, { $set: req.body }, (error, data) => {
+        if (error) {
+            res.send("error")
+        }
+        else {
+            res.send(data)
+
+        }
+    })
+}

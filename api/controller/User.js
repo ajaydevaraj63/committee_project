@@ -72,7 +72,7 @@ exports.displayall=(req,res)=>{
    
   }
   exports.displayallusers=(req,res)=>{
-    User.find((error,data)=>{
+    User.find({delete:"0"},(error,data)=>{
       if(error){
           res.status(500).json(error)
       }

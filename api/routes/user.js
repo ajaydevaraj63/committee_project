@@ -5,6 +5,7 @@ const router=express.Router();
 
 router.get("/:id",verifyuser,displayall)
 router.put("/put",verifyuser,updateuser)
+router.put("/UpdateUser/:id",updateuser)
 router.put("/UpdateUser/GroupRole/:id",updateuser)
 router.put("/UpdateUser/Group/:id",updateuser)
 router.delete("/delete",verifyuser,deleteuser)
