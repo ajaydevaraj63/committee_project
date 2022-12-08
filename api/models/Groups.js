@@ -10,5 +10,9 @@ const groupSchema=mongoose.Schema({
     GroupType:{
         type:String
     }
+    ,Delete:{
+        type:Number,
+        default:0
+    }
 },{timestamps:true})
 module.exports=mongoose.model("group",groupSchema);

@@ -34,14 +34,14 @@ exports.displayall=(req,res)=>{
     })
   
   }
-  exports.OwnGroupMembers=(req,res)=>{
-    const sort = { GroupRole: 1 };
-   User.find({ $query: { "GroupId": req.body.GroupId}, $orderby: { GroupRole : -1 } },(function(err,result){
-    res.send(result)
+//   exports.OwnGroupMembers=(req,res)=>{
+//     const sort = { GroupRole: 1 };
+//    User.find({ $query: { "GroupId": req.body.GroupId}, $orderby: { GroupRole : -1 } },(function(err,result){
+//     res.send(result)
 
-   }))
+//    }))
  
-}
+// }
   
   
 

@@ -7,4 +7,4 @@ const { verifyuser, verifyadmin } = require('../utils/verifytoken.js');
 
 router.post("/:id",newchat);
 router.get("/:userId", getchat);
-module.exports=router;
+module.exports = router;
