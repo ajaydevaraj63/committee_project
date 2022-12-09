@@ -18,7 +18,7 @@ exports.deleteuser=(req,res)=>{
             res.status(500).json(error)
         }
         else{
-            res.status(200).send("deleteted successfully")
+            res.status(200).send("deleted successfully")
         }
     })
 }

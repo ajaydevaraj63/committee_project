@@ -11,7 +11,7 @@ const { updatesingleuser, UpdateGroupOfAllUsers, FindAllGroups, findGroupById, F
 
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, './assets/data/uploads');
+    cb(null, './images');
   },
   filename: (req, file, cb) => {
     cb(null, new Date() + file.originalname);
@@ -19,10 +19,11 @@ var storage = multer.diskStorage({
 });
 
 var upload = multer({ storage: storage });
-router.post("/upload/:id", upload.array("csv"), uploadFiles);
+router.post("/create", upload.array("image"), uploadFiles);
 
 function uploadFiles(req, res) {
-  req.body.GroupImage = "/api/" + req.files[0].path
+  req.body.GroupImage =  'http://localhost:4006/images/'+req.files[0].filename
+
   console.log(req.body);
   console.log(req.files);
   const SaveGroup = new GroupTable(req.body)

@@ -5,7 +5,7 @@ const bdyp = require('body-parser')
 const { urlencoded } = require('body-parser')
 const exp = require('express')
 const app = exp()
-
+app.use("/images",exp.static('images'))
 const authroute=require('./routes/auth.js')
 const userroute=require('./routes/user.js')
 const eventRoute= require('./routes/Event.js')

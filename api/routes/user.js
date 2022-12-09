@@ -4,26 +4,27 @@ const UserSchema = require('../models/UserTable')
 const { verifytoken, verifyuser, verifyadmin } = require("../utils/verifytoken");
 const router = express.Router();
 const multer = require('multer');
+const app=express();
 
 var storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, './assets/data/uploads');
+        cb(null, './images');
     },
     filename: (req, file, cb) => {
         cb(null, new Date() + file.originalname);
     }
 });
-
+app.use(express.static(__dirname + '/api/images'));
 var upload = multer({ storage: storage });
 
 router.put("/UpdatePic/:id", upload.array("image"), updateProfileImage);
 
 function updateProfileImage(req, res) {
-    const ImagePath = "/api/" + req.files[0].path
+    const ImagePath = 'http://localhost:4006/images/'+req.files[0].filename
 
     console.log(req.files);
     const UserUpdate = UserSchema.updateOne({ _id: req.params.id },
-        { $set: { UserImage: ImagePath } },
+        { $set: { UserImage: ImagePath} },
         (error, data) => {
             if (error) {
                 res.send(error)

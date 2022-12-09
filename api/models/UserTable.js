@@ -42,9 +42,9 @@ const UserSchema=new moongoose.Schema({
     }
     ,
     UserImage:{
-        type:String,
-        default:""
+       type:String
     }
+
     
 },{timestamps:true})
 module.exports=mongoose.model("userstable",UserSchema);
