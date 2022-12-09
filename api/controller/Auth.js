@@ -49,7 +49,7 @@ application.use(cookieParser())
 require('dotenv').config();
 
 //google authentication
-require('../Passport.js')
+
 const passport = require('passport');
 const cookieSession = require('cookie-session');
 const UserTable = require("../models/UserTable.js");
