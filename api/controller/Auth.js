@@ -55,10 +55,11 @@ const cookieSession = require('cookie-session');
 const UserTable = require("../models/UserTable.js");
 const { newvalidation } = require("../utils/UserValidation");
 
-exports.csvAuth = (req, res) => {
+exports.csvAuth = async(req, res) => {
    
     // the buffer here containes your file data in a byte array 
   
+   try{
     console.log(req.files)
     const csvFilePath = 'simple.csv'
     const csv = require('csvtojson')
@@ -71,7 +72,17 @@ exports.csvAuth = (req, res) => {
 
         })
 
-    const newAuthfun = async (jsonObj) => {
+     await  jsonObj.forEach(function (obj) {
+            const saveuser = new userstable(obj);
+            saveuser.save((error, data) => {
+                if (error) {
+                    res.send(error)
+                }
+
+            });
+        });
+
+     const newAuthfun = async (jsonObj) => {
         jsonObj.forEach(function (obj) {
             const saveuser = new userstable(obj);
             saveuser.save((error, data) => {
@@ -85,6 +96,10 @@ exports.csvAuth = (req, res) => {
 
 
     }
+   }
+   catch(error){
+    throw error;
+   }
 
 }
 
