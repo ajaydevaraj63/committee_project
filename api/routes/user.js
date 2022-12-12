@@ -1,5 +1,5 @@
 const express = require("express");
-const { displayall, updateuser, deleteuser, FindbyNameAndEmail, displayallusers, getGropuMembers } = require("../controller/User");
+const { displayall, updateuser, deleteuser, FindbyNameAndEmail, displayallusers, getGropuMembers, paginationRecord, pagination } = require("../controller/User");
 const UserSchema = require('../models/UserTable')
 const { verifytoken, verifyuser, verifyadmin } = require("../utils/verifytoken");
 const router = express.Router();
@@ -35,6 +35,7 @@ function updateProfileImage(req, res) {
         })
 }
 router.get("/:id", verifyuser, displayall)
+router.get("/Users/Get",paginationRecord)
 router.put("/put", verifyuser, updateuser)
 router.put("/UpdateUser/:id", updateuser)
 router.put("/UpdateUser/GroupRole/:id", updateuser)
