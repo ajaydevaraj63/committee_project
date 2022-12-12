@@ -106,11 +106,6 @@ exports.csvAuth = async(req, res) => {
 
 
 exports.manuallyAddUser =( newvalidation,(req, res) => {
-    // const errors = validationResult(req);
-    // console.log("1",errors)
-    // if (!errors.isEmpty()) {
-    //   return res.status(400).json({ errors: errors.array() });
-    // }
 
    const data=req.body
    const usertableschema=userstable(data)

@@ -1,5 +1,10 @@
 const GroupSchema = require('../models/Groups.js')
 const UserSchema = require('../models/UserTable.js')
+const joi=require('@hapi/joi')
+const Schema =joi.object().keys({
+    GroupName: joi.string().alphanum().min(3).max(30).required(),
+    GroupType: joi.string().alphanum().min(3).max(30)
+})
 exports.updatesingleuser = (req, res) => {
     UserSchema.findByIdAndUpdate(req.params.id, { $set: req.body }, (error, data) => {
         if (error) {
@@ -34,7 +39,7 @@ exports.UpdateGroupOfAllUsers = async (req, res) => {
 
 }
 exports.FindAllGroups=(req,res)=>{
-    GroupSchema.find((error,data)=>{
+    GroupSchema.find({"Delete": "0"},(error,data)=>{
         res.send(data)
     })
 }
@@ -53,14 +58,28 @@ exports.FindUsersOfAGroup=(req,res)=>{
         }
     })
 }
-exports.updateGroupDetails=(req,res)=>{
-    GroupSchema.findByIdAndUpdate(req.params.id, { $set: req.body }, (error, data) => {
-        if (error) {
-            res.send("error")
-        }
-        else {
-            res.send(data)
+exports.updateGroupDetails=async(req,res)=>{
+  
+try{
+    var Validation=Schema.validate(req.body)
+    if(!Validation.error){
 
-        }
-    })
+  await  GroupSchema.findByIdAndUpdate(req.params.id, { $set: req.body }, (error, data) => {
+    if (error) {
+        res.send("error")
+    }
+    else {
+        res.send(data)
+
+    }
+})
+
+    }
+    else{
+        res.send(Validation.error)
+    }
+}
+catch(error){
+
+}
 }

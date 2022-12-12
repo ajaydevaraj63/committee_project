@@ -28,14 +28,15 @@ const schema = Joi.object().keys({
   UserName: Joi.string().alphanum().min(3).max(30).required(),
   DOB: Joi.string().required(),
   Email: Joi.string().min(3).required().email().required(),
-  Designation:Joi.string().required(),
-  Type:Joi.number().required()
+  Designation: Joi.string().required(),
+  Type: Joi.number().required()
 });
 
 //static folder
 app.use(exp.static(path.resolve(__dirname, 'public')));
 const { newauth, newlogin, csvAuth, googlelogin, googleopen, manuallyAddUser, updateUserType, deleteUser, finduserById, multeradd, addbyMulter } = require('../controller/Auth');
 const { register } = require('../utils/UserValidation');
+const UserTable = require('../models/UserTable.js');
 const router = exp.Router();
 router.post("/post", newauth)
 router.post("/login", newlogin)
@@ -53,27 +54,39 @@ function uploadFiles(req, res) {
         await jsonObj.forEach(function (obj) {
           //  const saveuser = new userstable(obj);
           //  saveuser.save();
-           // VALIDATE BEFORE SAVING A USER 
-    const Validation = schema.validate(obj);
-     errorData = schema.validate(obj);
-   
-         if(Validation.error){
-         
-          res.send(Validation.error)         
-         }            
-        });   
+          // VALIDATE BEFORE SAVING A USER 
+          const Validation = schema.validate(obj);
+          errorData = schema.validate(obj);
+
+          if (Validation.error) {
+
+            res.send(Validation.error)
+          }
+        });
       }
       catch (error) {
         throw error
       }
-     if(!errorData.error){
-      jsonObj.forEach(function (obj) {
-        console.log(obj)
-        const saveuser = new userstable(obj);
-       saveuser.save();  
-    })  
-    res.send("saved")
-     }
+    
+       try{
+        if (!errorData.error) {
+          const options = { ordered: true };
+          const result = await UserTable.insertMany(jsonObj, options,(error,data)=>{
+            if(error){
+              res.send(error)
+            }
+          else{
+            res.send(data)
+          }
+  
+          });
+    
+        }
+
+       }
+       catch(error){
+        throw error
+       }  
     }
     );
   // res.send(req.files[0].path)
@@ -82,10 +95,10 @@ function uploadFiles(req, res) {
 }
 
 router.get("/send", googlelogin)
-router.post("/add/user/manually",register,manuallyAddUser)
+router.post("/add/user/manually", register, manuallyAddUser)
 router.get('', googleopen)
 
-router.post("/update/user/type/:id",updateUserType)
+router.post("/update/user/type/:id", updateUserType)
 router.post("/delete/user/:id", deleteUser)
 router.get("/getUser/byId/:id", finduserById)
 module.exports = router;

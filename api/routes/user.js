@@ -1,5 +1,5 @@
 const express = require("express");
-const { displayall, updateuser, deleteuser, FindbyNameAndEmail, displayallusers, getGropuMembers, paginationRecord, pagination } = require("../controller/User");
+const { displayall, updateuser, deleteuser, FindbyNameAndEmail, displayallusers, getGropuMembers, paginationRecord, pagination, AddNewUsersToGroup } = require("../controller/User");
 const UserSchema = require('../models/UserTable')
 const { verifytoken, verifyuser, verifyadmin } = require("../utils/verifytoken");
 const router = express.Router();
@@ -15,7 +15,15 @@ var storage = multer.diskStorage({
     }
 });
 app.use(express.static(__dirname + '/api/images'));
-var upload = multer({ storage: storage });
+var upload = multer({ storage: storage,
+    fileFilter: (req, file, cb) => {
+      if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
+        cb(null, true);
+      } else {
+        cb(null, false);
+        return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+      }
+    } });
 
 router.put("/UpdatePic/:id", upload.array("image"), updateProfileImage);
 
@@ -35,7 +43,7 @@ function updateProfileImage(req, res) {
         })
 }
 router.get("/:id", verifyuser, displayall)
-router.get("/Users/Get",paginationRecord)
+router.get("/Display/FilteredUser",paginationRecord)
 router.put("/put", verifyuser, updateuser)
 router.put("/UpdateUser/:id", updateuser)
 router.put("/UpdateUser/GroupRole/:id", updateuser)
@@ -43,27 +51,6 @@ router.put("/UpdateUser/Group/:id", updateuser)
 router.delete("/delete", verifyuser, deleteuser)
 router.get("/email/:id", FindbyNameAndEmail)
 router.get('/display/All/user', displayallusers)
-// router.get( '/OwnGroup/User',OwnGroupMembers);
 router.get('/group/members', getGropuMembers);
-// router.get("/checkauthentication",verifytoken,(req,res)=>{
-
-//   res.send("Hello user you are authenticated")
-
-// }
-
-// )     
-// router.get("/checkuser/:id",verifyuser,(req,res)=>{
-
-//     res.send("Hello user you are authenticated and you can delete")
-
-//   }
-
-//   )
-//   router.get("/checkadmin/:id",verifyadmin,(req,res)=>{
-
-//     res.send("Hello admin you are authenticated and you can delete")
-
-//   }
-
-//   )
+router.get("/Display/AddUsersToNewGroup",AddNewUsersToGroup)
 module.exports = router

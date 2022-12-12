@@ -156,6 +156,15 @@ exports.paginationRecord = async(req, res, next) => {
   }
 }
 
-exports.pagination = (req, res) => {
-  res.send("hello")
+exports.AddNewUsersToGroup = (req, res) => {
+  User.find({ GroupId: "0" }, (error, data) => {
+    if (error) {
+      res.status(500).json(error)
+    }
+    else {
+
+      res.send(data)
+    }
+  })
+
 }
