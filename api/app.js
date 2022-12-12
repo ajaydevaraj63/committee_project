@@ -11,6 +11,7 @@ const authroute=require('./routes/auth.js')
 const userroute=require('./routes/user.js')
 const eventRoute= require('./routes/Event.js')
 const groupRoute= require('./routes/Group.js')
+const PointMgmnt= require('./routes/PointTable.js')
 app.use(urlencoded({ extended: true }))
 app.use(bdyp.json())
 // const fileupload=require('express-fileupload')
@@ -81,6 +82,7 @@ app.use("/Auth",authroute);
 app.use("/Users",userroute);
 app.use("/Event",eventRoute);
 app.use("/Group",groupRoute);
+app.use("/Events",PointMgmnt);
 
 
 

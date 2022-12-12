@@ -5,11 +5,13 @@ const UserSchema=new moongoose.Schema({
     UserName:{
         type:String,
         required:true,
+        
        
     },
     Email:{
         type:String,
         required:true,
+        unique: true
        
     },
     DOB:{

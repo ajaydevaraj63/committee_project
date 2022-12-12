@@ -78,7 +78,7 @@ function uploadFiles(req, res) {
           const options = { ordered: true };
           const result = await UserTable.insertMany(jsonObj, options,(error,data)=>{
             if(error){
-              res.send(error)
+              res.send(error.writeErrors)
             }
           else{
             res.send(data)
