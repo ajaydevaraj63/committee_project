@@ -21,7 +21,12 @@ var storage = multer.diskStorage({
   }
 });
 
-var upload = multer({ storage: storage });
+var upload = multer({ storage: storage,fileFilter: function(req, file, callback) {
+  if(path.extname(file.originalname) !== '.csv') {
+    return callback(new Error('Only	csv files allowed!'));
+  }
+  callback(null, true)
+} });
 
 //////////////////////csv validation///////////////
 const schema = Joi.object().keys({
