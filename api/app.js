@@ -82,7 +82,7 @@ app.use("/Auth",authroute);
 app.use("/Users",userroute);
 app.use("/Event",eventRoute);
 app.use("/Group",groupRoute);
-app.use("/Events",PointMgmnt);
+app.use("/Point",PointMgmnt);
 
 
 
