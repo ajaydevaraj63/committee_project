@@ -64,7 +64,7 @@ opacity: 1;
 
 .btn {
     background-image: url("https://freepngimg.com/save/24227-vector-hd/800x600");
-    background-position: right 50%  ;
+    background-position:-30%  ;
     outline: none;
     
     cursor: pointer;
@@ -104,7 +104,7 @@ opacity: 1;
     }
     .btn {
     background-image: url("https://freepngimg.com/save/24227-vector-hd/800x600");
-    background-position: 100%  ;
+    background-position: 0%  ;
   
     outline: none;
     
@@ -115,6 +115,10 @@ opacity: 1;
 }
 
 }
+
+
+
+
 @media screen and (max-width: 618px) and (min-width: 400px){
     .bg-img {
         background-image: url("https://innovature.letsachieve.co/images/illustration/img-1.png"), linear-gradient(#ffffff, #ffffff);
@@ -129,9 +133,24 @@ opacity: 1;
         position: relative;
 
     }
+    .btn {
+        background-image: url("https://freepngimg.com/save/24227-vector-hd/800x600");
+        background-position: 40%  ;
+      
+        outline: none;
+        
+        cursor: pointer;
+        -webkit-transition: all ease-in .1s;
+        transition: all ease-in .1s
+        
+    }
 
 }
 .SignUpText{
 font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 font-weight: 500;
+}
+.logo{
+    width: 10%;
+    height: auto;
 }

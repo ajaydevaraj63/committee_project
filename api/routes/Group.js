@@ -80,7 +80,7 @@ catch(error){
 router.put("/UpdatePic/:id", upload.array("image"), updateProfileImage);
 
 function updateProfileImage(req, res) {
-  const ImagePath = "/api/" + req.files[0].path
+  const ImagePath = 'http://localhost:4006/images/'+req.files[0].filename
 
   console.log(req.files);
   const updateGroup = GroupTable.updateOne({ _id: req.params.id },
