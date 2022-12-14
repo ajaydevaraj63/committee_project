@@ -6,6 +6,10 @@ const GamePointSchema = mongoose.Schema({
     type: String
     
   },
+  EventId: 
+    { type: mongoose.Schema.Types.ObjectId, ref: "Event" }
+    
+  ,
   Delete: {
 
     type: Number,

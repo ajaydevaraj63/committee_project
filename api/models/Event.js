@@ -1,14 +1,20 @@
 const mongoose=require('mongoose')
+
 const EventSchema=mongoose.Schema({
-    PdfName:{
+    File: {
+        require: true,
+        type: String
+    },
+    EventName:{
         require:true,
         type:String
     },
-    Text:{
+    EventDescription:{
         type:String
     },
     UserId:{
         type:String
     }
 },{timestamps:true})
-module.exports=mongoose.model("event",EventSchema);
+
+module.exports=mongoose.model("events",EventSchema);

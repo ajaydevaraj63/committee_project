@@ -1,28 +1,31 @@
 const PointTable = require('../models/GamePointTable.js')
-
+const UserTables=require('../models/UserTable.js')
+const Event=require('../models/Event.js')
+const Group=require('../models/Groups.js')
 const Joi = require('@hapi/joi');
 
 const schema = Joi.object().keys({
-    GameId: Joi.string().alphanum().min(6).max(30).required(),
     GamePoint: Joi.number().required(),
-    GroupId: Joi.string().alphanum().min(6).max(30).required()
+  
+    
 
 });
 const schemaForUpdate = Joi.object().keys({
-    GameId: Joi.string().alphanum().min(6).max(30),
-    GamePoint: Joi.number(),
-    GroupId: Joi.string().alphanum().min(6).max(30)
+  
+    GamePoint: Joi.number().required(),
+  
+
 });
 
 
 exports.AddPoint = async (req, res) => {
     try {
         const JsonObj = {
-            GameId: req.body.GameId,
+           
             GamePoint: req.body.GamePoint,
-            GroupId: req.body.GroupId
+          
         }
-        var Validation = schema.validate(JsonObj)
+         var Validation = schema.validate(JsonObj)
         if (!Validation.error) {
             const NewPointEntry = new PointTable(req.body);
             await NewPointEntry.save((error, data) => {
@@ -102,4 +105,24 @@ exports.DisplayPoints=async(req,res)=>{
         throw error
         
     }
+}
+
+
+
+
+exports.GetInfo=(req,res)=>{
+
+    PointTable.aggregate([
+        { 
+            $lookup: { 
+                from:"events" , localField: "EventId", foreignField: "_id", as:"grouplist"
+            } 
+
+            
+        },
+       
+    ]).then(result => {
+        res.send(result)
+    })
+
 }
