@@ -1,14 +1,11 @@
 const mongoose = require('mongoose')
 const GamePointSchema = mongoose.Schema({
-  GameId: {
-
-    require: true,
-    type: String
-    
-  },
-  EventId: 
+  GameId: 
+  { type: mongoose.Schema.Types.ObjectId, ref: "Games" }
+  ,
+  EventId:
     { type: mongoose.Schema.Types.ObjectId, ref: "Event" }
-    
+
   ,
   Delete: {
 
@@ -16,15 +13,12 @@ const GamePointSchema = mongoose.Schema({
     default: 0
 
   },
-  GamePoint: { 
-    
+  GamePoint: {
+
     type: Number
-   
+
   },
- GroupId: { 
-    
-  type: String
-  
-}
+  GroupId: { type: mongoose.Schema.Types.ObjectId, ref: "Groups" }
+
 }, { timestamps: true })
 module.exports = mongoose.model("gamepointtable", GamePointSchema);
