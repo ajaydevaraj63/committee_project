@@ -5,7 +5,7 @@ const Login = () => {
     const loginFun=()=>{
   
   console.log("hello")
-  window.open("http://localhost:5000/auth/google", "_self");
+  window.open("http://localhost:4006/auth/Googlogin/google", "_self");
   
    }
   return (
