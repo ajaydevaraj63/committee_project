@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { request } = require("express");
 const passport = require("passport");
 
 const CLIENT_URL = "http://localhost:3000/";
@@ -26,15 +27,24 @@ router.get("/logout", (req, res) => {
   res.redirect(CLIENT_URL);
 });
 
-router.get("/google", passport.authenticate("google", { scope: ["profile"] }));
+router.get("/google", passport.authenticate("google", { scope: ["profile","email"] }));
 
 router.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    successRedirect: CLIENT_URL,
-    failureRedirect: "/login/failed",
-  })
-);
+  "/google/callback",  passport.authenticate('google', { failureRedirect: '/login', failureMessage: true }),
+  function(req, res) {
+    console.log(req.user)
+    if(req.user.Type==2){
+      res.redirect('http://localhost:3000/User');
+    }
+    if(req.user.Type==1){
+      res.redirect('http://localhost:3000/Admin');
+    }
+  
+  
+   
+  });
+
+
 
 router.get("/github", passport.authenticate("github", { scope: ["profile"] }));
 

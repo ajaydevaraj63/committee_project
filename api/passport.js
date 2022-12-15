@@ -2,6 +2,10 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const GithubStrategy = require("passport-github2").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const passport = require("passport");
+const UserTable = require("./models/UserTable.js");
+const mng=require('mongoose')
+const exp=require('express')
+const app=exp();
 
 const GOOGLE_CLIENT_ID =
   "948869378175-2j4gta2nuea49a3slpap3fnnj4jqcfqm.apps.googleusercontent.com";
@@ -18,11 +22,26 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
+      callbackURL: "/auth/Googlogin/google/callback",
     },
-    function (accessToken, refreshToken, profile, done) {
-    
-      done(null, profile);
+  async  function (accessToken, refreshToken, profile,email, done) {
+    try{
+
+      console.log(email._json.email)
+     
+   let User=await UserTable.findOne({"Email":email._json.email})
+   if(User){
+         done(null, User);
+     
+        }
+
+
+    }
+    catch(error){
+      throw(error)
+    }
+     
+  
     }
   )
 );
@@ -34,7 +53,7 @@ passport.use(
       clientSecret: GOOGLE_CLIENT_SECRET,
       callbackURL: "/auth/github/callback",
     },
-    function (accessToken, refreshToken, profile, done) {
+    function (req,accessToken, refreshToken, profile, done) {
       done(null, profile);//done is given to skip db operation instead we use cb
     }
   )
@@ -53,10 +72,10 @@ passport.use(
   )
 );
 
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-
-passport.deserializeUser((user, done) => {
-  done(null, user);
-});
+passport.serializeUser((user , done) => {
+      done(null , user);
+  })
+  passport.deserializeUser(function(user, done) {
+      done(null, user);
+  });
+    

@@ -2,6 +2,7 @@ const UserTable = require("../models/UserTable.js");
 const User = require("../models/UserTable.js");
 
 exports.updateuser = (req, res) => {
+  console.log("inide Update")
   const updatemodel = User.findByIdAndUpdate(req.params.id, { $set: req.body }, (error, data) => {
     if (error) {
       res.send("error")
