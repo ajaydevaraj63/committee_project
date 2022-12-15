@@ -1,0 +1,30 @@
+const mongoose=require('mongoose')
+const GameSchema=mongoose.Schema({
+    GameName:{
+        require:true,
+        type:String
+    },
+    GameDesc:{
+        type:String
+    },
+    RulesPdf:{
+        type:String
+    }
+    ,GroupId:{
+        type:String
+    },
+    UserId:{
+        type:String
+    },
+    StartDate:{
+        type:Date
+    }
+    ,
+    EndDate:{
+        type:Date
+    },
+    Status:{
+        type:Number
+    }
+},{timestamps:true})
+module.exports=mongoose.model("game",GameSchema);
