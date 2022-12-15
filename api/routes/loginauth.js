@@ -22,9 +22,9 @@ router.get("/login/failed", (req, res) => {
   });
 });
 
-router.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect(CLIENT_URL);
+router.get("/logout", function(req, res) {
+ 
+  res.redirect('http://localhost:3000/User');
 });
 
 router.get("/google", passport.authenticate("google", { scope: ["profile","email"] }));
