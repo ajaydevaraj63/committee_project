@@ -1,7 +1,7 @@
 ///google login/////////
 const cookieSession = require("cookie-session"); //npm i  express pasport cors  cookie-session
 const cors = require("cors");
-require("./passport.js");
+
 const passport = require("passport");
 const loginRoute = require("./routes/loginauth");
 const CLIENT_ID = "948869378175-2j4gta2nuea49a3slpap3fnnj4jqcfqm.apps.googleusercontent.com"

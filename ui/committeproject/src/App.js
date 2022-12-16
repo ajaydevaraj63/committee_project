@@ -26,7 +26,7 @@ function App() {
 <Route path='/'  exact element={<Login/>}></Route>
 <Route path='/User'  exact element={<User/>}></Route>
 <Route path='/Admin'  exact element={<Admin/>}></Route>
-<Route path='/Commmittee'  exact element={<Committee/>}></Route>
+<Route path='/Committee'  exact element={<Committee/>}></Route>
 </Routes>
   
 
