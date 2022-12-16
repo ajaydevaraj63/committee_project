@@ -39,7 +39,7 @@ function postevent (req, res, next) {
     })
 
     console.log(req.files);
-    newevent.File = 'http://localhost:4006/images/' + req.files[0].path;
+    newevent.File = 'http://localhost:4006/images/'+req.files[0].filename
     newevent.save((error, data) => {
       try { 
 

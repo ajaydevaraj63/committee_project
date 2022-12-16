@@ -7,7 +7,7 @@ const loginRoute = require("./routes/loginauth");
 const CLIENT_ID = "948869378175-2j4gta2nuea49a3slpap3fnnj4jqcfqm.apps.googleusercontent.com"
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(CLIENT_ID);
-
+const session = require('express-session')
 const TotalPoint=require('./routes/TotalPoint.js')
 
 //////////////////////
@@ -20,6 +20,7 @@ const app = exp()
 app.use("/images", exp.static('images'))
 app.use("/csv", exp.static('csv'))
 const authroute = require('./routes/auth.js')
+const MongoStore = require('connect-mongo');
 const userroute = require('./routes/user.js')
 const eventRoute = require('./routes/Event.js')
 const groupRoute = require('./routes/Group.js')
@@ -29,16 +30,14 @@ app.use(urlencoded({ extended: true }))
 app.use(bdyp.json())
 
 ////////////google Login////////////
-
-// app.use(
-//     cookieSession({ name: "cookie", keys: ["lama"], maxAge: 24 * 60 * 60 * 100 })
-// );
+ app.use(
+   cookieSession({ name: "cookie", keys: ["lama"], maxAge: 24 * 60 * 60 * 100 })
+);
 app.use(
     session({
       secret: 'keyboard cat',
       resave: false,
       saveUninitialized: false,
-      store: MongoStore.create({mongoUrl: process.env.MONGO_URI,}),
     })
   )
 app.use(passport.initialize());

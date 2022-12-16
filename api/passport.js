@@ -28,53 +28,52 @@ passport.use(
       callbackURL: "/auth/Googlogin/google/callback",
     },
     async function (accessToken, refreshToken, profile, email, done) {
-      // try {
+      try {
 
-      //   console.log(email)
-      //   console.log("profile.email")
-      //   console.log(profile)
-
-
-      //   console.log("profile.email")
-
-      //   let User = await UserTable.findOne({ "Email": email._json.email })
-      //   if (User) {
-      //     done(null, User);
-
-      //   }
-      //   else {
-      //     return done(null, false)
-      //   }
+        console.log(email)
+        console.log("profile.email")
+        console.log(profile)
 
 
-      // }
-      // catch (error) {
-      //   throw (error)
-      // }
+        console.log("profile.email")
+
+        let User = await UserTable.findOne({ "Email": email._json.email })
+        if (User) {
+          done(null, User);
+        }
+         else {
+           return done(null, false)
+         }
+
+
+       }
+       catch (error) {
+        throw (error)
+       }
 
 //////new/////////
 console.log(email)
-const profile1=email._json;
-const newUser = {
-  googleId: email.id,
-  displayName: email.displayName,
-  firstName: email.name.givenName,
-  lastName: email.name.familyName,
-  image:"dfedfef",
-}
+// const profile1=email._json;
+// const newUser = {
+//   googleId: email.id,
+//   displayName: email.displayName,
+//   firstName: email.name.givenName,
+//   lastName: email.name.familyName,
+//   image:"dfedfef",
+// }
 
-try {
-  let user = await User.findOne({ googleId: profile.id })
+// try {
+//   let user = await User.findOne({ googleId: profile.id })
 
-  if (user) {
-    done(null, user)
-  } else {
-    user = await User.create(newUser)
-    done(null, user)
-  }
-} catch (err) {
-  console.error(err)
-}
+//   if (user) {
+//     done(null, user)
+//   } else {
+//     user = await User.create(newUser)
+//     done(null, user)
+//   }
+// } catch (err) {
+//   console.error(err)
+// }
 
 
 
