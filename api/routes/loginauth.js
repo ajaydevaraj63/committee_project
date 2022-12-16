@@ -1,6 +1,8 @@
 const router = require("express").Router();
 const { request } = require("express");
 const passport = require("passport");
+// var cookieParser = require('cookie-parser');
+// app.use(cookieParser());
 
 const CLIENT_URL = "http://localhost:3000/";
 
@@ -23,8 +25,8 @@ router.get("/login/failed", (req, res) => {
 });
 
 router.get("/logout", function(req, res) {
- 
-  res.redirect('http://localhost:3000/User');
+ req.logout();
+  res.redirect('/');
 });
 
 router.get("/google", passport.authenticate("google", { scope: ["profile","email"] }));

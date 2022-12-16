@@ -1,8 +1,11 @@
 const express=require('express');
+const { GetPointsOfAll } = require('../controller/InvPoint.js');
 const { AddPoint, UpdatePointTable, DisplayPoints, GetInfo } = require('../controller/Point.js');
 var router=express.Router();
 
+ 
 
+router.get("/getAll",GetPointsOfAll)
 
 router.post("/New/Point",AddPoint);
 router.put("/Update/PointTable/:id",UpdatePointTable)

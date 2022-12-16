@@ -24,13 +24,14 @@ const userroute = require('./routes/user.js')
 const eventRoute = require('./routes/Event.js')
 const groupRoute = require('./routes/Group.js')
 const PointMgmnt = require('./routes/PointTable.js')
+const gameRoute =require('./routes/Game.js')
 app.use(urlencoded({ extended: true }))
 app.use(bdyp.json())
 
 ////////////google Login////////////
 
 app.use(
-    cookieSession({ name: "session", keys: ["lama"], maxAge: 24 * 60 * 60 * 100 })
+    cookieSession({ name: "cookie", keys: ["lama"], maxAge: 24 * 60 * 60 * 100 })
 );
 
 app.use(passport.initialize());
@@ -105,6 +106,7 @@ app.use("/Users", userroute);
 app.use("/Event", eventRoute);
 app.use("/Group", groupRoute);
 app.use("/Point", PointMgmnt);
+app.use("/game",gameRoute);
 
 
 

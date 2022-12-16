@@ -1,5 +1,7 @@
 const mongoose=require('mongoose')
 const GameSchema=mongoose.Schema({
+    GamePointTableId: { type: mongoose.Schema.Types.ObjectId, 
+        ref: "gamepointtable"  },
     GameName:{
         require:true,
         type:String
@@ -9,22 +11,30 @@ const GameSchema=mongoose.Schema({
     },
     RulesPdf:{
         type:String
-    }
-    ,GroupId:{
-        type:String
     },
+    GroupId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "Groups" 
+    },
+
     UserId:{
         type:String
     },
     StartDate:{
-        type:Date
+        type:Date,
+        default: "",
+        require: true
     }
     ,
     EndDate:{
-        type:Date
+        type:Date,
+        default: "",
+        require: true
+
     },
     Status:{
-        type:Number
+        type:Number,
+        default: 0
     }
 },{timestamps:true})
 module.exports=mongoose.model("game",GameSchema);
