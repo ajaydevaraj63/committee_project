@@ -12,7 +12,8 @@ const Admin = () => {
   return (
     <div>
       admin
-      <li><a href="/auth/Googlogin/logout">Log out</a></li>
+      <li><a href="http://localhost:4006/auth/Googlogin/logout">Log out</a></li>
+      <li><a href="http://localhost:4006/auth/Googlogin/authenticate">Authenticate</a></li>
     </div>
   )
 }
