@@ -1,8 +1,6 @@
 const router = require("express").Router();
 const { request } = require("express");
 const passport = require("passport");
-// var cookieParser = require('cookie-parser');
-// app.use(cookieParser());
 
 const CLIENT_URL = "http://localhost:3000/";
 
@@ -24,38 +22,33 @@ router.get("/login/failed", (req, res) => {
   });
 });
 
-router.get("/logout", function(req, res) {
- req.logout();
- req.isAuthenticated()
-  res.redirect('/');
+router.get("/logout", (req, res) => {
+  req.logout();
+  res.redirect(CLIENT_URL);
 });
-router.get("/Authenticate", function(req, res) {
- 
-  if (req.isAuthenticated()) {
- console.log(req)
-  } else {
-    res.redirect('http://localhost:3000')
-   
-  }
-  
- });
- 
+
 router.get("/google", passport.authenticate("google", { scope: ["profile","email"] }));
 
 router.get(
   "/google/callback",  passport.authenticate('google', { failureRedirect: '/login', failureMessage: true }),
-  function(req, res) {
+  // function(req, res) {
+  //   console.log(req.user)
+  //   if(req.user.Type==2){
+  //     res.redirect('http://localhost:3000/User');
+  //   }
+  //   else if(req.user.Type==1){
+  //     res.redirect('http://localhost:3000/Admin');
+  //   }
+  // else{
+  //   res.redirect('http://localhost:3000/user'); 
+  // }
+  
+  
+  // }
+  
+  (req, res) => {
     console.log(req.user)
-    if(req.user.Type==2){
-      res.redirect('http://localhost:3000/User');
-    }
-    if(req.user.Type==1){
-      res.redirect('http://localhost:3000/Admin');
-    }
-  
-  
-   
-  });
+    res.redirect('http://localhost:3000/Admin');  });
 
 
 

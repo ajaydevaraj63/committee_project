@@ -8,7 +8,7 @@ const CLIENT_ID = "948869378175-2j4gta2nuea49a3slpap3fnnj4jqcfqm.apps.googleuser
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(CLIENT_ID);
 
-
+const TotalPoint=require('./routes/TotalPoint.js')
 
 //////////////////////
 
@@ -24,7 +24,7 @@ const userroute = require('./routes/user.js')
 const eventRoute = require('./routes/Event.js')
 const groupRoute = require('./routes/Group.js')
 const PointMgmnt = require('./routes/PointTable.js')
-const gameRoute =require('./routes/Game.js')
+const gameRoute =require('./routes/Game.js');
 app.use(urlencoded({ extended: true }))
 app.use(bdyp.json())
 
@@ -107,6 +107,7 @@ app.use("/Event", eventRoute);
 app.use("/Group", groupRoute);
 app.use("/Point", PointMgmnt);
 app.use("/game",gameRoute);
+app.use("/TotalPoint",TotalPoint);
 
 
 

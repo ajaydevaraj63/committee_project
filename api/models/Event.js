@@ -15,6 +15,7 @@ const EventSchema=mongoose.Schema({
     UserId:{
         type:String
     }
+
 },{timestamps:true})
 
 module.exports=mongoose.model("events",EventSchema);
