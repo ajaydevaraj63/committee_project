@@ -26,9 +26,20 @@ router.get("/login/failed", (req, res) => {
 
 router.get("/logout", function(req, res) {
  req.logout();
+ req.isAuthenticated()
   res.redirect('/');
 });
-
+router.get("/Authenticate", function(req, res) {
+ 
+  if (req.isAuthenticated()) {
+ console.log(req)
+  } else {
+    res.redirect('http://localhost:3000')
+   
+  }
+  
+ });
+ 
 router.get("/google", passport.authenticate("google", { scope: ["profile","email"] }));
 
 router.get(
