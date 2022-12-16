@@ -30,10 +30,17 @@ app.use(bdyp.json())
 
 ////////////google Login////////////
 
+// app.use(
+//     cookieSession({ name: "cookie", keys: ["lama"], maxAge: 24 * 60 * 60 * 100 })
+// );
 app.use(
-    cookieSession({ name: "cookie", keys: ["lama"], maxAge: 24 * 60 * 60 * 100 })
-);
-
+    session({
+      secret: 'keyboard cat',
+      resave: false,
+      saveUninitialized: false,
+      store: MongoStore.create({mongoUrl: process.env.MONGO_URI,}),
+    })
+  )
 app.use(passport.initialize());
 app.use(passport.session());
 //////////////////////////////

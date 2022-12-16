@@ -23,4 +23,4 @@ const EventSchema=mongoose.Schema({
   GroupId: { type: mongoose.Schema.Types.ObjectId, ref: "Groups" }
 },{timestamps:true})
 
-module.exports=mongoose.model("events",EventSchema);
+module.exports=mongoose.model("TotalPoints",EventSchema);
