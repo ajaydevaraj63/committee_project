@@ -3,6 +3,11 @@ const { request } = require("express");
 const passport = require("passport");
 
 const CLIENT_URL = "http://localhost:3000/";
+const exp = require('express');
+require('dotenv').config();
+
+const app = exp();
+const jwt = require('jsonwebtoken');
 
 router.get("/login/success", (req, res) => {
   if (req.user) {
@@ -23,32 +28,72 @@ router.get("/login/failed", (req, res) => {
 });
 
 router.get("/logout", (req, res) => {
-  req.logout();
+  res.clearCookie("yourToken");
   res.redirect(CLIENT_URL);
 });
 
-router.get("/google", passport.authenticate("google", { scope: ["profile","email"] }));
+router.get("/authenticate",(req,res)=>{
+  console.log(req)
+  var token = req.rawHeaders[15];
+
+  const accesstoken = token.replace("cookie=eyJwYXNzcG9ydCI6e319; cookie.sig=BN_GqSTLJIrst0sjYmXJP7JIKT0; yourToken=", '')
+  console.log(accesstoken)
+  jwt.verify(accesstoken, process.env.tk1, (err, user) => {
+
+    if (err) {
+  
+    console.log("error")
+    }
+    else{
+      console.log("success")
+    }
+   
+  
+  }
+
+)
+})
+
+
+
+
+router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
 router.get(
-  "/google/callback",  passport.authenticate('google', { failureRedirect: '/login', failureMessage: true }),
-  // function(req, res) {
+  "/google/callback", passport.authenticate('google', { failureRedirect: '/login', failureMessage: true }),
+  function (req, res) {
+    console.log("1111", req.user)
+
+    const envtoken = process.env.tk1;
+
+    console.log(envtoken)
+    const token = jwt.sign({ id: req._id, email: req.Email }, envtoken)
+
+   
+    res.cookie('yourToken',token, { maxAge: 900000, httpOnly: true })
+
+
+    if (req.user.Type == 2) {
+      res.redirect('http://localhost:3000/User');
+    }
+    else if (req.user.Type == 1) {
+      res.redirect('http://localhost:3000/Admin');
+    }
+    else {
+      res.redirect('http://localhost:3000/Committee');
+    }
+
+
+  }
+
+  // (req, res) => {
   //   console.log(req.user)
-  //   if(req.user.Type==2){
-  //     res.redirect('http://localhost:3000/User');
-  //   }
-  //   else if(req.user.Type==1){
   //     res.redirect('http://localhost:3000/Admin');
-  //   }
-  // else{
-  //   res.redirect('http://localhost:3000/user'); 
   // }
-  
-  
-  // }
-  
-  (req, res) => {
-    console.log(req.user)
-    res.redirect('http://localhost:3000/Admin');  });
+
+
+
+);
 
 
 
@@ -73,3 +118,4 @@ router.get(
 );
 
 module.exports = router
+

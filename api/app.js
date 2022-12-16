@@ -33,13 +33,7 @@ app.use(bdyp.json())
  app.use(
    cookieSession({ name: "cookie", keys: ["lama"], maxAge: 24 * 60 * 60 * 100 })
 );
-app.use(
-    session({
-      secret: 'keyboard cat',
-      resave: false,
-      saveUninitialized: false,
-    })
-  )
+
 app.use(passport.initialize());
 app.use(passport.session());
 //////////////////////////////

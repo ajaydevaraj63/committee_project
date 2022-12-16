@@ -3,12 +3,21 @@ const GithubStrategy = require("passport-github2").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const passport = require("passport");
 const UserTable = require("./models/UserTable.js");
-const User= require("./models/User.js");
+const User = require("./models/User.js");
 const mng = require('mongoose')
 const exp = require('express');
-
+require('dotenv').config();
 
 const app = exp();
+const jwt = require('jsonwebtoken');
+// var cookieParser = require('cookie-parser');
+// const { application } = require("express");
+// const { stringify } = require("qs");
+// application.use(cookieParser())
+// require('dotenv').config();
+
+
+
 
 const GOOGLE_CLIENT_ID =
   "948869378175-2j4gta2nuea49a3slpap3fnnj4jqcfqm.apps.googleusercontent.com";
@@ -30,79 +39,66 @@ passport.use(
     async function (accessToken, refreshToken, profile, email, done) {
       try {
 
-        console.log(email)
-        console.log("profile.email")
-        console.log(profile)
+
+
+        // console.log(profile)
 
 
         console.log("profile.email")
 
         let User = await UserTable.findOne({ "Email": email._json.email })
         if (User) {
+          const envtoken = process.env.tk1;
+
+          console.log(envtoken)
+          const token = jwt.sign({ id: User._id, email: User.Email }, envtoken)
+
+          console.log("2",token)
+             
+          // cookie("accesstoken", token, { httpOnly: true }).send({ "data": User, "token": token })
+
+          // res.cookie("accesstoken", token, { httpOnly: true })
+
+
+
           done(null, User);
         }
-         else {
-           return done(null, false)
-         }
+        else {
+          return done(null, false)
+        }
 
 
-       }
-       catch (error) {
+      }
+      catch (error) {
         throw (error)
-       }
+      }
 
-//////new/////////
-console.log(email)
-// const profile1=email._json;
-// const newUser = {
-//   googleId: email.id,
-//   displayName: email.displayName,
-//   firstName: email.name.givenName,
-//   lastName: email.name.familyName,
-//   image:"dfedfef",
-// }
+      //////new/////////
+      // console.log(email)
+      // const profile1=email._json;
+      // const newUser = {
+      //   googleId: email.id,
+      //   displayName: email.displayName,
+      //   firstName: email.name.givenName,
+      //   lastName: email.name.familyName,
+      //   image:"dfedfef",
+      // }
 
-// try {
-//   let user = await User.findOne({ googleId: profile.id })
+      // try {
+      //   let user = await User.findOne({ googleId: profile.id })
 
-//   if (user) {
-//     done(null, user)
-//   } else {
-//     user = await User.create(newUser)
-//     done(null, user)
-//   }
-// } catch (err) {
-//   console.error(err)
-// }
+      //   if (user) {
+      //     done(null, user)
+      //   } else {
+      //     user = await User.create(newUser)
+      //     done(null, user)
+      //   }
+      // } catch (err) {
+      //   console.error(err)
+      // }
 
 
 
-    }
-  )
-);
-
-passport.use(
-  new GithubStrategy(
-    {
-      clientID: GOOGLE_CLIENT_ID,
-      clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/github/callback",
-    },
-    function (req, accessToken, refreshToken, profile, done) {
-      done(null, profile);//done is given to skip db operation instead we use cb
-    }
-  )
-);
-
-passport.use(
-  new FacebookStrategy(
-    {
-      clientID: FACEBOOK_APP_ID,
-      clientSecret: FACEBOOK_APP_SECRET,
-      callbackURL: "/auth/facebook/callback",
-    },
-    function (accessToken, refreshToken, profile, done) {
-      done(null, profile);
     }
   )
 );
@@ -115,9 +111,9 @@ passport.use(
 // });
 
 passport.serializeUser((user, done) => {
-  done(null, user.id)
+  done(null, user._id)
 })
 
-passport.deserializeUser((id, done) => {
-  User.findById(id, (err, user) => done(err, user))
+passport.deserializeUser((_id, done) => {
+  User.findById(_id, (err, user) => done(err, user))
 })
