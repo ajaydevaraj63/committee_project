@@ -1,40 +1,27 @@
+// routes
+import Router from './routes';
+// theme
+import ThemeProvider from './theme';
+// components
+import ScrollToTop from './components/scroll-to-top';
+import { StyledChart } from './components/chart';
 
-import './App.css';
-
-
-
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Login from './Components\'/Login';
-import User from './Components\'/User';
-import Admin from './Components\'/Admin';
-import Committee from './Components\'/Committee';
-
-// import { ChakraProvider } from '@chakra-ui/react'
-
-
-
-
-
-function App() {
+import { Provider } from "react-redux";
+import { createStore, compose, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
+import reducers from "./reducers";
+// ----------------------------------------------------------------------
+const store = createStore(reducers, compose(applyMiddleware(thunk)));
+export default function App() {
   return (
-<>
-<BrowserRouter>
-<Routes>
-
-<Route path='/'  exact element={<Login/>}></Route>
-<Route path='/User'  exact element={<User/>}></Route>
-<Route path='/Admin'  exact element={<Admin/>}></Route>
-<Route path='/Committee'  exact element={<Committee/>}></Route>
-</Routes>
-  
-
-
-</BrowserRouter>
-
-</>
+    <Provider store={store}>
+    
+    <ThemeProvider>
+      <ScrollToTop />
+      <StyledChart />
+      <Router />
+    </ThemeProvider>
+     
+    </Provider>
   );
 }
-
-export default App;

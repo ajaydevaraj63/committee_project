@@ -1,0 +1,48 @@
+.container {
+    box-shadow:10px 10px 25px 3px #d6d6d6;
+      position: relative;
+        padding-bottom: 20px;  
+      width: 50%;
+          border-top-left-radius: 5%;
+          border-top-right-radius: 5%;
+          border-bottom-right-radius: 5%;
+          border-bottom-left-radius: 5%;
+          
+
+          background: linear-gradient(140deg, rgb(240, 240, 240) 60%, rgb(123, 235, 255) 100%); 
+     border-color: #000;
+ }
+.body{
+    margin: 0%;
+    padding-left: 15%;
+    padding-right: 15%;
+    width: 80%;
+}
+ .headContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: larger;
+}
+.container:hover{
+    transform: scale(1.03);
+
+    
+}
+.EventDetailsContainer{
+
+  left:35%;
+  right: 15%;
+   position: relative;
+}
+.input{
+    margin-left: 6rem;
+}
+.flex{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+ 
