@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import '../css/Login.css'
-import { signIn } from '../actions/auth';
+import { signIn, signOut } from '../actions/auth';
 const Login = () => {
   //redux dispatch
   const dispatch = useDispatch();
@@ -21,6 +21,7 @@ const Login = () => {
     const FormData = { "Email": userDecode.email, "Token": response.credential }
 
     dispatch(signIn(FormData, navigate))
+    // dispatch(signOut( navigate))
 
   }
   const LogOut = () => {
