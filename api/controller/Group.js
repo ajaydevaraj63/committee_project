@@ -2,7 +2,7 @@ const GroupSchema = require('../models/Groups.js')
 const UserSchema = require('../models/UserTable.js')
 const joi=require('@hapi/joi')
 const Schema =joi.object().keys({
-    GroupName: joi.string().alphanum().min(3).max(30).required(),
+    GroupName: joi.string().alphanum().min(3).max(30),
     GroupType: joi.string().alphanum().min(3).max(30)
 })
 exports.updatesingleuser = (req, res) => {
@@ -83,3 +83,28 @@ catch(error){
 
 }
 }
+exports.GroupDelete=async(req,res)=>{
+  
+    try{
+      
+        if(req.body){
+    
+      await  GroupSchema.findByIdAndUpdate(req.params.id, { $set: req.body }, (error, data) => {
+        if (error) {
+            res.send("error")
+        }
+        else {
+            res.send(data)
+    
+        }
+    })
+    
+        }
+        else{
+            res.send("error")
+        }
+    }
+    catch(error){
+    
+    }
+    }

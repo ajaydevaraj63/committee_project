@@ -8,7 +8,7 @@ const multer = require('multer');
 app.use(bodyParser.urlencoded({ extended: false }));
 const router = exp.Router();
 const GroupTable = require('../models/Groups.js');
-const { updatesingleuser, UpdateGroupOfAllUsers, FindAllGroups, findGroupById, FindUsersOfAGroup, updateGroupDetails } = require('../controller/Group.js');
+const { updatesingleuser, UpdateGroupOfAllUsers, FindAllGroups, findGroupById, FindUsersOfAGroup, updateGroupDetails, GroupDelete } = require('../controller/Group.js');
 const { verify } = require('crypto');
 
 const Joi = require('@hapi/joi');
@@ -101,6 +101,7 @@ router.get("/findAllGroup",FindAllGroups)
 router.get("/findGroupById/:id",findGroupById)
 router.get("/FindAllUser/inGroup/:id",FindUsersOfAGroup)
 router.put("/UpdateGroupDetails/:id",updateGroupDetails)
+router.put("/UpdateDelete/:id",GroupDelete)
 module.exports = router;
 
 
