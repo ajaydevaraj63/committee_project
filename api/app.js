@@ -62,7 +62,7 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST, PATCH, DELETE, OPTIONS");
     next();
 });
-
+app.use(cors());
 
 mongoose.connection.on("disconnected", () => {
     console.log("disconnected")

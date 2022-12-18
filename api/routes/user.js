@@ -51,7 +51,7 @@ router.put("/UpdateUser/GroupRole/:id", updateuser)
 router.put("/UpdateUser/Group/:id", updateuser)
 router.delete("/delete", verifyuser, deleteuser)
 router.get("/email/:id", FindbyNameAndEmail)
-router.get('/display/All/user',auth.ensureAuth, displayallusers)
+router.get('/display/All/user', displayallusers)
 router.get('/group/members', getGropuMembers);
 router.get("/Display/AddUsersToNewGroup",AddNewUsersToGroup)
 module.exports = router
