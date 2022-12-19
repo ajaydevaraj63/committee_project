@@ -4,6 +4,7 @@ const Event = require('../models/Event.js')
 const Group = require('../models/Groups.js')
 const Joi = require('@hapi/joi');
 const Point = require('../models/TotalPoint.js');
+const mongoose=require('mongoose')
 
 const schema = Joi.object().keys({
     GamePoint: Joi.number().required(),
@@ -130,6 +131,30 @@ exports.GetInfo = (req, res) => {
         {
             $lookup: {
                 from: "games", localField: "GameId", foreignField: "_id", as: "gameList"
+            }
+
+
+        }
+
+    ]).then(result => {
+        res.send(result)
+    })
+
+}
+exports.GetInfo2 = (req, res) => {
+
+    PointTable.aggregate([
+        {
+            $match: {
+                "GameId": mongoose.Types.ObjectId(req.body.GameId)
+              
+            }
+        },
+    
+       
+        {
+            $lookup: {
+                from: "groups", localField: "GroupId", foreignField: "_id", as: "grouplist"
             }
 
 
