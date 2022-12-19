@@ -20,7 +20,7 @@ const EventSchema=mongoose.Schema({
     type: Number
 
   },
-  GroupId: { type: mongoose.Schema.Types.ObjectId, ref: "Groups" }
+  GroupId: { type: mongoose.Schema.Types.ObjectId,ref: "Groups" }
 },{timestamps:true})
 
 module.exports=mongoose.model("TotalPoints",EventSchema);

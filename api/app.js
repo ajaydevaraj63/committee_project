@@ -108,6 +108,7 @@ app.use("/Event", eventRoute);
 app.use("/Group", groupRoute);
 app.use("/Point", PointMgmnt);
 app.use("/game",gameRoute);
+app.use("/TotalPoint",TotalPoint)
 
 app.use("/Designation",Desig);
 

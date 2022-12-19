@@ -3,6 +3,7 @@ const UserTables = require('../models/UserTable.js')
 const Event = require('../models/Event.js')
 const Group = require('../models/Groups.js')
 const Joi = require('@hapi/joi');
+const Point = require('../models/TotalPoint.js');
 
 const schema = Joi.object().keys({
     GamePoint: Joi.number().required(),
@@ -139,3 +140,21 @@ exports.GetInfo = (req, res) => {
     })
 
 }
+exports.getInfo=((req,res)=>{
+   const result=Point.find({EventId:req.body.EventId}).sort({TotalPoint:-1}).limit(2).exec((err, docs) => {
+    if (err) {
+      responseObj = {
+        "status": "error",
+        "msg": "Input is missing.",
+        "body": {}
+      }
+      res.status(500).send(responseObj);
+    
+    } 
+    else{
+        res.send(docs)
+    }
+  })
+})
+
+

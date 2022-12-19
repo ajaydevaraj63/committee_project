@@ -1,4 +1,5 @@
 const express=require('express');
+const { getInfo } = require('../controller/Point');
 const { AddPoint } = require('../controller/TotlaPoint');
 var router=express.Router();
 
@@ -7,6 +8,7 @@ var router=express.Router();
 
 
 router.post("/New/Point",AddPoint);
+router.get("/Get/Point",getInfo);
 
 
 module.exports = router;
