@@ -111,7 +111,7 @@ function EnhancedTableHead(props) {
     return (
         <TableHead>
             <TableRow>
-                <TableCell padding="checkbox">
+                {/* <TableCell padding="checkbox">
                     <Checkbox
                         color="primary"
                         indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -121,7 +121,7 @@ function EnhancedTableHead(props) {
                             'aria-label': 'select all desserts',
                         }}
                     />
-                </TableCell>
+                </TableCell> */}
                 {headCells.map((headCell) => (
                     <TableCell
                         key={headCell.id}
@@ -201,7 +201,7 @@ function EnhancedTableToolbar(props) {
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
                     <IconButton>
-                        <DeleteIcon />
+                        {/* <DeleteIcon /> */}
                     </IconButton>
                 </Tooltip>
             ) : (
@@ -270,6 +270,7 @@ export default function EnhancedTable() {
                     )
                     console.log(id);
                     console.log("check", response);
+                    window.location.reload();
                 })
             }
         })
@@ -366,7 +367,7 @@ export default function EnhancedTable() {
                                             key={row._id}
                                             selected={isItemSelected}
                                         >
-                                            <TableCell padding="checkbox">
+                                            {/* <TableCell padding="checkbox">
                                                 <Checkbox
                                                     color="primary"
                                                     checked={isItemSelected}
@@ -374,7 +375,7 @@ export default function EnhancedTable() {
                                                         'aria-labelledby': labelId,
                                                     }}
                                                 />
-                                            </TableCell>
+                                            </TableCell> */}
                                             <TableCell
                                                 component="th"
                                                 id={labelId}
@@ -384,7 +385,19 @@ export default function EnhancedTable() {
                                             >
                                                 {row.UserName}
                                             </TableCell>
-                                            <TableCell align='left'>{row.GroupRole}</TableCell>
+                                            
+                                            <TableCell align='left'>
+                                                    <div>
+                                                        {row.GroupRole === 1 ? (
+                                                            <p className="post-body">Captain</p>
+                                                        ) : row.GroupRole === 2 ? (
+                                                            <p className="post-body">Vice captain</p>
+                                                        ) : (
+                                                            <p> Group member</p>
+                                                        )}
+                                                    </div>
+
+                                                </TableCell>
                                             <TableCell align='left'>{row.Designation}</TableCell>
                                             <TableCell align='left'>{row.Email}</TableCell>
                                             <Tooltip title="Delete" sx={{ mb: 2 }}>

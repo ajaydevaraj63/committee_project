@@ -32,6 +32,7 @@ import PointTableCurrent from './Innovature/PointTableCurrent';
 import Event from './components/Event/Event';
 // import GamesCreate from './components/Games/Games';
 import CommitteManage from './committe/Committee';
+import Addcommitteemember from './Admin/Addcommitteemember';
 
 
 
@@ -57,6 +58,7 @@ export default function Router() {
         { path: 'events', element: <EventsMain /> },
         { path: 'groupsPoints', element: <GroupsPoints /> },
         { path: 'gamePoints', element: <GamePoints /> },
+        { path:'addcommitteemember',element:<Addcommitteemember/>}
 
       ],
     },
