@@ -102,16 +102,17 @@ const Login = () => {
 <div class="d-flex justify-content-center h-100">
   <div class="image_outer_container">
     <div class="green_icon"></div>
+   
     <div class="image_inner_container">
-      
+    <div class="box" >
+    <div class="btn" >
     <div id='signInDiv'></div>
+    </div>
+    </div>
     </div>
   </div>
 </div>
 </div>
-
-
-
 
 
 
