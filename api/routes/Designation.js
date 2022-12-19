@@ -1,5 +1,5 @@
 const express=require('express');
-const { addDesig } = require('../controller/Designation');
+const { addDesig, FindAllDesignation } = require('../controller/Designation');
 const { AddPoint } = require('../controller/TotlaPoint');
 var router=express.Router();
 
