@@ -1,7 +1,7 @@
 const express=require('express');
 const { getInfo } = require('../controller/Point');
 const { AddPoint } = require('../controller/TotlaPoint');
-var router=express.Router();
+let router=express.Router();
 
  
 

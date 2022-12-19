@@ -26,7 +26,7 @@ exports.AddPoint = async (req, res) => {
             GamePoint: req.body.GamePoint,
 
         }
-        var Validation = schema.validate(JsonObj)
+        const Validation = schema.validate(JsonObj)
         if (!Validation.error) {
             const NewPointEntry = new PointTable(req.body);
             await NewPointEntry.save((error, data) => {
@@ -53,7 +53,7 @@ exports.AddPoint = async (req, res) => {
 exports.UpdatePointTable = async (req, res) => {
     try {
 
-        var Validation = schemaForUpdate.validate(req.body)
+        const Validation = schemaForUpdate.validate(req.body)
         console.log(Validation.error)
         if (!Validation.error) {
             if (req.body) {
@@ -141,9 +141,9 @@ exports.GetInfo = (req, res) => {
 
 }
 exports.getInfo=((req,res)=>{
-   const result=Point.find({EventId:req.body.EventId}).sort({TotalPoint:-1}).limit(2).exec((err, docs) => {
+   Point.find({EventId:req.body.EventId}).sort({TotalPoint:-1}).limit(2).exec((err, docs) => {
     if (err) {
-      responseObj = {
+        const responseObj = {
         "status": "error",
         "msg": "Input is missing.",
         "body": {}

@@ -3,7 +3,7 @@ const User = require("../models/UserTable.js");
 
 exports.updateuser = (req, res) => {
   console.log("inide Update")
-  const updatemodel = User.findByIdAndUpdate(req.params.id, { $set: req.body }, (error, data) => {
+  User.findByIdAndUpdate(req.params.id, { $set: req.body }, (error, data) => {
     if (error) {
       res.send("error")
     }
@@ -36,14 +36,6 @@ exports.displayall = (req, res) => {
   })
 
 }
-//   exports.OwnGroupMembers=(req,res)=>{
-//     const sort = { GroupRole: 1 };
-//    User.find({ $query: { "GroupId": req.body.GroupId}, $orderby: { GroupRole : -1 } },(function(err,result){
-//     res.send(result)
-
-//    }))
-
-// }
 
 
 
@@ -60,7 +52,6 @@ exports.FindbyNameAndEmail = (req, res) => {
   }
 
 
-  //   { $or: [ { username: req.query.username }, { email:req.query.email } ] }
 
   User.find(keyword).find({ _id: { $ne: req.params.id } }, (error, data) => {
     res.send(data)
@@ -97,23 +88,21 @@ exports.getGropuMembers = (req, res) => {
 }
 exports.paginationRecord = async(req, res, next) => {
  
-  var condition = [{"Delete":"0"}];
-  var currentPage = 0;
-  var pageSize = 0;
-  var skip = 0;
-  var limit = 0;
+  let condition = [{"Delete":"0"}];
+  let currentPage = 0;
+  let pageSize = 0;
+  let skip = 0;
+  let limit = 0;
   try {
     if (!req.body) {
-      responseObj = {
+      let responseObj = {
         "status": "error",
         "msg": "Input is missing.",
         "body": {}
       }
       res.status(500).send(responseObj);
     } else {
-      //pagination
-      // page number
-      // no of records
+      
       if (req.body.UserName) {
         condition.push({'UserName': {'$regex': req.body.UserName,$options:'i'}});
 
@@ -125,8 +114,8 @@ exports.paginationRecord = async(req, res, next) => {
       if (req.body.currentPage && req.body.pageSize) {
 
           
-       currentPage = req.body.currentPage;//2
-       pageSize = req.body.pageSize; //10
+       currentPage = req.body.currentPage;
+       pageSize = req.body.pageSize; 
 
        skip = pageSize * (currentPage - 1);
        limit = pageSize;
@@ -136,14 +125,14 @@ exports.paginationRecord = async(req, res, next) => {
 
     await  UserTable.find({ $and: condition }).skip(skip).limit(limit).exec((err, docs) => {
         if (err) {
-          responseObj = {
+          let responseObj = {
             "status": "error",
             "msg": "Input is missing.",
             "body": {}
           }
           res.status(500).send(responseObj);
         } else {
-          responseObj = {
+          let  responseObj = {
             "status": "success",
             "msg": "Record found.",
             "body": docs

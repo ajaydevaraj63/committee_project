@@ -1,7 +1,7 @@
 
-var multer = require('multer');
-var path = require('path');
-var csv = require('csvtojson');
+let multer = require('multer');
+let path = require('path');
+let csv = require('csvtojson');
 
 
 const mongoose = require('mongoose')
@@ -21,7 +21,7 @@ app.use(bdyp.json())
 
 ////////////csv//////////////////
 
-var storage = multer.diskStorage({
+let storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, './assets/data/uploads');
     },
@@ -30,7 +30,7 @@ var storage = multer.diskStorage({
     }
   });
   
-  var uploads = multer({ storage: storage });
+  let uploads = multer({ storage: storage });
   
 
 
