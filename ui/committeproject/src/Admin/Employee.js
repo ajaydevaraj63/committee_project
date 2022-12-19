@@ -2,6 +2,7 @@ import * as React from 'react';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import { alpha } from '@mui/material/styles';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
@@ -11,7 +12,6 @@ import Toolbar from '@mui/material/Toolbar';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl'
 import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -19,8 +19,16 @@ import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import moment from 'moment';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
 import { Modal } from "react-responsive-modal";
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+
 import Swal from 'sweetalert2';
+import { Link } from 'react-router-dom/dist';
+
+
 import {
     Table,
     Stack,
@@ -32,6 +40,7 @@ import {
     TableCell,
     TextField,
     Typography,
+    FormControl,
     Box,
 } from '@mui/material';
 import Iconify from '../components/iconify';
@@ -117,11 +126,10 @@ function EnhancedTableHead(props) {
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
-
     return (
         <TableHead>
             <TableRow>
-                <TableCell padding="checkbox">
+                {/* <TableCell padding="checkbox">
                     <Checkbox
                         color="primary"
                         indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -131,7 +139,7 @@ function EnhancedTableHead(props) {
                             'aria-label': 'select all desserts',
                         }}
                     />
-                </TableCell>
+                </TableCell> */}
                 {headCells.map((headCell) => (
                     <TableCell
                         key={headCell.id}
@@ -167,6 +175,9 @@ EnhancedTableHead.propTypes = {
     rowCount: PropTypes.number.isRequired,
 };
 
+
+
+
 // Add GRoup member routing
 
 
@@ -194,24 +205,25 @@ function EnhancedTableToolbar(props) {
                     {numSelected} selected
                 </Typography>
             ) : (
-                <Typography
+                <><Typography
                     sx={{ flex: '1 1 100%' }}
                     variant="h6"
                     id="tableTitle"
                     component="div"
                 >
                     User
-                </Typography>
+                </Typography><Tooltip title="Add Group Member">
+                        <IconButton >
+                            <Link to="/dashboard/addMember">
+                                <PersonAddAltIcon /></Link>
+                        </IconButton>
+                    </Tooltip></>
             )}
-            <TextField
-                id="filled-search"
-                label="Search field"
-                type="search"
-                variant="filled"
-            />
         </Toolbar>
     );
 }
+
+
 
 EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
@@ -229,9 +241,29 @@ export default function EnhancedTable() {
     const [useropen, setUserOpens] = useState(false);
     const init = useRef();
     const [EditPatchValue, setEditpatchvalue] = useState([]);
-
     // CsvModal
     const [csvModal, setCsvModalOpen] = useState(false);
+
+    // search //
+
+    const [Searchuser, setSearchUser] = useState({
+        UserName: '',
+        currentPage: '',
+        pageSize: '',
+        Designation: '',
+    })
+
+    const onPageChange = e => {
+        e.preventDefault();
+        setSearchUser({ ...Searchuser, [e.target.name]: e.target.value })
+    }
+
+    const onSearch = () => {
+        axios.get('http://localhost:4006/Users/Display/FilteredUser', Searchuser).then((response) => {
+            console.log("sucessssssssssssssssss", response.data);
+
+        });
+    }
 
     function handleCsvModalOpen() {
         setCsvModalOpen(true);
@@ -323,8 +355,9 @@ export default function EnhancedTable() {
 
     // edit API //
 
-    const EditSubmit = () => {
-        console.log("EditUser=======");
+    const EditSubmit = (e) => {
+        e.preventDefault();
+        console.log("EditUser=======", editUser);
         const id = sessionStorage.getItem('id')
         console.log('check', id);
         axios.post("http://localhost:4006/auth/update/user/type/".concat(id), editUser).then((response) => {
@@ -454,8 +487,6 @@ export default function EnhancedTable() {
 
     const [editUser, setEdituser] = useState({
         Type: '',
-        GroupRole: '',
-        GroupId: '',
     })
 
     const onEditChange = e => {
@@ -463,16 +494,32 @@ export default function EnhancedTable() {
         setEdituser({ ...editUser, [e.target.name]: e.target.value })
     }
 
+
+
     return (
         <>
             <Helmet>
                 <title> Innovatures </title>
             </Helmet>
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Typography variant="h4" gutterBottom>
+                    Innovatures
+                </Typography>
                 <Button variant="contained" onClick={handleOpen} startIcon={<Iconify icon="eva:plus-fill" />}>
                     New User
                 </Button>
             </Stack>
+            <TextField
+                id="filled-search"
+                label="Search field"
+                type="search"
+                variant="filled"
+                name='UserName'
+                onChange={e => onPageChange(e)}
+            />
+            <Button variant="" sx={{color:'gray',mt:1}} onClick={(e) => onSearch(e)} >
+                Search
+            </Button>
             <Box sx={{ width: '100%' }}>
                 <Paper sx={{ width: '100%', mb: 2 }}>
                     <EnhancedTableToolbar numSelected={selected.length} />
@@ -508,15 +555,7 @@ export default function EnhancedTable() {
                                                 key={row._id}
                                                 selected={isItemSelected}
                                             >
-                                                <TableCell padding="checkbox">
-                                                    <Checkbox
-                                                        color="primary"
-                                                        checked={isItemSelected}
-                                                        inputProps={{
-                                                            'aria-labelledby': labelId,
-                                                        }}
-                                                    />
-                                                </TableCell>
+
                                                 <TableCell
                                                     component="th"
                                                     id={labelId}
@@ -598,7 +637,7 @@ export default function EnhancedTable() {
                 }}
             >
                 <MenuItem onClick={() => handleCsvModalOpen()}>
-                    <Iconify icon={'eos-icons:csv-file'} sx={{ mr: 2 }}  />
+                    <Iconify icon={'eos-icons:csv-file'} sx={{ mr: 2 }} />
                     Csv Upload
                 </MenuItem>
                 <MenuItem onClick={() => handleOpenUser()} >
@@ -613,37 +652,61 @@ export default function EnhancedTable() {
                 <Box sx={{ width: 500, mx: 9, mt: 3 }}>
                     <form id='regForm'>
                         <h4>Add User</h4>
-                        <FormControl  fullwidth sx={{m:3}} >
-                            <TextField type="text"      sx={{
-                                                            width: { sm: 200, md: 200, lg: 300, xl: 400 },
-                                                            "& .MuiInputBase-root": {
-                                                                height: 60
-                                                            }
-                                                        }}
-                                                         autoComplete="off" name='DOB' size="small" id="exampleFormControlInput1"  name='UserName' onChange={e => onInputChange(e)} label="Name" />
+                        {/* <div className="form-floating mb-3 has-validation">
+                            <TextField type="text" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" id="validationServerUsername" variant="outlined" size="small" name='UserName' onChange={e => onInputChange(e)} label="Name" />
+                        </div> */}
+                        <FormControl fullwidth sx={{ m: 2 }} >
+                            <TextField type="text" sx={{
+                                width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                                "& .MuiInputBase-root": {
+                                    height: 60
+                                }
+                            }}
+                                autoComplete="off" size="small" id="exampleFormControlInput1" name='UserName' onChange={e => onInputChange(e)} label="Name" />
                         </FormControl>
-                        <FormControl  fullwidth sx={{m:3}}>
-                            <TextField type="text"  sx={{
-                                                            width: { sm: 200, md: 200, lg: 300, xl: 400 },
-                                                            "& .MuiInputBase-root": {
-                                                                height: 60
-                                                            }
-                                                        }}
-                                                         autoComplete="off" name='DOB' size="small" id="exampleFormControlInput1"  name='UserName' onChange={e => onInputChange(e)} label="Email" />
+                        {/* <div className="form-floating mb-3 ">
+                            <TextField type="text" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" name='Email' size="small" id="exampleFormControlInput1" onChange={e => onInputChange(e)} label="Email" />
+                        </div> */}
+                         <FormControl fullwidth sx={{ m: 2 }} >
+                            <TextField type="text" sx={{
+                                width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                                "& .MuiInputBase-root": {
+                                    height: 60
+                                }
+                            }}
+                                autoComplete="off" size="small" id="exampleFormControlInput1" name='Email' onChange={e => onInputChange(e)} label="Email" />
                         </FormControl>
-                        <div className=" mb-3 ">
+                        {/* <div className="form-floating mb-3 ">
                             <TextField type="Date" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" name='DOB' size="small" id="exampleFormControlInput1" onChange={e => onInputChange(e)} label="Dob" InputLabelProps={{ shrink: true }} />
-                        </div>
+                        </div> */}
+                        <FormControl fullwidth sx={{ m: 2 }} >
+                            <TextField type="Date" sx={{
+                                width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                                "& .MuiInputBase-root": {
+                                    height: 60
+                                }
+                            }}
+                                autoComplete="off" size="small" id="exampleFormControlInput1" name='DOB' onChange={e => onInputChange(e)} label="Dob" InputLabelProps={{ shrink: true }}/>
+                        </FormControl>
                         {/* <div className="form-floating mb-3 ">
  <TextField type="number" sx={{ m: 2, width: '35ch' }} className="form-control" name='Type' value={Type} size="small" id="exampleFormControlInput1" autoComplete="off" onChange={e => onInputChange(e)} label="Type" />
  </div> */}
                         {/* <div className="form-floating mb-3 ">
  <TextField type="number" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" name='GroupRole' value={GroupRole} size="small" id="exampleFormControlInput1" onChange={e => onInputChange(e)} label="Group role" />
  </div> */}
-                        <div className=" mb-3 ">
+                        {/* <div className="form-floating mb-3 ">
                             <TextField type="text" sx={{ m: 2, width: '35ch' }} className="form-control" name='Designation' size="small" id="exampleFormControlInput1" autoComplete="off" onChange={e => onInputChange(e)} label="Designation" />
-                        </div>
-                        <div className=" mt-5 ">
+                        </div> */}
+                        <FormControl fullwidth sx={{ m: 2 }} >
+                            <TextField type="text" sx={{
+                                width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                                "& .MuiInputBase-root": {
+                                    height: 60
+                                }
+                            }}
+                                autoComplete="off" size="small" id="exampleFormControlInput1" name='Designation' onChange={e => onInputChange(e)} label="Designation" />
+                        </FormControl>
+                        <div className="row mt-5 ">
                             <div className="col-3"><Button sx={{ m: 2, width: '41ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => handleSubmit()} >Submit</Button></div>
                         </div>
                     </form>
@@ -656,11 +719,28 @@ export default function EnhancedTable() {
                 <Box sx={{ width: 400, mx: 9 }}>
                     <form id='EditForm'>
                         <h4> Edit Type</h4>
-                        <div className="form-floating mb-3 ">
+                        {/* <div className="form-floating mb-3 ">
                             <TextField sx={{ m: 2, width: '35ch' }} type="number" defaultValue={EditPatchValue.Type} className="form-control" name='Type' id="exampleFormControlInput1" autoComplete="off" onChange={e => onEditChange(e)} label="Type" />
-                        </div>
+                        </div> */}
+                        <Box sx={{ minWidth: 120 }}>
+                            <InputLabel id="demo-simple-select-label">Type</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                name='Type'
+                                label="Type"
+                                defaultValue={EditPatchValue.Type}
+
+                                sx={{ m: 2, width: '35ch' }}
+                                onChange={e => onEditChange(e)}
+                            >
+                                <MenuItem value={1}>Committee member</MenuItem>
+                                <MenuItem value={2}>Admin</MenuItem>
+                                <MenuItem value={0}>Innovatures</MenuItem>
+                            </Select>
+                        </Box>
                         <div className="row mt-5 ">
-                            <div className="col-3"><Button sx={{ mx: 2, m: 2 }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => EditSubmit()}>Submit</Button></div>
+                            <div className="col-3"><Button sx={{ mx: 2, m: 2 }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={(e) => EditSubmit(e)}>Submit</Button></div>
                         </div>
                     </form>
                 </Box>

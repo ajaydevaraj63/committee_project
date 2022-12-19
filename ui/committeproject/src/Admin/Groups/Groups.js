@@ -9,9 +9,11 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Swal from 'sweetalert2';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import { MenuItem, Box, Button, Container, Grid, Stack, TextField, FormControl, Typography } from '@mui/material';
 
 // @mui
-import { Box, Button, Container, Grid, Stack, TextField, Typography } from '@mui/material';
 import { Modal } from "react-responsive-modal";
 // components
 import { Link } from 'react-router-dom/dist';
@@ -74,8 +76,9 @@ export default function Groups() {
     position: 'absolute',
   });
 
-  const handleSubmit = () => {
-    console.log("AddGroup=======");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("AddGroup=======", GroupType);
     const formdata = new FormData();
     formdata.append('image', file);
     formdata.append('GroupName', GroupName);
@@ -84,7 +87,6 @@ export default function Groups() {
     axios.post("http://localhost:4006/Group/create", formdata).then((response) => {
       console.log("check", response.data);
       handleClose();
-      window.location.reload();
     })
   }
 
@@ -97,6 +99,7 @@ export default function Groups() {
 
     });
   }, [])
+
 
   const deleteUser = (id) => {
     const body = {
@@ -163,6 +166,7 @@ export default function Groups() {
     axios.put("http://localhost:4006/Group/UpdateGroupDetails/".concat(id), editUser).then((response) => {
       console.log("check", response.data);
       handleeditClose();
+      window.location.reload();
     })
   }
 
@@ -273,19 +277,69 @@ export default function Groups() {
         <Box sx={{ width: 500, mx: 9, mt: 3 }}>
           <form id='regForm'>
             <h4>Add Group</h4>
-            <div className="form-floating mb-3 has-validation">
+            <FormControl fullwidth sx={{ m: 2 }} >
+              <TextField type="text" sx={{
+                width: { sm: 200, md: 200, lg: 480, xl: 400 },
+                "& .MuiInputBase-root": {
+                  height: 54
+                }
+              }}
+                autoComplete="off" size="small" id="exampleFormControlInput1" name='GroupName' onChange={(e) => setGroupName(e.target.value)} label="Group name" />
+            </FormControl>
+            {/* <div className="form-floating mb-3 has-validation">
               <TextField type="text" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" id="validationServerUsername" variant="outlined" size="small" name='GroupName' onChange={(e) => setGroupName(e.target.value)} label="Group name" />
-            </div>
-            <div className="form-floating mb-3 ">
+            </div> */}
+            {/* <div className="form-floating mb-3 ">
               <TextField type="text" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" name='GroupType' size="small" id="exampleFormControlInput1" onChange={(e) => setGroupType(e.target.value)} label="Group Type" />
-            </div>
-            <div className='row m-4'>
-              <div className='col col-3'>
+            </div> */}
+            <FormControl fullwidth sx={{ m: 2 }} >
+            <Box sx={{
+              width: { sm: 200, md: 200, lg: 480, xl: 400 },
+              "& .MuiInputBase-root": {
+                height: 54
+              }
+
+            }}>
+              <InputLabel id="demo-simple-select-label">Group Type</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                className="form-control"
+                name='GroupType'
+                label="Group Type"
+                autoComplete="off"
+                sx={{
+                  width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                  "& .MuiInputBase-root": {
+                    height: 54
+                  }
+
+                }}
+                size="small"
+                onChange={(e) => setGroupType(e.target.value)}
+              >
+                <MenuItem value={'mainGroup'}>Main group</MenuItem>
+                <MenuItem value={'committee'}>Committee</MenuItem>
+              </Select>
+            </Box>
+            </FormControl>
+            <FormControl fullwidth sx={{ m: 2 }} >
+              <TextField type="file" sx={{
+                width: { sm: 200, md: 200, lg: 480, xl: 400 },
+                "& .MuiInputBase-root": {
+                  height: 60
+                }
+
+              }}
+                autoComplete="off" size="small" id="exampleFormControlInput1" name='GroupImage' onChange={e => onInputFIlechange(e)} label="Group Image" InputLabelProps={{ shrink: true }} />
+            </FormControl>
+
+            {/* <div className='col col-3'>
                 <TextField sx={{ m: 2, width: '35ch' }} className='form-control' type="file" name='GroupImage' onChange={e => onInputFIlechange(e)} label="Group Image" InputLabelProps={{ shrink: true }} />
-              </div>
-            </div>
+              </div> */}
+
             <div className="row mt-5 ">
-              <div className="col-3"><Button sx={{ m: 2, width: '41ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => handleSubmit()} >Submit</Button></div>
+              <div className="col-3"><Button sx={{ m: 2, width: '41ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={(e) => handleSubmit(e)}  >Submit</Button></div>
             </div>
           </form>
         </Box>
@@ -294,9 +348,19 @@ export default function Groups() {
         <Box sx={{ width: 500, mx: 9, mt: 3 }}>
           <form id='regForm'>
             <h4>Edit Group</h4>
-            <div className="form-floating mb-3 has-validation">
+            {/* <div className="form-floating mb-3 has-validation">
               <TextField type="text" sx={{ m: 2, width: '35ch' }} defaultValue={EditPatchValue.GroupName} className="form-control" autoComplete="off" id="validationServerUsername" variant="outlined" size="small" name='GroupName' onChange={e => onEditChange(e)} />
-            </div>
+            </div> */}
+            <FormControl fullwidth sx={{ m: 2 }} >
+              <TextField type="text" sx={{
+                width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                "& .MuiInputBase-root": {
+                  height: 60
+                }
+
+              }}
+                autoComplete="off" size="small" id="exampleFormControlInput1" defaultValue={EditPatchValue.GroupName} name='GroupName' onChange={e => onEditChange(e)} label="GroupName" />
+            </FormControl>
             <div className="row mt-5 ">
               <div className="col-3"><Button sx={{ m: 2, width: '41ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => EditSubmit()} >Submit</Button></div>
             </div>
