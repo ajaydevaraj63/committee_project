@@ -66,7 +66,7 @@ export default function AllEvents() {
                                 .map((row) => {
                                     return (
                                         <TableRow>
-                                            <TableCell sx={{ cursor: 'pointer' }}>  Event </TableCell>
+                                            <TableCell>  Event </TableCell>
                                             {/* <TableCell >{row.GroupId}</TableCell>
                 <TableCell>{row.GamePoint}</TableCell> */}
                                         </TableRow>

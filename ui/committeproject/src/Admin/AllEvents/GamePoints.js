@@ -67,7 +67,7 @@ export default function GamePoints() {
                                 .map((row) => {
                                     return (
                                         <TableRow>
-                                            <TableCell sx={{ cursor: 'pointer' }}> Game </TableCell>
+                                            <TableCell > Game </TableCell>
                                             <Tooltip title="Click to Add Points to Groups" placement='bottom-start'>
                                                 <TableCell ><input type='text' placeholder='score' style={{ border: 'none' }} /></TableCell>
                                             </Tooltip>                              {/* <TableCell >{row.GroupId}</TableCell>
