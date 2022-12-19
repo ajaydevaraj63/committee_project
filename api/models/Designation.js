@@ -6,4 +6,4 @@ const postSchema=mongoose.Schema({
     }
 
 },{Timestamp:true})
-module.exports=mongoose.model("post",postSchema)
+module.exports=mongoose.model("Designation",postSchema)
