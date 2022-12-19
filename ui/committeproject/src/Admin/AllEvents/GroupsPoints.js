@@ -71,17 +71,17 @@ export default function GroupsPoints() {
                         </TableHead>
                         <TableBody>
                             {PointList
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                            {/* .map((row) => {
-                  return ( */}
-                            <TableRow>
-                                <TableCell onClick={gamePoints} sx={{ cursor: 'pointer' }}> Group1 </TableCell>
-                                <TableCell > Total Score </TableCell>
-                                {/* <TableCell >{row.GroupId}</TableCell>
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row) => {
+                                    return (
+                                        <TableRow>
+                                            <TableCell onClick={gamePoints} sx={{ cursor: 'pointer' }}> Group </TableCell>
+                                            <TableCell > Total Score </TableCell>
+                                            {/* <TableCell >{row.GroupId}</TableCell>
                 <TableCell>{row.GamePoint}</TableCell> */}
-                            </TableRow>
-                            {/* );
-                })} */}
+                                        </TableRow>
+                                    );
+                                })}
                         </TableBody>
                     </Table>
                 </TableContainer>

@@ -37,7 +37,6 @@ export default function AllEvents() {
         axios.get('http://localhost:4006/Point/getinfo/common').then((response) => {
             console.log("Response", response.data);
             setPointList(response.data)
-            console.log("========================================================", response.data.gameList.GameName);
         });
     }, [])
 
@@ -61,16 +60,16 @@ export default function AllEvents() {
                         </TableHead>
                         <TableBody>
                             {PointList
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                            {/* .map((row) => {
-                  return ( */}
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                        .map((row) => {
+                  return ( 
                             <TableRow>
-                                <TableCell sx={{ cursor: 'pointer' }}> Event 1 </TableCell>
+                                <TableCell > Event  </TableCell>
                                 {/* <TableCell >{row.GroupId}</TableCell>
                 <TableCell>{row.GamePoint}</TableCell> */}
                             </TableRow>
-                            {/* );
-                })} */}
+                          );
+                })} 
                         </TableBody>
                     </Table>
                 </TableContainer>
