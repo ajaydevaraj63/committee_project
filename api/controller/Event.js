@@ -33,7 +33,7 @@ exports.getEvents = (req, res) => {
 
 }
 exports.updateEvent = (req, res) => {
-    const updatemodel = event.findByIdAndUpdate(req.params.id, { $set: req.body }, (error, data) => {
+   event.findByIdAndUpdate(req.params.id, { $set: req.body }, (error, data) => {
       if (error) {
         res.send("error")
       }
@@ -54,7 +54,7 @@ exports.allevents = async (req, res)=> {
   const { page, LIMIT, sortOrder, sortBy } = req.query 
   try { 
 
-    // const LIMIT = 5;
+   
     const startIndex = (Number(page) - 1) * Number(LIMIT);
     const total = await Event.countDocuments({});
     const events = await Event.find().sort({ [sortBy]: sortOrder }).limit(LIMIT).skip(startIndex);
@@ -66,18 +66,7 @@ exports.allevents = async (req, res)=> {
   }
 }
   
-  // Event.find((error,data) => {
-
-  //   if(error){
-  //       res.status(500).json(error)
-  //   }
-  //   else  {
-  //       // res.send({"data":data})
-  //       // res.json(res.paginatedResults)
-  //       res.status(200).json(data);
-  //   }
-  // });
-
+ 
 
 
 exports.event = (req, res) => { 
