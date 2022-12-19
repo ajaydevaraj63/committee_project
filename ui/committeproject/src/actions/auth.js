@@ -35,7 +35,7 @@ export const signIn = (formData, navigate) => async (dispatch) => {
     }
     if (UserData.data.data.Type === 1) {
       dispatch({ type: AUTH, LocalData })
-      navigate("/dashboardCommitte/Event");
+      navigate("/dashboard/app");
     }
     if (UserData.data.data.Type === 2) {
       dispatch({ type: AUTH, LocalData })
