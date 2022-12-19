@@ -8,7 +8,7 @@ exports.addDesig=(req,res)=>{
     })
 }
 exports.FindAllDesignation=(req,res)=>{
-    GroupSchema.find({"Delete": "0"},(error,data)=>{
+    Designation.find((error,data)=>{
         res.send(data)
     })
 }

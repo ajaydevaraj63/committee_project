@@ -1,5 +1,5 @@
 const express=require('express');
-const { addDesig } = require('../controller/Designation');
+const { addDesig, FindAllDesignation } = require('../controller/Designation.js');
 const { AddPoint } = require('../controller/TotlaPoint');
 var router=express.Router();
 
@@ -8,7 +8,7 @@ var router=express.Router();
 
 
 router.post("/add",addDesig);
-router.get("/add",FindAllDesignation);
+router.get("/get",FindAllDesignation);
 
 
 module.exports = router;
