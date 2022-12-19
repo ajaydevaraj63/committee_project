@@ -70,18 +70,18 @@ export default function EventsHistory() {
                         </TableHead>
                         <TableBody>
                             {PointList
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                            {/* .map((row) => {
-                  return ( */}
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            .map((row) => {
+                  return (
                             <TableRow>
                                 <Tooltip title="Click to Add Points to Groups" placement='bottom-start'>
-                                    <TableCell onClick={groupsPoints} sx={{ cursor: 'pointer' }}>Event 1 </TableCell>
+                                    <TableCell onClick={groupsPoints} sx={{ cursor: 'pointer' }}> Event  </TableCell>
                                 </Tooltip>
                                 {/* <TableCell >{row.GroupId}</TableCell>
                 <TableCell>{row.GamePoint}</TableCell> */}
                             </TableRow>
-                            {/* );
-                })} */}
+                           );
+                })} 
                         </TableBody>
                     </Table>
                 </TableContainer>

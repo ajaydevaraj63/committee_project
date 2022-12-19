@@ -62,16 +62,16 @@ export default function AllEvents() {
                         </TableHead>
                         <TableBody>
                             {PointList
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                            {/* .map((row) => {
-                  return ( */}
-                            <TableRow>
-                                <TableCell sx={{ cursor: 'pointer' }}> Event 1 </TableCell>
-                                {/* <TableCell >{row.GroupId}</TableCell>
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row) => {
+                                    return (
+                                        <TableRow>
+                                            <TableCell sx={{ cursor: 'pointer' }}>  Event </TableCell>
+                                            {/* <TableCell >{row.GroupId}</TableCell>
                 <TableCell>{row.GamePoint}</TableCell> */}
-                            </TableRow>
-                            {/* );
-                })} */}
+                                        </TableRow>
+                                    );
+                                })}
                         </TableBody>
                     </Table>
                 </TableContainer>

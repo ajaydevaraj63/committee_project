@@ -1,3 +1,4 @@
+import { Tooltip } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -62,16 +63,18 @@ export default function GamePoints() {
                         </TableHead>
                         <TableBody>
                             {PointList
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                            {/* .map((row) => {
-                  return ( */}
-                            <TableRow>
-                                <TableCell sx={{ cursor: 'pointer' }}> Game1 </TableCell>
-                                <TableCell ><input type='text' placeholder='score' style={{ border: 'none' }} /></TableCell>                                {/* <TableCell >{row.GroupId}</TableCell>
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row) => {
+                                    return (
+                                        <TableRow>
+                                            <TableCell sx={{ cursor: 'pointer' }}> Game </TableCell>
+                                            <Tooltip title="Click to Add Points to Groups" placement='bottom-start'>
+                                                <TableCell ><input type='text' placeholder='score' style={{ border: 'none' }} /></TableCell>
+                                            </Tooltip>                              {/* <TableCell >{row.GroupId}</TableCell>
                 <TableCell>{row.GamePoint}</TableCell> */}
-                            </TableRow>
-                            {/* );
-                })} */}
+                                        </TableRow>
+                                    );
+                                })}
                         </TableBody>
                     </Table>
                 </TableContainer>
