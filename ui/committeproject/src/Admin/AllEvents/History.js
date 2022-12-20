@@ -1,3 +1,5 @@
+import AddIcon from '@mui/icons-material/Add';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -6,7 +8,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import Tooltip from '@mui/material/Tooltip';
 import axios from 'axios';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
@@ -15,9 +16,12 @@ import { useNavigate } from "react-router-dom";
 
 const columns = [
     { id: 'Events', label: 'Events', minWidth: 150 },
+    { id: 'description', label: 'Description', minWidth: 150 },
+    { id: 'file', label: 'File', minWidth: 150 },
+    { id: 'Action', label: '', minWidth: 150 },
 ];
 
-export default function EventsHistory() {
+export default function History() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -36,7 +40,7 @@ export default function EventsHistory() {
         let path = `/dashboard/groupsPoints`;
         navigate(path);
 
-        sessionStorage.setItem('eId',eId);
+        sessionStorage.setItem('eId', eId);
         console.log(eId);
 
     }
@@ -52,6 +56,17 @@ export default function EventsHistory() {
             console.log("========", PointList);
         });
     }, [])
+
+    //on Click toggle 
+
+    const useToggle = (initialState) => {
+        const [toggleValue, setToggleValue] = useState(initialState);
+
+        const toggler = () => { setToggleValue(!toggleValue) };
+        return [toggleValue, toggler]
+    };
+
+    const [toggle, setToggle] = useToggle();
 
     // Point Table =================================================================================================
 
@@ -76,15 +91,39 @@ export default function EventsHistory() {
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row) => {
                                     return (
-                                        <TableRow>
-                                            <Tooltip title="Click to Add Points to Groups" placement='bottom-start'>
-                                                <TableCell onClick={() => groupsPoints(row._id)} sx={{ cursor: 'pointer' }}> {row.EventName}  </TableCell>
-                                            </Tooltip>
-                                            {/* <TableCell >{row.GroupId}</TableCell>
-                <TableCell>{row.GamePoint}</TableCell> */}
+                                        <><TableRow>
+                                            <TableCell> {row.EventName}  </TableCell>
+                                            <TableCell> {row.EventDescription}  </TableCell>
+                                            <TableCell><a href={row.File} download><PictureAsPdfIcon /></a></TableCell>
+                                            <TableCell><AddIcon onClick={setToggle} />
+                                            </TableCell>
                                         </TableRow>
+                                            <TableRow>
+                                                {/* OnClick toggle========================================================================================================== */}
+                                                {toggle && (
+                                                    <Table sx={{ marginTop: '25px', marginLeft: '40%' }}>
+                                                        <TableHead>
+                                                            <TableRow>
+                                                                <TableCell>Game Name</TableCell>
+                                                                <TableCell>Description</TableCell>
+                                                                <TableCell>Start Date</TableCell>
+                                                                <TableCell>End Date</TableCell>
+                                                            </TableRow>
+                                                        </TableHead>
+                                                        <TableBody>
+                                                            <TableRow>
+                                                                <TableCell>Game Name</TableCell>
+                                                                <TableCell>Description</TableCell>
+                                                                <TableCell>Start Date</TableCell>
+                                                                <TableCell>End Date</TableCell>
+                                                            </TableRow>
+                                                        </TableBody>
+                                                    </Table>
+                                                )}
+                                            </TableRow></>
                                     );
                                 })}
+
                         </TableBody>
                     </Table>
                 </TableContainer>

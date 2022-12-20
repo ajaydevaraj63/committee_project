@@ -3,9 +3,10 @@ import { AUTH, LOGOUT, FORGOT, RESET } from "../constants/actionTypes.js";
 const authReducer = (state = { authData: null }, action) => {
   switch (action.type) {
     case AUTH:
-    
+
       localStorage.setItem("Profile", JSON.stringify(action.LocalData));
-    
+      localStorage.setItem("loggedInUser", action.LocalData.UserName)
+
       return { ...state, authData: action?.LocalData };
     case LOGOUT:
       localStorage.clear();
