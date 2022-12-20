@@ -54,7 +54,7 @@ const UserSchema = new moongoose.Schema({
     ,
     CommitteeRole:{
     type: String,
-    required: true,
+    default:0,
 }
     
 }, { timestamps: true })
