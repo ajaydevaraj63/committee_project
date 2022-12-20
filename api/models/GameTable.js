@@ -35,6 +35,11 @@ const GameSchema=mongoose.Schema({
     Status:{
         type:Number,
         default: 0
-    }
+    },
+
+    Delete:{
+        type:Number,
+        default:0
+    },
 },{timestamps:true})
 module.exports=mongoose.model("game",GameSchema);

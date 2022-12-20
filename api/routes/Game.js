@@ -11,11 +11,18 @@ const bodyParser = require('body-parser');
 const { error } = require('console');
 app.use(bdyp.json());
 app.use(bodyParser.urlencoded({extended: false}));
-
+const Schema =joi.object().keys({
+  GameName: joi.string().alphanum().min(3).max(30),
+  GameDesc: joi.string().alphanum().min(3).max(30),
+  StartDate: joi.date(),
+  EndDate: joi.date(),
+  UserId: joi.string(),
+  EventId: joi.string()
+})
 
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, 'http://localhost:4006/uploads');
+      cb(null, './images');
     },
     filename: (req, file, cb) => {
       const date = new Date();
@@ -24,63 +31,96 @@ let storage = multer.diskStorage({
   });
 
 
-let upload = multer({ storage: storage });
+let upload = multer({ storage: storage,
+  // fileFilter: function(req, file, callback) {
+  //   if(path.extname(file.originalname) !== '.pdf' || path.extname(file.originalname) !== '.text') {
+  //     return callback(new Error('Only	pdf, text files are allowed!'));
+  //   }
+  //   callback(null, true)
+  // }
+ });
 
 function postgame(req, res, next) {
-  
-    const newgame = new Game({
 
-        GameName: req.body.GameName,
-        GameDesc: req.body.GameDesc,
-        UserId: req.body.UserId,
-        StartDate: req.body.StartDate,
-        EndDate: req.body.EndDate
+  try{
+    
+    let Validation=Schema.validate(req.body)
+    if(!Validation.error){
 
-    })
+              const newgame = new Game({
 
-    newgame.RulesPdf = req.files[0].path
-    newgame.save((error, data) => {
-      try {
+                GameName: req.body.GameName,
+                GameDesc: req.body.GameDesc,
+                UserId: req.body.UserId,
+                StartDate: req.body.StartDate,
+                EndDate: req.body.EndDate,
+                EventId: req.body.EventId
+            })
+            newgame.RulesPdf = req.files[0].path
+            newgame.save((error, data) => {
+                    try {
 
-        res.send(data)
+                      res.send(data)
 
-      }
-      catch (error) {
+                    }
+                    catch (error) {
 
-        console.log(error);
+                      console.log(error);
 
-      }
-    next();
-    }); 
+                    }
+          next();
+          });
+    
+    }
+    else{
+        res.send(Validation.error)
+    }
+  }
+  catch(error){
 
   }
 
-  function gameupdation (req, res) {
-    const date = new Date();
-    Game.findById( req.params.id, (error, data) => {
-      const sd = Game.StartDate;
-      if ( sd < date ) {
+}
 
-        Game.findByIdAndUpdate( req.params.id, { $set: req.body, RulesPdf: req.files[0].path }, (error, data) => { 
-          try{
-    
-            res.send(data)
-    
-          }
-          catch (error) {
-            
-            console.log(error);
-            res.send(error);
-    
-          }
-        })
+function gameupdation (req, res) {
+  const date = new Date();
+  try{
+  
+    let Validation=Schema.validate(req.body)
+    if(!Validation.error){
+        Game.findById( req.params.id, (error, data) => {
+        const sd = Game.StartDate;
+        if ( sd < date ) {
+
+              Game.findByIdAndUpdate( req.params.id, { $set: req.body, RulesPdf: req.files[0].path }, (error, data) => { 
+                try{
+          
+                  res.send(data)
+          
+                }
+                catch (error) {
+                  
+                  console.log(error);
+                  res.send(error);
+          
+                }
+            })
       }
-        else {
+      else {
 
-          res.send("Game Started Further Updation Not Possible")
+        res.send("Game Started Further Updation Not Possible")
 
-        }
-    } )
+      }
+    })
+}
+
+else{
+  res.send(Validation.error)
+}
+}
+catch(error){
+
+}
 }
 
 

@@ -158,3 +158,90 @@ exports.AddNewUsersToGroup = (req, res) => {
   })
 
 }
+
+
+exports.searchUser = async (req, res) => {
+  const { searchQuery } = req.query
+  try {
+    const value = new RegExp(searchQuery, 'i');
+    const searchdata = await User.find({ $or: [{ UserName: value }] })
+    res.json({ data: searchdata });
+
+  }
+  catch (error) {
+    res.status(404).json({ message: error.message })
+  }
+
+}
+
+exports.updatecommittee = (req, res) => {
+
+  if (req.body.role == 2) {
+
+    try {
+        User.findOneAndUpdate({ CommitteeRole: "2" }, { $set: { CommitteeRole: 0 }}, (error,data) => {
+
+                if (!error) {
+                  console.log(data);
+                }
+                else {
+                  console.log(error);
+                }
+
+        })
+        User.findByIdAndUpdate(req.params.id, { CommitteeRole: req.body.role }, (error, data) => {
+
+                if (!error) {
+                  res.send(data);
+                }
+                else {
+                  console.log(error);
+                }
+          })
+        }
+    catch (error) {
+        res.send(error);
+    }
+      }
+
+  else if (req.body.role == 1) {
+
+    try {
+        User.findOneAndUpdate({ CommitteeRole: "1" }, { $set:  {CommitteeRole: 0 }  }, (error,data) => {
+
+                if (!error) {
+                  console.log(data);
+                }
+                else {
+                  console.log(error);
+                }
+          })
+
+        User.findByIdAndUpdate(req.params.id, { CommitteeRole: req.body.role }, (error, data) => {
+
+                if (!error) {
+                  res.send(data);
+                }
+                else {
+                  console.log(error);
+                }
+          })
+        }
+    catch (error) {
+        res.send(error);
+    }
+
+    }
+}
+
+exports.committeemember = (req, res) => {
+
+  User.find({ CommitteeRole: { $gte: 0 } }, (error, data) => {
+    if (!error) {
+      res.send(data)
+    }
+    else {
+      res.send(error)
+    }
+  })
+}
