@@ -90,6 +90,8 @@ app.use("/TotalPoint",TotalPoint)
 
 app.use("/Designation",Desig);
 
+app.use("/Designation",Desig);
+
 
 
 

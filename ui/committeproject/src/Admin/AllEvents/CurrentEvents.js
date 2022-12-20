@@ -35,10 +35,10 @@ export default function AllEvents() {
 
     useEffect(() => {
         console.log("PointTable  Api Call===============")
-        axios.get('http://localhost:4006/Point/getinfo/common').then((response) => {
+        axios.get('http://localhost:4006/event/allevent?page=1&LIMIT=10&sortOrder=1&sortBy=EventName').then((response) => {
             console.log("Response", response.data);
-            setPointList(response.data)
-            console.log("========================================================", response.data.gameList.GameName);
+            setPointList(response.data.data)
+            console.log("========",PointList);
         });
     }, [])
 
@@ -66,7 +66,7 @@ export default function AllEvents() {
                                 .map((row) => {
                                     return (
                                         <TableRow>
-                                            <TableCell>  Event </TableCell>
+                                            <TableCell>  {row.EventName} </TableCell>
                                             {/* <TableCell >{row.GroupId}</TableCell>
                 <TableCell>{row.GamePoint}</TableCell> */}
                                         </TableRow>

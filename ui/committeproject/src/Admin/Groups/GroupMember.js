@@ -1,9 +1,17 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import {
-    Box, Table, TableBody,
-    TableCell, TableRow, Typography
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  Typography,
+  Stack,
+  Button,
+  Container
 } from '@mui/material';
+import Multiselect from 'multiselect-react-dropdown';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import IconButton from '@mui/material/IconButton';
@@ -19,6 +27,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import { Modal } from "react-responsive-modal";
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -146,6 +155,7 @@ function EnhancedTableHead(props) {
             </TableRow>
         </TableHead>
     );
+
 }
 
 EnhancedTableHead.propTypes = {
@@ -160,25 +170,102 @@ EnhancedTableHead.propTypes = {
 // Add GRoup member routing
 
 
-const handleAddMembers = () => {
-    console.log('loooo');
-}
+
 
 function EnhancedTableToolbar(props) {
     const { numSelected } = props;
 
+    // close and open of modal for add user //
+
+    const [open, setOpen] = useState(false);
+    const handleAddMembers = (e) => {
+        setOpen(true);
+    }
+    const handleAddmemberclose = () => {
+        setOpen(false);
+    }
+
+    const [groupMember, setGroupmemebr] = useState('select');
+    const [userList, setUserlist] = useState([]);
+    const [objects, setObjects] = useState([]);
+    const [mailist, setMaillist] = useState([]);
+    const [employeelist, setEmployeelist] = useState([]);
+
+    const disp = (e) => {
+
+        console.log("efewfwef", e)
+        const data = e;
+        console.log('data', e);
+        setMaillist(data);
+    }
+
+
+    useEffect(() => {
+        const listgroupusers = []
+        const listobject = []
+        const getUserlist = async () => {
+            console.log("ap call====================");
+            const reqData = await axios.get('http://localhost:4006/users/Display/AddUsersToNewGroup');
+            const reqsData = await reqData.data;
+            console.log("reqData", reqsData);
+
+            for (let i = 0; i < reqsData.length; i += 1) {
+                listgroupusers.push(reqsData[i].Email);
+                listobject.push(reqsData[i]);
+                console.log('kk', listobject);
+            }
+            setUserlist(listgroupusers);
+            setObjects(listobject);
+
+        }
+        getUserlist();
+
+    }, []);
+
+    const Groupmembersubmit = async () => {
+        const emplist = []
+        console.log('nnnnnnnnnnnnnnnnnnnnnnnn', mailist);
+        console.log('ooooooooooooooooo', objects)
+        const promise1 = new Promise((resolve, reject) => {
+
+            for (let i = 0; i < mailist.length; i += 1) {
+                for (let j = 0; j < objects.length; j += 1) {
+                    if (mailist[i] === objects[j].Email) {
+                        console.log(objects[i]._id)
+                        emplist.push(objects[j]._id);
+                        console.log('bbbbbbbbbbbb', emplist);
+                    }
+                }
+            }
+            resolve();
+        });
+        promise1.then(() => {
+            setEmployeelist(emplist);
+        });
+        console.log('success', employeelist);
+        const Gid = sessionStorage.getItem('Gid')
+        console.log("AddUserto group=======", Gid);
+        console.log(emplist);
+        axios.put("http://localhost:4006/group/Update/Multiple/UsersGroup/".concat(Gid), emplist).then((response) => {
+            console.log("check", response);
+
+
+        })
+    }
+
     return (
-        <Toolbar
-            sx={{
-                pl: { sm: 2 },
-                pr: { xs: 1, sm: 1 },
-                ...(numSelected > 0 && {
-                    bgcolor: (theme) =>
-                        alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-                }),
-            }}
-        >
-            {numSelected > 0 ? (
+        <>
+            <Toolbar
+                sx={{
+                    pl: { sm: 2 },
+                    pr: { xs: 1, sm: 1 },
+                    ...(numSelected > 0 && {
+                        bgcolor: (theme) =>
+                            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+                    }),
+                }}
+            >
+                {/* {numSelected > 0 ? (
                 <Typography
                     sx={{ flex: '1 1 100%' }}
                     color="inherit"
@@ -187,7 +274,7 @@ function EnhancedTableToolbar(props) {
                 >
                     {numSelected} selected
                 </Typography>
-            ) : (
+            ) : ( */}
                 <Typography
                     sx={{ flex: '1 1 100%' }}
                     variant="h6"
@@ -196,24 +283,51 @@ function EnhancedTableToolbar(props) {
                 >
                     Group members
                 </Typography>
-            )}
+                {/* )} */}
 
-            {numSelected > 0 ? (
+                {/* {numSelected > 0 ? (
                 <Tooltip title="Delete">
                     <IconButton>
-                        {/* <DeleteIcon /> */}
+                        <DeleteIcon />
                     </IconButton>
                 </Tooltip>
-            ) : (
+            ) : ( */}
                 <Tooltip title="Add Group Member">
-                    <IconButton onClick={handleAddMembers} >
-                        <Link to="/dashboard/addMember">
-                            <PersonAddAltIcon /></Link>
+                    <IconButton onClick={(e) => handleAddMembers(e)} >
+                        <PersonAddAltIcon />
                     </IconButton>
                 </Tooltip>
-            )}
-        </Toolbar>
+                {/* )} */}
+            </Toolbar>
+            <Modal open={open} onClose={handleAddmemberclose} center>
+                <Box sx={{ width: 500, mx: 9, mt: 3,height:500 }}>
+                <Container>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+
+                    <Typography variant="h4" gutterBottom>
+                        Add Group Member
+                    </Typography>
+                </Stack>
+                <Stack spacing={6}>
+                    <Multiselect
+                        value={groupMember}
+                        isObject={false}
+                        onRemove={(event) => { disp(event) }}
+                        onSelect={(event) => { disp(event) }}
+                        options={userList}
+                        showCheckbox
+                    />
+                    <Button variant="contained" sx={{ m: 2, width: '15ch' }} onClick={() => Groupmembersubmit()} >
+                        Submit
+                    </Button>
+                </Stack>
+            </Container>
+                </Box>
+            </Modal>
+        </>
+
     );
+
 }
 
 EnhancedTableToolbar.propTypes = {
@@ -227,6 +341,11 @@ export default function EnhancedTable() {
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [open, setopen] = useState(false);
+
+    const handleaddmembr = () => {
+        setopen(true);
+    }
 
     // list members API calling//
 
@@ -385,19 +504,19 @@ export default function EnhancedTable() {
                                             >
                                                 {row.UserName}
                                             </TableCell>
-                                            
-                                            <TableCell align='left'>
-                                                    <div>
-                                                        {row.GroupRole === 1 ? (
-                                                            <p className="post-body">Captain</p>
-                                                        ) : row.GroupRole === 2 ? (
-                                                            <p className="post-body">Vice captain</p>
-                                                        ) : (
-                                                            <p> Group member</p>
-                                                        )}
-                                                    </div>
 
-                                                </TableCell>
+                                            <TableCell align='left'>
+                                                <div>
+                                                    {row.GroupRole === 1 ? (
+                                                        <p className="post-body">Captain</p>
+                                                    ) : row.GroupRole === 2 ? (
+                                                        <p className="post-body">Vice captain</p>
+                                                    ) : (
+                                                        <p> Group member</p>
+                                                    )}
+                                                </div>
+
+                                            </TableCell>
                                             <TableCell align='left'>{row.Designation}</TableCell>
                                             <TableCell align='left'>{row.Email}</TableCell>
                                             <Tooltip title="Delete" sx={{ mb: 2 }}>
@@ -437,4 +556,5 @@ export default function EnhancedTable() {
             />
         </Box>
     );
+
 }

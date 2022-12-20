@@ -6,11 +6,12 @@ import IconButton from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Tooltip from '@mui/material/Tooltip';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Swal from 'sweetalert2';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
+import WallpaperIcon from '@mui/icons-material/Wallpaper';
 import { MenuItem, Box, Button, Container, Grid, Stack, TextField, FormControl, Typography } from '@mui/material';
 
 // @mui
@@ -36,7 +37,11 @@ export default function Groups() {
   const [EditPatchValue, setEditpatchvalue] = useState([]);
   const [UpdatepicOpen, setUpdatepicOpen] = useState(false);
   const [editpicId, setEditpicId] = useState('');
-
+  const [fileError,setFileError] = useState(null);
+  const [Nameerror,setNameerror] = useState(null);
+  const filetypeRef = useRef();
+  const groupNameRef = useRef();
+  
 
   // filter modal open //
 
@@ -59,7 +64,28 @@ export default function Groups() {
   };
 
   const onInputFIlechange = e => {
+ const fileSelected = e.target.files[0].type;
+    console.log()
+    // if(fileSelected ==='jpg || jpeg || png')
+    // {
     setFile(e.target.files[0]);
+    // }
+    // else{
+    //   setFileError('files only support jpg,jpeg,png format only');
+    // }
+    
+  }
+
+  const onInputNamechange = e => {
+    const grname = e.target.value;
+    if(grname===null || grname==="" )
+    {
+      setNameerror('please enter a valid Group name');
+    }else{
+      setNameerror(null);
+    setGroupName(e.target.value)
+    
+    }
   }
 
   const [editUser, setEdituser] = useState({
@@ -84,6 +110,21 @@ export default function Groups() {
     formdata.append('GroupName', GroupName);
     formdata.append('GroupType', GroupType);
     console.log('formdata', formdata);
+    if(GroupName.trim().length == 0 )
+    {
+      setNameerror('This field is required')      
+      groupNameRef.focus();
+
+    }
+    // if(file[0] == null){
+    //   setFileError('This field is required')
+    //   filetypeRef.focus();
+    // }
+    // if(fileError !=null || Nameerror !=null)
+    if(Nameerror !=null)
+    {
+      return;
+    }
     axios.post("http://localhost:4006/Group/create", formdata).then((response) => {
       console.log("check", response.data);
       handleClose();
@@ -91,6 +132,10 @@ export default function Groups() {
   }
 
   useEffect(() => {
+   listgroups();
+  }, [])
+
+  const listgroups = () => {
     console.log("ap call====================");
     axios.get('http://localhost:4006/Group/findAllGroup').then((response) => {
       console.log("Response", response.data);
@@ -98,10 +143,10 @@ export default function Groups() {
       console.log(response.data.GroupName);
 
     });
-  }, [])
+  }
 
 
-  const deleteUser = (id) => {
+  const deleteUser = async(id) => {
     const body = {
       Delete: 1
     }
@@ -129,6 +174,8 @@ export default function Groups() {
         })
       }
     })
+    const lis = await listgroups();
+
   }
 
   // gt id for list group members //
@@ -208,12 +255,12 @@ export default function Groups() {
 
         <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
           <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
-            <ProductFilterSidebar
+            {/* <ProductFilterSidebar
               openFilter={openFilter}
               onOpenFilter={handleOpenFilter}
               onCloseFilter={handleCloseFilter}
-            />
-            <ProductSort />
+            /> */}
+           
           </Stack>
         </Stack>
         <Grid container spacing={3}>
@@ -223,33 +270,39 @@ export default function Groups() {
               return (
                 <Grid item xs={12} sm={6} md={3}>
                   <Card>
-                    <Tooltip title="Change Group Icon" placement="top-start">
-                      <Box sx={{ pt: '100%', position: 'relative', cursor: 'pointer' }} onClick={() => handleUpdatepicOpen(value._id)} >
+                    <Tooltip title="View group details" placement="top-start">
+                    <Link style={{ textDecoration: 'none' }} to='/dashboard/groupMember' onClick={() => getId(value._id)} >
+                      <Box sx={{ pt: '100%', position: 'relative', cursor: 'pointer' }}>
                         <StyledProductImg src={value.GroupImage} alt="Group Icon" />
                       </Box>
+                      </Link>
                     </Tooltip>
                     <CardContent direction="row">
-                      <Tooltip title="View Group Details" placement="bottom-start">
-                        <Link style={{ textDecoration: 'none' }} to='/dashboard/groupMember' onClick={() => getId(value._id)} >
-                          <Typography gutterBottom variant="subtitle1">
+                      <Tooltip title="Edit name" placement="bottom-start">
+                      {/* <Link style={{ textDecoration: 'none' }} to='/dashboard/groupMember' onClick={() => getId(value._id)} > */}
+                          <Typography gutterBottom variant="subtitle1" onClick={() => handleeditOpen(value._id)}>
                             {value.GroupName}
                           </Typography>
-                        </Link>
+                      {/* </Link> */}
                       </Tooltip>
                       <Tooltip title="Delete">
                         <IconButton sx={{ ml: 23, mt: -9 }} onClick={() => deleteUser(value._id)}>
                           <DeleteIcon />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Edit">
+                      {/* <Tooltip title="Edit">
                         <IconButton sx={{ ml: 19, mt: -15 }} onClick={() => handleeditOpen(value._id)}>
                           <EditIcon />
+                        </IconButton>
+                      </Tooltip> */}
+                      <Tooltip title="change group icon">
+                        <IconButton sx={{ ml: 19, mt: -15 }} onClick={() => handleUpdatepicOpen(value._id)}>
+                          <WallpaperIcon />
                         </IconButton>
                       </Tooltip>
                       {/* <Typography variant="body2" color="text.secondary">
  24
  </Typography> */}
-
                     </CardContent>
                   </Card>
                 </Grid>
@@ -278,20 +331,17 @@ export default function Groups() {
           <form id='regForm'>
             <h4>Add Group</h4>
             <FormControl fullwidth sx={{ m: 2 }} >
-              <TextField type="text" sx={{
+              <TextField 
+              ref= {groupNameRef}
+              type="text" sx={{
                 width: { sm: 200, md: 200, lg: 480, xl: 400 },
                 "& .MuiInputBase-root": {
                   height: 54
                 }
               }}
-                autoComplete="off" size="small" id="exampleFormControlInput1" name='GroupName' onChange={(e) => setGroupName(e.target.value)} label="Group name" />
+                autoComplete="off" size="small" id="exampleFormControlInput1" name='GroupName' onChange={(e) => onInputNamechange(e)} label="Group name" />
             </FormControl>
-            {/* <div className="form-floating mb-3 has-validation">
-              <TextField type="text" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" id="validationServerUsername" variant="outlined" size="small" name='GroupName' onChange={(e) => setGroupName(e.target.value)} label="Group name" />
-            </div> */}
-            {/* <div className="form-floating mb-3 ">
-              <TextField type="text" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" name='GroupType' size="small" id="exampleFormControlInput1" onChange={(e) => setGroupType(e.target.value)} label="Group Type" />
-            </div> */}
+            {Nameerror !=null ? <p style={{color:"red"}}>{Nameerror}</p> : ''} 
             <FormControl fullwidth sx={{ m: 2 }} >
             <Box sx={{
               width: { sm: 200, md: 200, lg: 480, xl: 400 },
@@ -324,7 +374,9 @@ export default function Groups() {
             </Box>
             </FormControl>
             <FormControl fullwidth sx={{ m: 2 }} >
-              <TextField type="file" sx={{
+             
+              <input type="file"  
+               sx={{
                 width: { sm: 200, md: 200, lg: 480, xl: 400 },
                 "& .MuiInputBase-root": {
                   height: 60
@@ -333,17 +385,15 @@ export default function Groups() {
               }}
                 autoComplete="off" size="small" id="exampleFormControlInput1" name='GroupImage' onChange={e => onInputFIlechange(e)} label="Group Image" InputLabelProps={{ shrink: true }} />
             </FormControl>
-
-            {/* <div className='col col-3'>
-                <TextField sx={{ m: 2, width: '35ch' }} className='form-control' type="file" name='GroupImage' onChange={e => onInputFIlechange(e)} label="Group Image" InputLabelProps={{ shrink: true }} />
-              </div> */}
-
+            {/* {fileError !=null ? <p style={{color:"red"}}>{fileError}</p> : ''}  */}
             <div className="row mt-5 ">
-              <div className="col-3"><Button sx={{ m: 2, width: '41ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={(e) => handleSubmit(e)}  >Submit</Button></div>
+              <div className="col-3"><Button sx={{ m: 2, width: '41ch',height:40 }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={(e) => handleSubmit(e)}  >Submit</Button></div>
             </div>
           </form>
         </Box>
       </Modal>
+
+
       <Modal open={editopen} onClose={handleeditClose} center>
         <Box sx={{ width: 500, mx: 9, mt: 3 }}>
           <form id='regForm'>
@@ -367,14 +417,25 @@ export default function Groups() {
           </form>
         </Box>
       </Modal>
+
       <Modal open={UpdatepicOpen} onClose={handleUpdatepicClose} center>
         <Box sx={{ width: 500, mx: 9, mt: 3 }}>
           <form id='regForm'>
             <h4>Change Group Icon</h4>
             <div className='row m-4'>
-              <div className='col col-3'>
+              {/* <div className='col col-3'>
                 <TextField sx={{ m: 2, width: '35ch' }} className='form-control' onChange={e => onInputFIlechange(e)} type="file" name='GroupImage' label="Group Image" InputLabelProps={{ shrink: true }} />
-              </div>
+              </div> */}
+              <FormControl fullwidth sx={{ m: 2 }} >
+              <TextField 
+              type="file" sx={{
+                width: { sm: 200, md: 200, lg: 480, xl: 400 },
+                "& .MuiInputBase-root": {
+                  height: 54
+                }
+              }}
+                autoComplete="off" size="small" id="exampleFormControlInput1" name='GroupImage' onChange={e => onInputFIlechange(e)} label="Group Image" InputLabelProps={{ shrink: true }}/>
+            </FormControl>
             </div>
             <div className="row mt-5 ">
               <div className="col-3"><Button sx={{ m: 2, width: '13ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => changePic()} >Submit</Button></div>

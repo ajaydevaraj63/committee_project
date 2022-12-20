@@ -34,7 +34,7 @@ export default function AllEvents() {
 
     useEffect(() => {
         console.log("PointTable  Api Call===============")
-        axios.get('http://localhost:4006/Point/getinfo/common').then((response) => {
+        axios.get('http://localhost:4006/event/allevent?page=1&LIMIT=10&sortOrder=1&sortBy=EventName').then((response) => {
             console.log("Response", response.data);
             setPointList(response.data)
         });
@@ -74,7 +74,7 @@ export default function AllEvents() {
                     </Table>
                 </TableContainer>
                 <TablePagination
-                    rowsPerPageOptions={[10, 25, 100]}
+                    rowsPerPageOptions={[5, 10, 25,]}
                     component="div"
                     count={PointList.length}
                     rowsPerPage={rowsPerPage}

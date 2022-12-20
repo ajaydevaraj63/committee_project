@@ -6,12 +6,12 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import * as React from 'react';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate } from "react-router-dom";
-import { Helmet } from 'react-helmet-async';
 import Tooltip from '@mui/material/Tooltip';
+import axios from 'axios';
+import * as React from 'react';
+import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { useNavigate } from "react-router-dom";
 
 const columns = [
     { id: 'Events', label: 'Events', minWidth: 150 },
@@ -32,21 +32,24 @@ export default function EventsHistory() {
 
     let navigate = useNavigate();
 
-    const groupsPoints = () => {
+    function groupsPoints(eId) {
         let path = `/dashboard/groupsPoints`;
         navigate(path);
+
+        sessionStorage.setItem('eId',eId);
+        console.log(eId);
+
     }
 
     //List Point Table ==========================================================================
-
     const [PointList, setPointList] = useState([])
 
     useEffect(() => {
         console.log("PointTable  Api Call===============")
-        axios.get('http://localhost:4006/Point/getinfo/common').then((response) => {
+        axios.get('http://localhost:4006/event/allevent?page=1&LIMIT=10&sortOrder=1&sortBy=EventName').then((response) => {
             console.log("Response", response.data);
-            setPointList(response.data)
-            console.log("========================================================", response.data.gameList.GameName);
+            setPointList(response.data.data)
+            console.log("========", PointList);
         });
     }, [])
 
@@ -71,17 +74,17 @@ export default function EventsHistory() {
                         <TableBody>
                             {PointList
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row) => {
-                  return (
-                            <TableRow>
-                                <Tooltip title="Click to Add Points to Groups" placement='bottom-start'>
-                                    <TableCell onClick={groupsPoints} sx={{ cursor: 'pointer' }}> Event  </TableCell>
-                                </Tooltip>
-                                {/* <TableCell >{row.GroupId}</TableCell>
+                                .map((row) => {
+                                    return (
+                                        <TableRow>
+                                            <Tooltip title="Click to Add Points to Groups" placement='bottom-start'>
+                                                <TableCell onClick={() => groupsPoints(row._id)} sx={{ cursor: 'pointer' }}> {row.EventName}  </TableCell>
+                                            </Tooltip>
+                                            {/* <TableCell >{row.GroupId}</TableCell>
                 <TableCell>{row.GamePoint}</TableCell> */}
-                            </TableRow>
-                           );
-                })} 
+                                        </TableRow>
+                                    );
+                                })}
                         </TableBody>
                     </Table>
                 </TableContainer>

@@ -202,7 +202,7 @@ function EnhancedTableToolbar(props) {
                     variant="subtitle1"
                     component="div"
                 >
-                    {numSelected} selected
+                    {/* {numSelected} selected */}
                 </Typography>
             ) : (
                 <><Typography
@@ -212,12 +212,8 @@ function EnhancedTableToolbar(props) {
                     component="div"
                 >
                     User
-                </Typography><Tooltip title="Add Group Member">
-                        <IconButton >
-                            <Link to="/dashboard/addMember">
-                                <PersonAddAltIcon /></Link>
-                        </IconButton>
-                    </Tooltip></>
+                </Typography>
+                    </>
             )}
         </Toolbar>
     );
@@ -241,9 +237,9 @@ export default function EnhancedTable() {
     const [useropen, setUserOpens] = useState(false);
     const init = useRef();
     const [EditPatchValue, setEditpatchvalue] = useState([]);
+    const [designation,setdesignation] = useState('');
     // CsvModal
     const [csvModal, setCsvModalOpen] = useState(false);
-
     // search //
 
     const [Searchuser, setSearchUser] = useState({
@@ -310,15 +306,36 @@ export default function EnhancedTable() {
 
     const [data, setData] = useState([]);
 
-    useEffect(() => {
+    const listusers = () => {
         console.log("ap call====================");
         axios.get('http://localhost:4006/users/display/All/user').then((response) => {
             console.log("sucess", response.data);
             setData(response.data)
         });
 
-    }, [])
+    }
+    const listdesignation = async() => {
+        const listdesignation = [] 
+        console.log("ap call====================");
+        const des = await axios.get('http://localhost:4006/Designation/get').then((response) => {
+            console.log("sucessdesignations", response.data);
+            const designationdata = response.data
+            console.log('jjjjjjjjjjjjjj',response.data[0].Designation);  
+            for (let i = 0; i < designationdata.length; i += 1) {
+                listdesignation.push(designationdata[i].Designation);
+                console.log('kk', listdesignation);
+            }
+            setdesignation(listdesignation)   
+        });
+         console.log('ffffffffff',designation);
+        
+    }
 
+    useEffect(() => {
+       listusers();
+       listdesignation();
+
+    }, [])
 
     // Delete API //
 
@@ -509,17 +526,17 @@ export default function EnhancedTable() {
                     New User
                 </Button>
             </Stack>
-            <TextField
+            {/* <TextField
                 id="filled-search"
                 label="Search field"
                 type="search"
                 variant="filled"
                 name='UserName'
                 onChange={e => onPageChange(e)}
-            />
-            <Button variant="" sx={{color:'gray',mt:1}} onClick={(e) => onSearch(e)} >
+            /> */}
+            {/* <Button variant="" sx={{ color: 'gray', mt: 1 }} onClick={(e) => onSearch(e)} >
                 Search
-            </Button>
+            </Button> */}
             <Box sx={{ width: '100%' }}>
                 <Paper sx={{ width: '100%', mb: 2 }}>
                     <EnhancedTableToolbar numSelected={selected.length} />
@@ -667,7 +684,7 @@ export default function EnhancedTable() {
                         {/* <div className="form-floating mb-3 ">
                             <TextField type="text" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" name='Email' size="small" id="exampleFormControlInput1" onChange={e => onInputChange(e)} label="Email" />
                         </div> */}
-                         <FormControl fullwidth sx={{ m: 2 }} >
+                        <FormControl fullwidth sx={{ m: 2 }} >
                             <TextField type="text" sx={{
                                 width: { sm: 200, md: 200, lg: 300, xl: 400 },
                                 "& .MuiInputBase-root": {
@@ -686,17 +703,8 @@ export default function EnhancedTable() {
                                     height: 60
                                 }
                             }}
-                                autoComplete="off" size="small" id="exampleFormControlInput1" name='DOB' onChange={e => onInputChange(e)} label="Dob" InputLabelProps={{ shrink: true }}/>
+                                autoComplete="off" size="small" id="exampleFormControlInput1" name='DOB' onChange={e => onInputChange(e)} label="Dob" InputLabelProps={{ shrink: true }} />
                         </FormControl>
-                        {/* <div className="form-floating mb-3 ">
- <TextField type="number" sx={{ m: 2, width: '35ch' }} className="form-control" name='Type' value={Type} size="small" id="exampleFormControlInput1" autoComplete="off" onChange={e => onInputChange(e)} label="Type" />
- </div> */}
-                        {/* <div className="form-floating mb-3 ">
- <TextField type="number" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" name='GroupRole' value={GroupRole} size="small" id="exampleFormControlInput1" onChange={e => onInputChange(e)} label="Group role" />
- </div> */}
-                        {/* <div className="form-floating mb-3 ">
-                            <TextField type="text" sx={{ m: 2, width: '35ch' }} className="form-control" name='Designation' size="small" id="exampleFormControlInput1" autoComplete="off" onChange={e => onInputChange(e)} label="Designation" />
-                        </div> */}
                         <FormControl fullwidth sx={{ m: 2 }} >
                             <TextField type="text" sx={{
                                 width: { sm: 200, md: 200, lg: 300, xl: 400 },
