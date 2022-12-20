@@ -1,4 +1,4 @@
-import { Tooltip } from '@mui/material';
+import { Avatar, Box, Button, Input } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -11,11 +11,13 @@ import axios from 'axios';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import Modal from 'react-responsive-modal';
 
 const columns = [
+    { id: 'Group', label: 'Group Icon', maxWidth: 0 },
     { id: 'Groups', label: 'Groups', minWidth: 150 },
     { id: 'Points', label: 'Points', minWidth: 150 },
+    { id: 'Action', label: '', minWidth: 150 }
 ];
 
 export default function GroupsPoints() {
@@ -31,17 +33,22 @@ export default function GroupsPoints() {
         setPage(0);
     };
 
-    let navigate = useNavigate();
 
-    function gamePoints(gId) {
-        let path = `/dashboard/gamePoints`;
-        navigate(path);
+    // Game modal
+    const [GameModal, setGameModalOpen] = useState(false);
+
+    function handleGameModalOpen(gId) {
 
         sessionStorage.setItem('gId', gId);
         console.log(gId);
-
+        setGameModalOpen(true);
 
     }
+
+    const handleModalClose = () => setGameModalOpen(false);
+
+
+
 
 
     //List Point Table ==========================================================================
@@ -84,12 +91,10 @@ export default function GroupsPoints() {
                                 .map((row) => {
                                     return (
                                         <TableRow>
-                                            <Tooltip title="Click to Add Points to Groups" placement='bottom-start'>
-                                                <TableCell onClick={() => gamePoints(row._id)} sx={{ cursor: 'pointer' }}> {row.GroupName} </TableCell>
-                                            </Tooltip>
+                                            <TableCell><Avatar src={row.GroupImage}></Avatar></TableCell>
+                                            <TableCell sx={{ cursor: 'pointer' }}> {row.GroupName} </TableCell>
                                             <TableCell > 378 </TableCell>
-                                            {/* <TableCell >{row.GroupId}</TableCell>
-                <TableCell>{row.GamePoint}</TableCell> */}
+                                            <TableCell><Button onClick={() => handleGameModalOpen(row._id)}>Add</Button></TableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -104,6 +109,39 @@ export default function GroupsPoints() {
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage} />
-            </Paper></>
+            </Paper>
+
+
+            <Modal open={GameModal} onClose={handleModalClose} center>
+                <Box sx={{ width: 600, marginLeft: '1vh' }}>
+                    <Table stickyHeader aria-label="sticky table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell style={{ minWidth: '300' }}>Game</TableCell>
+                                <TableCell>Score</TableCell>
+                            </TableRow>
+                        </TableHead>
+
+                        <TableBody>
+                            <TableRow>
+                                <TableCell>Game</TableCell>
+                                <TableCell><Input type='number' placeholder='score' /> </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>Game</TableCell>
+                                <TableCell><Input type='number' placeholder='score' /> </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                    <Button>submit</Button>
+
+                </Box>
+            </Modal>
+
+
+        </>
+
+
     );
 }
+

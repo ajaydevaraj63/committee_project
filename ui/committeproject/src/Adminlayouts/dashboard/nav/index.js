@@ -65,12 +65,13 @@ export default function Nav({ openNav, onCloseNav }) {
 
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-          
+                {localStorage.getItem("loggedInUser")}
               </Typography>
 
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 {account.role}
               </Typography>
+
             </Box>
           </StyledAccount>
         </Link>

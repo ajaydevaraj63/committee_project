@@ -27,8 +27,8 @@ const navConfig = [
     icon: icon('groups'),
   },
   {
-    title: 'Event Points',
-    path: '/dashboard/Events',
+    title: 'Point Table',
+    path: '/dashboard/eventHistory',
     icon: icon('event'),
   },
   // {
@@ -37,8 +37,8 @@ const navConfig = [
   //   icon: icon('meeting'),
   // },
   {
-    title: 'Point Table',
-    path: '/dashboard/groupsPoints',
+    title: 'Event History',
+    path: '/dashboard/events',
     icon: icon('point_table'),
   },
   // {

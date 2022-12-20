@@ -10,9 +10,13 @@ import axios from 'axios';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import AddIcon from '@mui/icons-material/Add';
 
 const columns = [
     { id: 'Events', label: 'Events', minWidth: 150 },
+    { id: 'description', label: 'Description', minWidth: 150 },
+    { id: 'Action', label: '', minWidth: 150 },
+
 ];
 
 export default function AllEvents() {
@@ -28,6 +32,17 @@ export default function AllEvents() {
         setPage(0);
     };
 
+    //on Click toggle 
+
+    const useToggle = (initialState) => {
+        const [toggleValue, setToggleValue] = useState(initialState);
+
+        const toggler = () => { setToggleValue(!toggleValue) };
+        return [toggleValue, toggler]
+    };
+
+    const [toggle, setToggle] = useToggle();
+
     //List Point Table ==========================================================================
 
     const [PointList, setPointList] = useState([])
@@ -36,7 +51,8 @@ export default function AllEvents() {
         console.log("PointTable  Api Call===============")
         axios.get('http://localhost:4006/event/allevent?page=1&LIMIT=10&sortOrder=1&sortBy=EventName').then((response) => {
             console.log("Response", response.data);
-            setPointList(response.data)
+            setPointList(response.data.data)
+            console.log("========", PointList);
         });
     }, [])
 
@@ -59,17 +75,34 @@ export default function AllEvents() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {PointList
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        .map((row) => {
-                  return ( 
-                            <TableRow>
-                                <TableCell > Event  </TableCell>
-                                {/* <TableCell >{row.GroupId}</TableCell>
-                <TableCell>{row.GamePoint}</TableCell> */}
-                            </TableRow>
-                          );
-                })} 
+                            {PointList.map((row) => {
+                                return (
+                                    <>  <TableRow>
+                                        <TableCell > {row.EventName}  </TableCell>
+                                        <TableCell>{row.EventDescription}</TableCell>
+                                        <TableCell><AddIcon onClick={setToggle} />
+                                        </TableCell>
+                                    </TableRow>
+                                        <TableRow> {/* OnClick toggle========================================================================================================== */}
+
+                                            {toggle && (
+                                                <Table sx={{ marginTop: '25px', marginLeft: '70%' }}>
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <TableCell>Group Name</TableCell>
+                                                            <TableCell>Point</TableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        <TableRow>
+                                                            <TableCell>Group</TableCell>
+                                                            <TableCell>Score</TableCell>
+                                                        </TableRow>
+                                                    </TableBody>
+                                                </Table>
+                                            )}</TableRow></>
+                                );
+                            })}
                         </TableBody>
                     </Table>
                 </TableContainer>
