@@ -24,12 +24,12 @@ exports.UpdateGroupOfAllUsers = async (req, res) => {
 
 
     try {
-        for (let i = 0; i < ObjJson.length; i++) {
+        for (const element of ObjJson) {
             await UserSchema.findOneAndUpdate(
-                { _id: ObjJson[i] },
+                { _id: element },
                 { $set: { GroupId: GroupID } }
             )
-            console.log(ObjJson[i])
+            console.log(element)
         }
         res.send("saved")
     } catch (err) {
@@ -61,7 +61,7 @@ exports.FindUsersOfAGroup=(req,res)=>{
 exports.updateGroupDetails=async(req,res)=>{
   
 try{
-    var Validation=Schema.validate(req.body)
+    let Validation=Schema.validate(req.body)
     if(!Validation.error){
 
   await  GroupSchema.findByIdAndUpdate(req.params.id, { $set: req.body }, (error, data) => {

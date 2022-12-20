@@ -7,8 +7,8 @@ const bodyParser=require('body-parser')
 ///////////multer///////
 
 const multer = require('multer');
-var path = require('path');
-var csv = require('csvtojson');
+let path = require('path');
+let csv = require('csvtojson');
 const app=exp()
 
 ////////////csv//////////////////
@@ -19,7 +19,7 @@ const upload = multer({ dest: "../assets/data/uploads" });
 
 
 
-var storage = multer.diskStorage({
+let storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, './assets/data/uploads');
     },
@@ -28,7 +28,7 @@ var storage = multer.diskStorage({
     }
   });
   
-  var uploads = multer({ storage: storage });
+  let uploads = multer({ storage: storage });
   
   exports.addbyMulter=(upload.array("csv"), uploadFiles);
 
@@ -42,7 +42,7 @@ var storage = multer.diskStorage({
 
 
 
-var cookieParser = require('cookie-parser');
+let cookieParser = require('cookie-parser');
 const { application } = require("express");
 const { stringify } = require("qs");
 application.use(cookieParser())
@@ -108,7 +108,7 @@ exports.csvAuth = async(req, res) => {
 exports.manuallyAddUser =( newvalidation,(req, res) => {
 
    const data=req.body
-   const usertableschema=userstable(data)
+   const usertableschema= new userstable(data)
     usertableschema.save((error,data) => {
         if (error) {
             res.status(500).json(error)
@@ -125,10 +125,7 @@ exports.manuallyAddUser =( newvalidation,(req, res) => {
 
 exports.newauth = (req, res) => {
 
-    var data = {
-        username: req.body.username, email: req.body.email, password: req.body.password
-    }
-
+ 
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password, salt);
 
@@ -181,7 +178,7 @@ exports.newlogin = async (req, res, next) => {
 }
 
 exports.updateUserType= (req,res)=>{
-    const updatemodel= UserTable.findByIdAndUpdate(req.params.id,{$set:req.body},(error,data)=>{
+   UserTable.findByIdAndUpdate(req.params.id,{$set:req.body},(error,data)=>{
             if(error){
                 res.send("error")
             }
@@ -194,7 +191,7 @@ exports.updateUserType= (req,res)=>{
 }
 exports.deleteUser= (req,res)=>{
 
-    const updatemodel= UserTable.findByIdAndUpdate(req.params.id,{$set:req.body},(error,data)=>{
+   UserTable.findByIdAndUpdate(req.params.id,{$set:req.body},(error,data)=>{
             if(error){
                 res.send(error )
             }

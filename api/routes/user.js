@@ -1,5 +1,5 @@
 const express = require("express");
-const { displayall, updateuser, deleteuser, FindbyNameAndEmail, displayallusers, getGropuMembers, paginationRecord, pagination, AddNewUsersToGroup } = require("../controller/User");
+const { displayall, updateuser, deleteuser, FindbyNameAndEmail, displayallusers, getGropuMembers, paginationRecord, pagination, AddNewUsersToGroup, searchUser, updatecommittee, committeemember } = require("../controller/User");
 const UserSchema = require('../models/UserTable')
 const { verifytoken, verifyuser, verifyadmin } = require("../utils/verifytoken");
 const router = express.Router();
@@ -7,7 +7,7 @@ const multer = require('multer');
 const auth = require("../middleware/auth");
 const app=express();
 
-var storage = multer.diskStorage({
+let storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, './images');
     },
@@ -16,7 +16,7 @@ var storage = multer.diskStorage({
     }
 });
 app.use(express.static(__dirname + '/api/images'));
-var upload = multer({ storage: storage,
+let upload = multer({ storage: storage,
     fileFilter: (req, file, cb) => {
       if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
         cb(null, true);
@@ -32,7 +32,7 @@ function updateProfileImage(req, res) {
     const ImagePath = 'http://localhost:4006/images/'+req.files[0].filename
 
     console.log(req.files);
-    const UserUpdate = UserSchema.updateOne({ _id: req.params.id },
+        UserSchema.updateOne({ _id: req.params.id },
         { $set: { UserImage: ImagePath} },
         (error, data) => {
             if (error) {
@@ -54,4 +54,8 @@ router.get("/email/:id", FindbyNameAndEmail)
 router.get('/display/All/user', displayallusers)
 router.get('/group/members', getGropuMembers);
 router.get("/Display/AddUsersToNewGroup",AddNewUsersToGroup)
+router.get("/searchuser", searchUser)
+router.get("/getCommitteMember", committeemember)
+router.put("/committeeupdate/:id",updatecommittee)
+
 module.exports = router

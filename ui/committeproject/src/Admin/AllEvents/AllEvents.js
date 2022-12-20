@@ -36,8 +36,7 @@ export default function AllEvents() {
         console.log("PointTable  Api Call===============")
         axios.get('http://localhost:4006/event/allevent?page=1&LIMIT=10&sortOrder=1&sortBy=EventName').then((response) => {
             console.log("Response", response.data);
-            setPointList(response.data.data)
-            console.log("========",PointList);
+            setPointList(response.data)
         });
     }, [])
 
@@ -60,10 +59,12 @@ export default function AllEvents() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {PointList.map((row) => {
+                            {PointList
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                        .map((row) => {
                   return ( 
                             <TableRow>
-                                <TableCell > {row.EventName}  </TableCell>
+                                <TableCell > Event  </TableCell>
                                 {/* <TableCell >{row.GroupId}</TableCell>
                 <TableCell>{row.GamePoint}</TableCell> */}
                             </TableRow>

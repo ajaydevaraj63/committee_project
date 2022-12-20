@@ -3,6 +3,8 @@ const UserTables = require('../models/UserTable.js')
 const Event = require('../models/Event.js')
 const Group = require('../models/Groups.js')
 const Joi = require('@hapi/joi');
+const Point = require('../models/TotalPoint.js');
+const mongoose=require('mongoose')
 
 const schema = Joi.object().keys({
     GamePoint: Joi.number().required(),
@@ -25,7 +27,7 @@ exports.AddPoint = async (req, res) => {
             GamePoint: req.body.GamePoint,
 
         }
-        var Validation = schema.validate(JsonObj)
+        const Validation = schema.validate(JsonObj)
         if (!Validation.error) {
             const NewPointEntry = new PointTable(req.body);
             await NewPointEntry.save((error, data) => {
@@ -52,7 +54,7 @@ exports.AddPoint = async (req, res) => {
 exports.UpdatePointTable = async (req, res) => {
     try {
 
-        var Validation = schemaForUpdate.validate(req.body)
+        const Validation = schemaForUpdate.validate(req.body)
         console.log(Validation.error)
         if (!Validation.error) {
             if (req.body) {
@@ -139,3 +141,45 @@ exports.GetInfo = (req, res) => {
     })
 
 }
+exports.GetInfo2 = (req, res) => {
+
+    PointTable.aggregate([
+        {
+            $match: {
+                "GameId": mongoose.Types.ObjectId(req.body.GameId)
+              
+            }
+        },
+    
+       
+        {
+            $lookup: {
+                from: "groups", localField: "GroupId", foreignField: "_id", as: "grouplist"
+            }
+
+
+        }
+
+    ]).then(result => {
+        res.send(result)
+    })
+
+}
+exports.getInfo=((req,res)=>{
+   Point.find({EventId:req.body.EventId}).sort({TotalPoint:-1}).limit(2).exec((err, docs) => {
+    if (err) {
+        const responseObj = {
+        "status": "error",
+        "msg": "Input is missing.",
+        "body": {}
+      }
+      res.status(500).send(responseObj);
+    
+    } 
+    else{
+        res.send(docs)
+    }
+  })
+})
+
+

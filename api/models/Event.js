@@ -14,8 +14,33 @@ const EventSchema=mongoose.Schema({
     },
     UserId:{
         type:String
+    },
+    StartDate:{
+        type:Date,
+        default: "",
+        require: true
     }
+    ,
+    EndDate:{
+        type:Date,
+        default: "",
+        require: true
 
+    },
+    Status:{
+        type:Number,
+        default: 0
+    },
+    Delete:{
+        type:Number,
+        default:0
+    },
+    GroupId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "Groups" 
+    },
+    GamePointTableId: { type: mongoose.Schema.Types.ObjectId, 
+        ref: "gamepointtable"  },
 },{timestamps:true})
 
 module.exports=mongoose.model("events",EventSchema);

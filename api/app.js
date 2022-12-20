@@ -77,29 +77,7 @@ app.get("/api/view", (req, res) => {
     res.send("in get api")
 
 })
-// app.post("/group/create",(req,res)=>{
 
-//  console.log(req.files.data)
-
-//     // const groups = new createGroup({
-//     //     GroupId: req.body.GroupName, GroupImage: "./assets/img1.png" ,GroupType: req.body.GroupType
-//     // })
-
-//     // const groups = new posts({
-//     //     UserId: req.body.UserId,PostImage:"./assets/img2.png",Tags:req.body.Tags
-
-// const groups = new gamepointtable(req.body)
-// groups.save((error,data)=>{
-//     if(error){
-//         res.send(error)
-//     }
-//     else{
-//         res.send(data)
-//     }
-// })
-
-// })
-//middle
 
 app.use("/Auth", authroute);
 app.use("/Auth/Googlogin", loginRoute);
@@ -108,7 +86,9 @@ app.use("/Event", eventRoute);
 app.use("/Group", groupRoute);
 app.use("/Point", PointMgmnt);
 app.use("/game",gameRoute);
-app.use("/TotalPoint",TotalPoint);
+app.use("/TotalPoint",TotalPoint)
+
+app.use("/Designation",Desig);
 
 app.use("/Designation",Desig);
 
