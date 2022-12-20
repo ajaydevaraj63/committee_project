@@ -9,13 +9,13 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import axios from 'axios';
+import moment from 'moment';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from "react-router-dom";
 
 const columns = [
-    { id: 'Events', label: 'Events', minWidth: 150 },
+    { id: 'Events', label: 'Event Name', minWidth: 150 },
     { id: 'description', label: 'Description', minWidth: 150 },
     { id: 'file', label: 'File', minWidth: 150 },
     { id: 'Action', label: '', minWidth: 150 },
@@ -34,16 +34,6 @@ export default function History() {
         setPage(0);
     };
 
-    let navigate = useNavigate();
-
-    function groupsPoints(eId) {
-        let path = `/dashboard/groupsPoints`;
-        navigate(path);
-
-        sessionStorage.setItem('eId', eId);
-        console.log(eId);
-
-    }
 
     //List Point Table ==========================================================================
     const [PointList, setPointList] = useState([])
@@ -56,6 +46,24 @@ export default function History() {
             console.log("========", PointList);
         });
     }, [])
+
+
+    //List Point Table ==========================================================================
+
+    const [gameList, setGameList] = useState([])
+
+    function EventClick(eId) {
+        console.log("Hello");
+        console.log(eId);
+        console.log("GameTable  Api Call===============")
+        axios.get('http://localhost:4006/game/EventId', eId).then((response) => {
+            console.log("Response", response.data);
+            setGameList(response.data)
+            console.log("========", gameList);
+        });
+    }
+
+
 
     //on Click toggle 
 
@@ -95,7 +103,7 @@ export default function History() {
                                             <TableCell> {row.EventName}  </TableCell>
                                             <TableCell> {row.EventDescription}  </TableCell>
                                             <TableCell><a href={row.File} download><PictureAsPdfIcon /></a></TableCell>
-                                            <TableCell><AddIcon onClick={setToggle} />
+                                            <TableCell  ><AddIcon onClick={() => { EventClick(row._id); setToggle(); }} />
                                             </TableCell>
                                         </TableRow>
                                             <TableRow>
@@ -111,12 +119,18 @@ export default function History() {
                                                             </TableRow>
                                                         </TableHead>
                                                         <TableBody>
-                                                            <TableRow>
-                                                                <TableCell>Game Name</TableCell>
-                                                                <TableCell>Description</TableCell>
-                                                                <TableCell>Start Date</TableCell>
-                                                                <TableCell>End Date</TableCell>
-                                                            </TableRow>
+                                                            {gameList
+                                                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                                                .map((row) => {
+                                                                    return (
+                                                                        <TableRow>
+                                                                            <TableCell>{row.GameName}</TableCell>
+                                                                            <TableCell>{row.GameDesc}</TableCell>
+                                                                            <TableCell>{moment(row.StartDate).format('DD/MM/YYYY')}</TableCell>
+                                                                            <TableCell>{moment(row.EndDate).format('DD/MM/YYYY')}</TableCell>
+                                                                        </TableRow>
+                                                                    );
+                                                                })}
                                                         </TableBody>
                                                     </Table>
                                                 )}

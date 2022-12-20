@@ -56,6 +56,25 @@ export default function AllEvents() {
         });
     }, [])
 
+
+    //List Point Table ==========================================================================
+
+    const [gameList, setGameList] = useState([])
+
+    function EventClick(eId) {
+        console.log("Hello");
+        console.log(eId);
+        console.log("GroupTable  Api Call===============")
+        let obj ={"EventId":"63a1745ed62e10d22e357a88"}
+        console.log("obj" , obj);
+        axios.get('http://localhost:4006/TotalPoint/Get/Point',obj).then((response) => {
+            console.log("Response", response);
+            setGameList(response.data)
+            console.log("========", gameList);
+        });
+    }
+
+
     // Point Table =================================================================================================
 
     return (
@@ -80,7 +99,7 @@ export default function AllEvents() {
                                     <>  <TableRow>
                                         <TableCell > {row.EventName}  </TableCell>
                                         <TableCell>{row.EventDescription}</TableCell>
-                                        <TableCell><AddIcon onClick={setToggle} />
+                                        <TableCell  ><AddIcon onClick={() => { EventClick(row._id); setToggle(); }} />
                                         </TableCell>
                                     </TableRow>
                                         <TableRow> {/* OnClick toggle========================================================================================================== */}

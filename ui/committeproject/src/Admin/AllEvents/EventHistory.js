@@ -89,6 +89,23 @@ export default function EventHistory() {
         });
     }, [])
 
+
+    //List Point Table ==========================================================================
+
+    const [gameList, setGameList] = useState([])
+
+    function EventClick(eId) {
+        console.log("Hello");
+        console.log(eId);
+        console.log("GameTable  Api Call===============")
+        axios.get('http://localhost:4006/game/EventId', eId).then((response) => {
+            console.log("Response", response.data);
+            setGameList(response.data)
+            console.log("========", gameList);
+        });
+    }
+
+
     // Point Table =================================================================================================
 
     return (
@@ -116,7 +133,7 @@ export default function EventHistory() {
                                             <TableCell> {row.EventName}  </TableCell>
                                             <TableCell > {row.EventDescription}  </TableCell>
                                             <TableCell><a href={row.File} download><PictureAsPdfIcon /></a></TableCell>
-                                            <TableCell><Button variant='contained' onClick={() => handleGameModalOpen()}><AddIcon />
+                                            <TableCell><Button variant='contained' onClick={() => { EventClick(row._id); handleGameModalOpen(); }}><AddIcon />
                                             </Button></TableCell>
                                         </TableRow>
                                     );
@@ -166,10 +183,16 @@ export default function EventHistory() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                <TableRow>
-                                    <TableCell>Game 1</TableCell>
-                                    <TableCell><Input type='number' placeholder='Score' /></TableCell>
-                                </TableRow>
+                                {gameList
+                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    .map((row) => {
+                                        return (
+                                            <TableRow>
+                                                <TableCell>{row.GameName}</TableCell>
+                                                <TableCell><Input type='number' placeholder='Score' /></TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
                             </TableBody>
                         </Table>
                     </TableContainer>
