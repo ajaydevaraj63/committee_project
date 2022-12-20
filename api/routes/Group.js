@@ -14,8 +14,8 @@ const { verify } = require('crypto');
 const Joi = require('@hapi/joi');
 
 const schema = Joi.object().keys({
-  GroupName: Joi.string().alphanum().min(3).max(30).required(),
-  GroupType: Joi.string().alphanum().min(3).max(30).required()
+  GroupName: Joi.string().alphanum().max(30).required(),
+  GroupType: Joi.string().alphanum().max(30).required()
  
 });
 
