@@ -520,7 +520,7 @@ export default function EnhancedTable() {
                                             <TableCell align='left'>{row.Designation}</TableCell>
                                             <TableCell align='left'>{row.Email}</TableCell>
                                             <Tooltip title="Delete" sx={{ mb: 2 }}>
-                                                <IconButton onClick={() => deleteUser(row._id)}>
+                                                <IconButton onClick={() => deleteUser(row._id)} color="error">
                                                     <DeleteIcon />
                                                 </IconButton>
                                             </Tooltip>
