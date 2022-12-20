@@ -3,7 +3,7 @@ const app = express();
 const path = require("path");
 const multer=require('multer')
 const Game = require('../models/GameTable')
-const { allgames, game, gameactivation, gameSearch } = require("../controller/Game");
+const { allgames, game, gameactivation, gameSearch, FindGamesWithEventId } = require("../controller/Game");
 const router=express.Router();
 module.exports=router;
 const bdyp = require('body-parser');
@@ -11,13 +11,14 @@ const bodyParser = require('body-parser');
 const { error } = require('console');
 app.use(bdyp.json());
 app.use(bodyParser.urlencoded({extended: false}));
+const joi=require('@hapi/joi')
 const Schema =joi.object().keys({
   GameName: joi.string().alphanum().min(3).max(30),
-  GameDesc: joi.string().alphanum().min(3).max(30),
+  GameDesc: joi.string().min(3).max(30),
   StartDate: joi.date(),
   EndDate: joi.date(),
-  UserId: joi.string(),
-  EventId: joi.string()
+  UserId: joi.string().alphanum(),
+  EventId: joi.string().alphanum()
 })
 
 let storage = multer.diskStorage({
@@ -55,6 +56,7 @@ function postgame(req, res, next) {
                 StartDate: req.body.StartDate,
                 EndDate: req.body.EndDate,
                 EventId: req.body.EventId
+                
             })
             newgame.RulesPdf = req.files[0].path
             newgame.save((error, data) => {
@@ -130,6 +132,7 @@ router.put("/updategame/:id", upload.array('RulesPdf'), gameupdation)
 router.get("/allgame" , allgames);
 router.get("/game/:id" , game);
 router.get("/gameSearch", gameSearch);
+router.get("/EventId",FindGamesWithEventId);
 
 
 module.exports=router;

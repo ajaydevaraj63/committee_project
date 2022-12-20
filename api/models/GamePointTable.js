@@ -1,11 +1,9 @@
 const mongoose = require('mongoose')
 const GamePointSchema = mongoose.Schema({
   GameId: 
-  { type: mongoose.Schema.Types.ObjectId, ref: "Games" }
-  ,
+  { type: mongoose.Schema.Types.ObjectId, ref: "Games" },
   EventId:
-  { type: mongoose.Schema.Types.ObjectId, ref: "Event" }
-  ,
+  { type: mongoose.Schema.Types.ObjectId, ref: "Event" },
   GamePointTableId: {
     type: mongoose.Schema.Types.ObjectId, ref: "Event"
   },
