@@ -14,20 +14,29 @@ app.use(bodyParser.urlencoded({extended: false}))
 
 exports.game = (req, res) => {
 
-    let GameId = req.params.id
-    GamePoint.aggregate([
-        {$lookup:{ from: 'games', localField:'GamePointTableId' , 
-        foreignField:'_Id' ,as:'GAMEPOINTS'}},
-    ]).exec((err, result)=>{
-        if (err) {
-            console.log("error" ,err)
-        }
-        if (result) {
-            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            console.log(result);
-            res.send(result)
-        }
-    });
+    exports.game = (req, res) => {
+            
+        GamePoint.aggregate([
+            {
+                $match: {
+                    "GameId" : mongoose.Types.ObjectId(req.params.id)
+                }
+            },
+
+            {
+                $lookup: {
+                    from: "groups", localField: "GroupId", foreignField: "_id", as: "grouplist"
+                }
+    
+    
+            }
+        ]).exec((error, result)   =>  {
+    
+            try { res.send(result) } 
+            catch(error) { console.log(error); }
+    
+        });
+}
 }
 
 
