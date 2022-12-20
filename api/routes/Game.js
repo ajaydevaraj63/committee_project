@@ -12,7 +12,6 @@ const { error } = require('console');
 app.use(bdyp.json());
 const joi = require('@hapi/joi');
 app.use(bodyParser.urlencoded({extended: false}));
-const joi=require('@hapi/joi')
 const Schema =joi.object().keys({
   GameName: joi.string().alphanum().min(3).max(30),
   GameDesc: joi.string().min(3).max(30),
