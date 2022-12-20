@@ -24,9 +24,11 @@ import Select from '@mui/material/Select';
 import { Modal } from "react-responsive-modal";
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
-
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom/dist';
+
 
 
 import {
@@ -185,37 +187,7 @@ function EnhancedTableToolbar(props) {
     const { numSelected } = props;
 
     return (
-        <Toolbar
-            sx={{
-                pl: { sm: 2 },
-                pr: { xs: 1, sm: 1 },
-                ...(numSelected > 0 && {
-                    bgcolor: (theme) =>
-                        alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-                }),
-            }}
-        >
-            {numSelected > 0 ? (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    color="inherit"
-                    variant="subtitle1"
-                    component="div"
-                >
-                    {/* {numSelected} selected */}
-                </Typography>
-            ) : (
-                <><Typography
-                    sx={{ flex: '1 1 100%' }}
-                    variant="h6"
-                    id="tableTitle"
-                    component="div"
-                >
-                    User
-                </Typography>
-                    </>
-            )}
-        </Toolbar>
+        <></>
     );
 }
 
@@ -232,12 +204,12 @@ export default function EnhancedTable() {
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [opens, setOpens] = useState(null);
+    const [opens, setOpens] = useState(false);
     const [editopen, setEditopen] = useState(false);
     const [useropen, setUserOpens] = useState(false);
     const init = useRef();
     const [EditPatchValue, setEditpatchvalue] = useState([]);
-    const [designation,setdesignation] = useState('');
+    const [designation, setdesignation] = useState([]);
     // CsvModal
     const [csvModal, setCsvModalOpen] = useState(false);
     // search //
@@ -314,26 +286,25 @@ export default function EnhancedTable() {
         });
 
     }
-    const listdesignation = async() => {
-        const listdesignation = [] 
+    const listdesignation = async () => {
+        const listdesignation = []
         console.log("ap call====================");
         const des = await axios.get('http://localhost:4006/Designation/get').then((response) => {
             console.log("sucessdesignations", response.data);
             const designationdata = response.data
-            console.log('jjjjjjjjjjjjjj',response.data[0].Designation);  
+            console.log('jjjjjjjjjjjjjj', response.data[0].Designation);
             for (let i = 0; i < designationdata.length; i += 1) {
                 listdesignation.push(designationdata[i].Designation);
                 console.log('kk', listdesignation);
             }
-            setdesignation(listdesignation)   
+            setdesignation(listdesignation)
+            console.log('designation', designation)
         });
-         console.log('ffffffffff',designation);
-        
     }
 
     useEffect(() => {
-       listusers();
-       listdesignation();
+        listusers();
+        listdesignation();
 
     }, [])
 
@@ -363,6 +334,7 @@ export default function EnhancedTable() {
                         'Your file has been deleted.',
                         'success'
                     )
+                    listusers();
                     console.log(id);
                     console.log("check", response);
                 })
@@ -380,20 +352,21 @@ export default function EnhancedTable() {
         axios.post("http://localhost:4006/auth/update/user/type/".concat(id), editUser).then((response) => {
             console.log("check", response.data);
             handleeditClose();
-            window.location.reload();
+            listusers();
+            // <Alert severity="error">This is an error alert — check it out!</Alert>
+
         })
     }
 
     // add single user API//
 
     const handleSubmit = () => {
-        console.log("AddUser=======");
+        console.log("AddUser=======", designation);
         axios.post("http://localhost:4006/auth/add/user/manually", user).then((response) => {
             console.log(user);
             console.log("check", response.data);
-            handleClose();
-            window.location.reload();
-
+            handleCloseUser();
+            listusers();
         })
     }
 
@@ -469,7 +442,7 @@ export default function EnhancedTable() {
     };
 
     const handleClose = () => {
-        setOpens(null);
+        setOpens(false);
     };
 
     // Edit user modal //
@@ -511,6 +484,7 @@ export default function EnhancedTable() {
         setEdituser({ ...editUser, [e.target.name]: e.target.value })
     }
 
+    const modalRef = useRef(null);
 
 
     return (
@@ -522,9 +496,14 @@ export default function EnhancedTable() {
                 <Typography variant="h4" gutterBottom>
                     Innovatures
                 </Typography>
-                <Button variant="contained" onClick={handleOpen} startIcon={<Iconify icon="eva:plus-fill" />}>
+                {/* <Button variant="contained" onClick={handleOpen} startIcon={<Iconify icon="eva:plus-fill" />}>
                     New User
-                </Button>
+                </Button> */}
+                <Tooltip title="Add User">
+                    <IconButton onClick={handleOpen} >
+                        <PersonAddAltIcon color="secondary"/>
+                    </IconButton>
+                </Tooltip>
             </Stack>
             {/* <TextField
                 id="filled-search"
@@ -598,8 +577,19 @@ export default function EnhancedTable() {
 
                                                 </TableCell>
                                                 <Stack direction="row" spacing={2} sx={{ mt: 1.2 }}>
-                                                    <Button variant="outline" startIcon={<EditIcon />} onClick={() => handleeditOpen(row._id)} >Type</Button>
-                                                    <Button variant="outlined" color="error" startIcon={<DeleteIcon />} onClick={() => deleteUser(row._id)}>Delete</Button>
+                                                    {/* <Button variant="outline" startIcon={<EditIcon />} onClick={() => handleeditOpen(row._id)} >Type</Button> */}
+                                                    {/* <Button variant="outlined" color="error" startIcon={<DeleteIcon />} onClick={() => deleteUser(row._id)}>Delete</Button> */}
+                                                    <Tooltip title="Edit">
+                                                        <IconButton onClick={() => handleeditOpen(row._id)} color="secondary">
+                                                            <EditIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                    <Tooltip title="Delete">
+                                                        <IconButton onClick={() => deleteUser(row._id)} color="error">
+                                                            <DeleteIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
+
                                                 </Stack>
                                             </TableRow>
                                         );
@@ -665,7 +655,12 @@ export default function EnhancedTable() {
 
             {/* Add single user modal */}
 
-            <Modal open={useropen} onClose={handleCloseUser} center>
+            <Modal
+                open={useropen}
+                onClose={handleCloseUser}
+                initialFocusRef={modalRef}
+                center
+            >
                 <Box sx={{ width: 500, mx: 9, mt: 3 }}>
                     <form id='regForm'>
                         <h4>Add User</h4>
@@ -674,9 +669,9 @@ export default function EnhancedTable() {
                         </div> */}
                         <FormControl fullwidth sx={{ m: 2 }} >
                             <TextField type="text" sx={{
-                                width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                                width: { sm: 200, md: 200, lg: 480, xl: 400 },
                                 "& .MuiInputBase-root": {
-                                    height: 60
+                                    height: 54
                                 }
                             }}
                                 autoComplete="off" size="small" id="exampleFormControlInput1" name='UserName' onChange={e => onInputChange(e)} label="Name" />
@@ -686,9 +681,9 @@ export default function EnhancedTable() {
                         </div> */}
                         <FormControl fullwidth sx={{ m: 2 }} >
                             <TextField type="text" sx={{
-                                width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                                width: { sm: 200, md: 200, lg: 480, xl: 400 },
                                 "& .MuiInputBase-root": {
-                                    height: 60
+                                    height: 54
                                 }
                             }}
                                 autoComplete="off" size="small" id="exampleFormControlInput1" name='Email' onChange={e => onInputChange(e)} label="Email" />
@@ -698,14 +693,43 @@ export default function EnhancedTable() {
                         </div> */}
                         <FormControl fullwidth sx={{ m: 2 }} >
                             <TextField type="Date" sx={{
-                                width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                                width: { sm: 200, md: 200, lg: 480, xl: 400 },
                                 "& .MuiInputBase-root": {
-                                    height: 60
+                                    height: 54
                                 }
                             }}
                                 autoComplete="off" size="small" id="exampleFormControlInput1" name='DOB' onChange={e => onInputChange(e)} label="Dob" InputLabelProps={{ shrink: true }} />
                         </FormControl>
                         <FormControl fullwidth sx={{ m: 2 }} >
+                            <Box sx={{
+                                width: { sm: 200, md: 200, lg: 480, xl: 400 },
+                                "& .MuiInputBase-root": {
+                                    height: 54
+                                }
+
+                            }}>
+                                <InputLabel id="demo-simple-select-label">Designation</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    name='Designation'
+                                    label="Designation"
+                                    sx={{
+                                        width: { sm: 200, md: 200, lg: 480, xl: 400 },
+                                        "& .MuiInputBase-root": {
+                                            height: 54
+                                        }
+
+                                    }}
+                                    onChange={e => onInputChange(e)}
+                                >{designation.map((data, value) => {
+                                    return <MenuItem value={data}>{data}</MenuItem>
+
+                                })}
+                                </Select>
+                            </Box>
+                        </FormControl>
+                        {/* <FormControl fullwidth sx={{ m: 2 }} >
                             <TextField type="text" sx={{
                                 width: { sm: 200, md: 200, lg: 300, xl: 400 },
                                 "& .MuiInputBase-root": {
@@ -713,9 +737,9 @@ export default function EnhancedTable() {
                                 }
                             }}
                                 autoComplete="off" size="small" id="exampleFormControlInput1" name='Designation' onChange={e => onInputChange(e)} label="Designation" />
-                        </FormControl>
+                        </FormControl> */}
                         <div className="row mt-5 ">
-                            <div className="col-3"><Button sx={{ m: 2, width: '41ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => handleSubmit()} >Submit</Button></div>
+                            <div className="col-3"><Button sx={{ m: 2, width: '41ch', height: 40 }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => handleSubmit()} >Submit</Button></div>
                         </div>
                     </form>
                 </Box>

@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import WallpaperIcon from '@mui/icons-material/Wallpaper';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import { MenuItem, Box, Button, Container, Grid, Stack, TextField, FormControl, Typography } from '@mui/material';
 
 // @mui
@@ -37,11 +38,12 @@ export default function Groups() {
   const [EditPatchValue, setEditpatchvalue] = useState([]);
   const [UpdatepicOpen, setUpdatepicOpen] = useState(false);
   const [editpicId, setEditpicId] = useState('');
-  const [fileError,setFileError] = useState(null);
-  const [Nameerror,setNameerror] = useState(null);
+  const [fileError, setFileError] = useState(null);
+  const [Nameerror, setNameerror] = useState(null);
   const filetypeRef = useRef();
   const groupNameRef = useRef();
-  
+  const [filelength,setfilelength] = useState(0);
+
 
   // filter modal open //
 
@@ -64,27 +66,29 @@ export default function Groups() {
   };
 
   const onInputFIlechange = e => {
- const fileSelected = e.target.files[0].type;
+    const fileSelected = e.target.files[0].type;
     console.log()
-    // if(fileSelected ==='jpg || jpeg || png')
-    // {
+    if(fileSelected ==='image/jpg' || fileSelected ==='image/jpeg' || fileSelected ==='image/png')
+    {
     setFile(e.target.files[0]);
-    // }
-    // else{
-    //   setFileError('files only support jpg,jpeg,png format only');
-    // }
-    
+    setfilelength(e.target.files.length);
+    setFileError(null);
+    }
+    else{
+      setFileError('Files only support jpg,jpeg,png format only');
+    }
+
   }
 
   const onInputNamechange = e => {
     const grname = e.target.value;
-    if(grname===null || grname==="" )
-    {
+    if (grname === null || grname === "") {
       setNameerror('please enter a valid Group name');
-    }else{
+      
+    } else {
       setNameerror(null);
-    setGroupName(e.target.value)
-    
+      setGroupName(e.target.value)
+
     }
   }
 
@@ -110,29 +114,29 @@ export default function Groups() {
     formdata.append('GroupName', GroupName);
     formdata.append('GroupType', GroupType);
     console.log('formdata', formdata);
-    if(GroupName.trim().length == 0 )
-    {
-      setNameerror('This field is required')      
-      groupNameRef.focus();
+    if (GroupName.trim().length == 0) {
+      setNameerror('This field is required')
+      groupNameRef.current.focus();
 
     }
-    // if(file[0] == null){
-    //   setFileError('This field is required')
-    //   filetypeRef.focus();
-    // }
-    // if(fileError !=null || Nameerror !=null)
-    if(Nameerror !=null)
-    {
+    if(filelength == 0 ){
+      setFileError('This field is required')
+      filetypeRef.current.focus();
+    }
+    if(fileError !=null || Nameerror !=null)
+    if (Nameerror != null) {
       return;
     }
     axios.post("http://localhost:4006/Group/create", formdata).then((response) => {
       console.log("check", response.data);
+     
+      listgroups();
       handleClose();
     })
   }
 
   useEffect(() => {
-   listgroups();
+    listgroups();
   }, [])
 
   const listgroups = () => {
@@ -146,7 +150,7 @@ export default function Groups() {
   }
 
 
-  const deleteUser = async(id) => {
+  const deleteUser = (id) => {
     const body = {
       Delete: 1
     }
@@ -169,13 +173,12 @@ export default function Groups() {
             'Your file has been deleted.',
             'success'
           )
+          listgroups();
           console.log(id);
           console.log("check", response);
         })
       }
     })
-    const lis = await listgroups();
-
   }
 
   // gt id for list group members //
@@ -212,8 +215,8 @@ export default function Groups() {
     console.log('check', id);
     axios.put("http://localhost:4006/Group/UpdateGroupDetails/".concat(id), editUser).then((response) => {
       console.log("check", response.data);
+      listgroups();
       handleeditClose();
-      window.location.reload();
     })
   }
 
@@ -234,7 +237,7 @@ export default function Groups() {
     axios.put("http://localhost:4006/Group/UpdatePic/".concat(editpicId), formdata).then((response) => {
       console.log("check", response.data);
       handleUpdatepicClose();
-      window.location.reload();
+      listgroups();
     })
   }
   return (
@@ -248,9 +251,14 @@ export default function Groups() {
           <Typography variant="h4" gutterBottom>
             Groups
           </Typography>
-          <Button variant="contained" onClick={() => handleOpen()} startIcon={<Iconify icon="eva:plus-fill" />}>
+          {/* <Button variant="contained" onClick={() => handleOpen()} startIcon={<Iconify icon="eva:plus-fill" />}>
             New Group
-          </Button>
+          </Button> */}
+          <Tooltip title="Add Group Member">
+            <IconButton onClick={() => handleOpen()} color="secondary">
+              <GroupAddIcon />
+            </IconButton>
+          </Tooltip>
         </Stack>
 
         <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
@@ -260,7 +268,7 @@ export default function Groups() {
               onOpenFilter={handleOpenFilter}
               onCloseFilter={handleCloseFilter}
             /> */}
-           
+
           </Stack>
         </Stack>
         <Grid container spacing={3}>
@@ -271,22 +279,22 @@ export default function Groups() {
                 <Grid item xs={12} sm={6} md={3}>
                   <Card>
                     <Tooltip title="View group details" placement="top-start">
-                    <Link style={{ textDecoration: 'none' }} to='/dashboard/groupMember' onClick={() => getId(value._id)} >
-                      <Box sx={{ pt: '100%', position: 'relative', cursor: 'pointer' }}>
-                        <StyledProductImg src={value.GroupImage} alt="Group Icon" />
-                      </Box>
+                      <Link style={{ textDecoration: 'none' }} to='/dashboard/groupMember' onClick={() => getId(value._id)} >
+                        <Box sx={{ pt: '100%', position: 'relative', cursor: 'pointer' }}>
+                          <StyledProductImg src={value.GroupImage} alt="Group Icon" />
+                        </Box>
                       </Link>
                     </Tooltip>
                     <CardContent direction="row">
                       <Tooltip title="Edit name" placement="bottom-start">
-                      {/* <Link style={{ textDecoration: 'none' }} to='/dashboard/groupMember' onClick={() => getId(value._id)} > */}
-                          <Typography gutterBottom variant="subtitle1" onClick={() => handleeditOpen(value._id)}>
-                            {value.GroupName}
-                          </Typography>
-                      {/* </Link> */}
+                        {/* <Link style={{ textDecoration: 'none' }} to='/dashboard/groupMember' onClick={() => getId(value._id)} > */}
+                        <Typography gutterBottom variant="subtitle1" onClick={() => handleeditOpen(value._id)}>
+                          {value.GroupName}
+                        </Typography>
+                        {/* </Link> */}
                       </Tooltip>
                       <Tooltip title="Delete">
-                        <IconButton sx={{ ml: 23, mt: -9 }} onClick={() => deleteUser(value._id)}>
+                        <IconButton sx={{ ml: 23, mt: -9 }} onClick={() => deleteUser(value._id)} color="error">
                           <DeleteIcon />
                         </IconButton>
                       </Tooltip>
@@ -296,7 +304,7 @@ export default function Groups() {
                         </IconButton>
                       </Tooltip> */}
                       <Tooltip title="change group icon">
-                        <IconButton sx={{ ml: 19, mt: -15 }} onClick={() => handleUpdatepicOpen(value._id)}>
+                        <IconButton sx={{ ml: 19, mt: -15 }} onClick={() => handleUpdatepicOpen(value._id)} color="secondary">
                           <WallpaperIcon />
                         </IconButton>
                       </Tooltip>
@@ -331,63 +339,62 @@ export default function Groups() {
           <form id='regForm'>
             <h4>Add Group</h4>
             <FormControl fullwidth sx={{ m: 2 }} >
-              <TextField 
-              ref= {groupNameRef}
-              type="text" sx={{
+              <TextField
+                ref={groupNameRef}
+                type="text" sx={{
+                  width: { sm: 200, md: 200, lg: 480, xl: 400 },
+                  "& .MuiInputBase-root": {
+                    height: 54
+                  }
+                }}
+                autoComplete="off" size="small" id="exampleFormControlInput1" name='GroupName' onChange={(e) => onInputNamechange(e)} label="Group name" />
+            </FormControl>
+            {Nameerror != null ? <p style={{ color: "red" }}>{Nameerror}</p> : ''}
+            <FormControl fullwidth sx={{ m: 2 }} >
+              <Box sx={{
                 width: { sm: 200, md: 200, lg: 480, xl: 400 },
                 "& .MuiInputBase-root": {
                   height: 54
                 }
-              }}
-                autoComplete="off" size="small" id="exampleFormControlInput1" name='GroupName' onChange={(e) => onInputNamechange(e)} label="Group name" />
-            </FormControl>
-            {Nameerror !=null ? <p style={{color:"red"}}>{Nameerror}</p> : ''} 
-            <FormControl fullwidth sx={{ m: 2 }} >
-            <Box sx={{
-              width: { sm: 200, md: 200, lg: 480, xl: 400 },
-              "& .MuiInputBase-root": {
-                height: 54
-              }
 
-            }}>
-              <InputLabel id="demo-simple-select-label">Group Type</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                className="form-control"
-                name='GroupType'
-                label="Group Type"
-                autoComplete="off"
+              }}>
+                <InputLabel id="demo-simple-select-label">Group Type</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  className="form-control"
+                  name='GroupType'
+                  label="Group Type"
+                  autoComplete="off"
+                  sx={{
+                    width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                    "& .MuiInputBase-root": {
+                      height: 54
+                    }
+                  }}
+                  size="small"
+                  onChange={(e) => setGroupType(e.target.value)}
+                >
+                  <MenuItem value={0}>Main group</MenuItem>
+                  <MenuItem value={1}>Committee</MenuItem>
+                </Select>
+              </Box>
+            </FormControl>
+            <FormControl fullwidth sx={{ m: 2 }} >
+
+              <input type="file" accept='image/png,image/jpg,image/jpeg '
                 sx={{
-                  width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                  width: { sm: 200, md: 200, lg: 480, xl: 400 },
                   "& .MuiInputBase-root": {
-                    height: 54
+                    height: 60
                   }
 
                 }}
-                size="small"
-                onChange={(e) => setGroupType(e.target.value)}
-              >
-                <MenuItem value={'mainGroup'}>Main group</MenuItem>
-                <MenuItem value={'committee'}>Committee</MenuItem>
-              </Select>
-            </Box>
-            </FormControl>
-            <FormControl fullwidth sx={{ m: 2 }} >
-             
-              <input type="file"  
-               sx={{
-                width: { sm: 200, md: 200, lg: 480, xl: 400 },
-                "& .MuiInputBase-root": {
-                  height: 60
-                }
-
-              }}
                 autoComplete="off" size="small" id="exampleFormControlInput1" name='GroupImage' onChange={e => onInputFIlechange(e)} label="Group Image" InputLabelProps={{ shrink: true }} />
             </FormControl>
-            {/* {fileError !=null ? <p style={{color:"red"}}>{fileError}</p> : ''}  */}
+            {fileError !=null ? <p style={{color:"red"}}>{fileError}</p> : ''} 
             <div className="row mt-5 ">
-              <div className="col-3"><Button sx={{ m: 2, width: '41ch',height:40 }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={(e) => handleSubmit(e)}  >Submit</Button></div>
+              <div className="col-3"><Button sx={{ m: 2, width: '41ch', height: 40 }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={(e) => handleSubmit(e)}  >Submit</Button></div>
             </div>
           </form>
         </Box>
@@ -427,15 +434,15 @@ export default function Groups() {
                 <TextField sx={{ m: 2, width: '35ch' }} className='form-control' onChange={e => onInputFIlechange(e)} type="file" name='GroupImage' label="Group Image" InputLabelProps={{ shrink: true }} />
               </div> */}
               <FormControl fullwidth sx={{ m: 2 }} >
-              <TextField 
-              type="file" sx={{
-                width: { sm: 200, md: 200, lg: 480, xl: 400 },
-                "& .MuiInputBase-root": {
-                  height: 54
-                }
-              }}
-                autoComplete="off" size="small" id="exampleFormControlInput1" name='GroupImage' onChange={e => onInputFIlechange(e)} label="Group Image" InputLabelProps={{ shrink: true }}/>
-            </FormControl>
+                <TextField
+                  type="file" sx={{
+                    width: { sm: 200, md: 200, lg: 480, xl: 400 },
+                    "& .MuiInputBase-root": {
+                      height: 54
+                    }
+                  }}
+                  autoComplete="off" size="small" id="exampleFormControlInput1" name='GroupImage' onChange={e => onInputFIlechange(e)} label="Group Image" InputLabelProps={{ shrink: true }} />
+              </FormControl>
             </div>
             <div className="row mt-5 ">
               <div className="col-3"><Button sx={{ m: 2, width: '13ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => changePic()} >Submit</Button></div>

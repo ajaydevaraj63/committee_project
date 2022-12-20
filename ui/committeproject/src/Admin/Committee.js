@@ -22,6 +22,10 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import { Modal } from "react-responsive-modal";
 import { Link } from 'react-router-dom';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import Multiselect from 'multiselect-react-dropdown';
 import Swal from 'sweetalert2';
 
 import {
@@ -35,6 +39,7 @@ import {
     TableCell,
     TextField,
     Typography,
+    Container,
     Box,
 } from '@mui/material';
 import Iconify from '../components/iconify';
@@ -180,36 +185,7 @@ function EnhancedTableToolbar(props) {
     const { numSelected } = props;
 
     return (
-        <Toolbar
-            sx={{
-                pl: { sm: 2 },
-                pr: { xs: 1, sm: 1 },
-                ...(numSelected > 0 && {
-                    bgcolor: (theme) =>
-                        alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-                }),
-            }}
-        >
-            {numSelected > 0 ? (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    color="inherit"
-                    variant="subtitle1"
-                    component="div"
-                >
-                    {numSelected} selected
-                </Typography>
-            ) : (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    variant="h6"
-                    id="tableTitle"
-                    component="div"
-                >
-                  Committee Members
-                </Typography>
-            )}
-        </Toolbar>
+       <></>
     );
 }
 
@@ -254,47 +230,6 @@ export default function EnhancedTable() {
                 
             });
         }
-
-    function handleCsvModalOpen() {
-        setCsvModalOpen(true);
-        handleClose();
-    }
-
-    const handleModalClose = () => setCsvModalOpen(false);
-
-
-    const [selectedFile, setSelectedFile] = useState();
-
-    const changeHandler = (event) => {
-        setSelectedFile(event.target.files[0]);
-
-    };
-
-    const handleSubmission = () => {
-        const formData = new FormData();
-        formData.append('csv', selectedFile);
-        console.log("csv=============================");
-        axios.post("http://localhost:4006/Auth/upload", formData).then((response) => {
-            console.log("============================");
-            Swal.fire({
-                icon: 'success',
-                title: 'File has been uploaded',
-                showConfirmButton: false,
-                timer: 1500
-            })
-            console.log("Response", response.error);
-        })
-            .catch((error) => {
-                console.log(error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong!',
-                })
-            });
-    }
-
-
 
     // list members API calling//
 
@@ -358,17 +293,6 @@ export default function EnhancedTable() {
     }
 
     // add single user API//
-
-    const handleSubmit = () => {
-        console.log("AddUser=======");
-        axios.post("http://localhost:4006/auth/add/user/manually", user).then((response) => {
-            console.log(user);
-            console.log("check", response.data);
-            handleClose();
-            window.location.reload();
-
-        })
-    }
 
     const [user, setUser] = useState({
         UserName: '',
@@ -437,14 +361,6 @@ export default function EnhancedTable() {
 
     // Add user modal open //
 
-    const handleOpen = (event) => {
-        setOpens(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setOpens(null);
-    };
-
     // Edit user modal //
 
     function handleeditOpen(id) {
@@ -463,12 +379,6 @@ export default function EnhancedTable() {
 
     // add user modal // 
 
-    function handleOpenUser() {
-        setUserOpens(true);
-        handleClose();
-    }
-    const handleCloseUser = () => setUserOpens(false);
-
     const isSelected = (_id) => selected.indexOf(_id) !== -1;
 
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -484,6 +394,86 @@ export default function EnhancedTable() {
         setEdituser({ ...editUser, [e.target.name]: e.target.value })
     }
 
+    // committee member add //
+
+    // close and open of modal for add user //
+
+    const [open, setOpen] = useState(false);
+    const handleAddMembers = (e) => {
+        setOpen(true);
+    }
+    const handleAddmemberclose = () => {
+        setOpen(false);
+    }
+
+    const [groupMember, setGroupmemebr] = useState('select');
+    const [userList, setUserlist] = useState([]);
+    const [objects, setObjects] = useState([]);
+    const [mailist, setMaillist] = useState([]);
+    const [employeelist, setEmployeelist] = useState([]);
+
+    const disp = (e) => {
+
+        console.log("efewfwef", e)
+        const data = e;
+        console.log('data', e);
+        setMaillist(data);
+    }
+
+
+    useEffect(() => {
+        const listgroupusers = []
+        const listobject = []
+        const getUserlist = async () => {
+            console.log("ap call====================");
+            const reqData = await axios.get('http://localhost:4006/users/Display/AddUsersToNewGroup');
+            const reqsData = await reqData.data;
+            console.log("reqData", reqsData);
+
+            for (let i = 0; i < reqsData.length; i += 1) {
+                listgroupusers.push(reqsData[i].Email);
+                listobject.push(reqsData[i]);
+                console.log('kk', listobject);
+            }
+            setUserlist(listgroupusers);
+            setObjects(listobject);
+
+        }
+        getUserlist();
+
+    }, []);
+
+    const Groupmembersubmit = async () => {
+        const emplist = []
+        console.log('nnnnnnnnnnnnnnnnnnnnnnnn', mailist);
+        console.log('ooooooooooooooooo', objects)
+        const promise1 = new Promise((resolve, reject) => {
+
+            for (let i = 0; i < mailist.length; i += 1) {
+                for (let j = 0; j < objects.length; j += 1) {
+                    if (mailist[i] === objects[j].Email) {
+                        console.log(objects[i]._id)
+                        emplist.push(objects[j]._id);
+                        console.log('bbbbbbbbbbbb', emplist);
+                    }
+                }
+            }
+            resolve();
+        });
+        promise1.then(() => {
+            setEmployeelist(emplist);
+        });
+        console.log('success', employeelist);
+        const Gid = sessionStorage.getItem('Gid')
+        console.log("AddUserto group=======", Gid);
+        console.log(emplist);
+        axios.put("http://localhost:4006/group/Update/Multiple/UsersGroup/".concat(Gid), emplist).then((response) => {
+            console.log("check", response);
+
+
+        })
+    }
+
     
 
     return (
@@ -492,11 +482,20 @@ export default function EnhancedTable() {
                 <title> Innovatures </title>
             </Helmet>
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                <Button variant="contained" sx={{color:'white'}} startIcon={<Iconify icon="eva:plus-fill" />}>
+                {/* <Button variant="contained" sx={{color:'white'}} startIcon={<Iconify icon="eva:plus-fill" />}>
                 <Link to="/dashboard/addcommitteemember" sx={{color:'white'}} >
                     New Member
                 </Link>
-                </Button>
+                </Button> */}
+                <Typography variant="h4" gutterBottom>
+                    Committee member
+                </Typography>
+                <Tooltip title="Add Committee member">
+                    <IconButton onClick={(e) => handleAddMembers(e)} color="secondary">
+                        <GroupAddIcon />
+                    </IconButton>
+                </Tooltip>
+                
             </Stack>
             {/* <TextField
                 id="filled-search"
@@ -582,7 +581,12 @@ export default function EnhancedTable() {
                                                 </TableCell>
                                                 <Stack direction="row" spacing={2} sx={{ mt: 1.2 }}>
                                                     {/* <Button variant="outline" startIcon={<EditIcon />} onClick={() => handleeditOpen(row._id)} >Type</Button> */}
-                                                    <Button variant="outlined" color="error" startIcon={<DeleteIcon />} onClick={() => deleteUser(row._id)}>Delete</Button>
+                                                    {/* <Button variant="outlined" color="error" startIcon={<DeleteIcon />} onClick={() => deleteUser(row._id)}>Delete</Button> */}
+                                                    <Tooltip title="Delete">
+                                                        <IconButton onClick={() => deleteUser(row._id)} color="error">
+                                                            <DeleteIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
                                                 </Stack>
                                             </TableRow>
                                         );
@@ -615,112 +619,36 @@ export default function EnhancedTable() {
                 />
             </Box>
 
+            <Modal open={open} onClose={handleAddmemberclose} center>
+                <Box sx={{ width: 400, mx: 9, mt: 3,height:500 }}>
+                <Container>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+
+                    <Typography variant="h4" gutterBottom>
+                        Add Group Member
+                    </Typography>
+                </Stack>
+                <Stack spacing={6}>
+                    <Multiselect
+                        value={groupMember}
+                        isObject={false}
+                        onRemove={(event) => { disp(event) }}
+                        onSelect={(event) => { disp(event) }}
+                        options={userList}
+                        showCheckbox
+                    />
+                    <Button variant="contained" sx={{ m: 2, width: '15ch' }} onClick={() => Groupmembersubmit()} >
+                        Submit
+                    </Button>
+                </Stack>
+            </Container>
+                </Box>
+            </Modal>
+            
+
             {/* New use Popover */}
 
-            <Popover
-                open={Boolean(opens)}
-                anchorEl={opens}
-                onClose={handleClose}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                    sx: {
-                        p: 0,
-                        mt: 1.5,
-                        ml: 0.75,
-                        width: 180,
-                        '& .MuiMenuItem-root': {
-                            typography: 'body2',
-                            borderRadius: 0.75,
-                        },
-                    },
-                }}
-            >
-                <MenuItem onClick={() => handleCsvModalOpen()}>
-                    <Iconify icon={'eos-icons:csv-file'} sx={{ mr: 2 }} />
-                    Csv Upload
-                </MenuItem>
-                <MenuItem onClick={() => handleOpenUser()} >
-                    <Iconify icon={'uiw:user-add'} sx={{ mr: 2 }} />
-                    Add user
-                </MenuItem>
-            </Popover>
-
             {/* Add single user modal */}
-
-            <Modal open={useropen} onClose={handleCloseUser} center>
-                <Box sx={{ width: 500, mx: 9, mt: 3 }}>
-                    <form id='regForm'>
-                        <h4>Add User</h4>
-                        <div className="form-floating mb-3 has-validation">
-                            <TextField type="text" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" id="validationServerUsername" variant="outlined" size="small" name='UserName' onChange={e => onInputChange(e)} label="Name" />
-                        </div>
-                        <div className="form-floating mb-3 ">
-                            <TextField type="text" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" name='Email' size="small" id="exampleFormControlInput1" onChange={e => onInputChange(e)} label="Email" />
-                        </div>
-                        <div className="form-floating mb-3 ">
-                            <TextField type="Date" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" name='DOB' size="small" id="exampleFormControlInput1" onChange={e => onInputChange(e)} label="Dob" InputLabelProps={{ shrink: true }} />
-                        </div>
-                        {/* <div className="form-floating mb-3 ">
- <TextField type="number" sx={{ m: 2, width: '35ch' }} className="form-control" name='Type' value={Type} size="small" id="exampleFormControlInput1" autoComplete="off" onChange={e => onInputChange(e)} label="Type" />
- </div> */}
-                        {/* <div className="form-floating mb-3 ">
- <TextField type="number" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" name='GroupRole' value={GroupRole} size="small" id="exampleFormControlInput1" onChange={e => onInputChange(e)} label="Group role" />
- </div> */}
-                        <div className="form-floating mb-3 ">
-                            <TextField type="text" sx={{ m: 2, width: '35ch' }} className="form-control" name='Designation' size="small" id="exampleFormControlInput1" autoComplete="off" onChange={e => onInputChange(e)} label="Designation" />
-                        </div>
-                        <div className="row mt-5 ">
-                            <div className="col-3"><Button sx={{ m: 2, width: '41ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => handleSubmit()} >Submit</Button></div>
-                        </div>
-                    </form>
-                </Box>
-            </Modal>
-
-            {/* edit modal */}
-
-            <Modal open={editopen} onClose={handleeditClose} center>
-                <Box sx={{ width: 400, mx: 9 }}>
-                    <form id='EditForm'>
-                        <h4> Edit Type</h4>
-                        {/* <div className="form-floating mb-3 ">
-                            <TextField sx={{ m: 2, width: '35ch' }} type="number" defaultValue={EditPatchValue.Type} className="form-control" name='Type' id="exampleFormControlInput1" autoComplete="off" onChange={e => onEditChange(e)} label="Type" />
-                        </div> */}
-                        <Box sx={{ minWidth: 120 }}>
-                            <InputLabel id="demo-simple-select-label">Type</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                name='Type'
-                                label="Type"
-                                defaultValue={EditPatchValue.Type}
-
-                                sx={{ m: 2, width: '35ch' }}
-                                onChange={e => onEditChange(e)}
-                            >
-                                <MenuItem value={1}>Committee member</MenuItem>
-                                <MenuItem value={2}>Admin</MenuItem>
-                                <MenuItem value={0}>Innovatures</MenuItem>
-                            </Select>
-                        </Box>
-                        <div className="row mt-5 ">
-                            <div className="col-3"><Button sx={{ mx: 2, m: 2 }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={(e) => EditSubmit(e)}>Submit</Button></div>
-                        </div>
-                    </form>
-                </Box>
-            </Modal>
-
-            <Modal open={csvModal} onClose={handleModalClose} center>
-                <Box sx={{ width: 100, mx: 17, marginLeft: '9vh' }}>
-                    <h4>Upload CSV</h4>
-                    <label htmlFor="inputTag">  <CloudUploadIcon sx={{ mr: 9, fontSize: '100px' }} />
-                        <br />
-                        <input type="file" accept=".csv" name="file" id="inputTag" onChange={changeHandler} />
-                    </label>
-                    <br />
-                    <Button onClick={() => handleSubmission()}>Upload</Button>
-                </Box>
-            </Modal>
 
         </>
     );
