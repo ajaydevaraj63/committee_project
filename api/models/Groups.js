@@ -8,7 +8,7 @@ const groupSchema=mongoose.Schema({
         type:String
     },
     GroupType:{
-        type:String
+        type:Number
     }
     ,Delete:{
         type:Number,
