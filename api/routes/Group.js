@@ -1,7 +1,7 @@
 const exp = require('express');
 const app = exp();
 var path = require('path');
-const {validationG}=require('../utils/GroupValidation.js')
+const { validationG } = require('../utils/GroupValidation.js')
 const bodyParser = require('body-parser')
 //fetch data from the request
 const multer = require('multer');
@@ -13,9 +13,9 @@ const { verify } = require('crypto');
 const Joi = require('@hapi/joi');
 
 const schema = Joi.object().keys({
-  GroupName: Joi.string().alphanum().min(3).max(30).required(),
-  GroupType: Joi.string().alphanum().min(3).max(30).required()
- 
+  GroupName: Joi.string().alphanum().max(30).required(),
+  GroupType: Joi.string().alphanum().max(30).required()
+
 });
 
 
@@ -29,47 +29,49 @@ var storage = multer.diskStorage({
   }
 });
 
-var upload = multer({ storage: storage,
-    fileFilter: (req, file, cb) => {
-      if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
-        cb(null, true);
-      } else {
-        cb(null, false);
-        return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
-      }
-    } });
-router.post("/create",upload.array("image"), uploadFiles);
+var upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+    }
+  }
+});
+router.post("/create", upload.array("image"), uploadFiles);
 
 async function uploadFiles(req, res) {
 
-try{
+  try {
 
-  const Validation = schema.validate(req.body);
-  if(!Validation.error){
+    const Validation = schema.validate(req.body);
+    if (!Validation.error) {
 
-  req.body.GroupImage =  'http://localhost:4006/images/'+req.files[0].filename
+      req.body.GroupImage = 'http://localhost:4006/images/' + req.files[0].filename
 
-  console.log(req.body);
-  console.log(req.files);
-  const SaveGroup = new GroupTable(req.body)
-  await SaveGroup.save((error, data) => {
-    if (error) {
-      res.send(error)
+      console.log(req.body);
+      console.log(req.files);
+      const SaveGroup = new GroupTable(req.body)
+      await SaveGroup.save((error, data) => {
+        if (error) {
+          res.send(error)
+        }
+        else {
+          res.send(data)
+        }
+      })
+
     }
     else {
-      res.send(data)
+      res.send(Validation.error)
     }
-  })
 
   }
-  else{
-    res.send(Validation.error)
+  catch (error) {
+    throw error
   }
-
-}
-catch(error){
-  throw error
-}
 
 
 }
@@ -79,7 +81,7 @@ catch(error){
 router.put("/UpdatePic/:id", upload.array("image"), updateProfileImage);
 
 function updateProfileImage(req, res) {
-  const ImagePath = 'http://localhost:4006/images/'+req.files[0].filename
+  const ImagePath = 'http://localhost:4006/images/' + req.files[0].filename
 
   console.log(req.files);
   const updateGroup = GroupTable.updateOne({ _id: req.params.id },

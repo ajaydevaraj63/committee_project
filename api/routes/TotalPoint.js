@@ -9,7 +9,7 @@ let router=express.Router();
 
 
 router.post("/New/Point",AddPoint);
-router.get("/Get/Point",GetInfo);
+router.post("/Get/Point",GetInfo);
 
 
 module.exports = router;

@@ -94,7 +94,7 @@ exports.GroupDelete=async(req,res)=>{
       
         if(req.body){
     
-      await  GroupSchema.findByIdAndUpdate(req.params.id, { $set: req.body }, (error, data) => {
+      await  GroupSchema.findByIdAndDelete(req.params.id,(error, data) => {
         if (error) {
             res.send("error")
         }
