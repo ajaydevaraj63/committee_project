@@ -147,7 +147,7 @@ exports.paginationRecord = async(req, res, next) => {
 }
 
 exports.AddNewUsersToGroup = (req, res) => {
-  User.find({ GroupId: "0" }, (error, data) => {
+  User.find({$and:[{ GroupId: "0" },{Delete:"0"}]}, (error, data) => {
     if (error) {
       res.status(500).json(error)
     }
