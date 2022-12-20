@@ -65,9 +65,9 @@ export default function AllEvents() {
         console.log("Hello");
         console.log(eId);
         console.log("GroupTable  Api Call===============")
-        let obj = { "EventId": "63a1745ed62e10d22e357a88" }
+        const obj = { "EventId": eId }
         console.log("obj", obj);
-        axios.get('http://localhost:4006/TotalPoint/Get/Point', obj).then((response) => {
+        axios.post('http://localhost:4006/TotalPoint/Get/Point', obj).then((response) => {
             console.log("Response", response);
             setGameList(response.data)
             console.log("========", gameList);

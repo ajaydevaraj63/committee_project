@@ -46,20 +46,17 @@ export default function EventHistory() {
     useEffect(() => {
         console.log("PointTable  Api Call===============")
         axios.get('http://localhost:4006/Point/getinfo/common').then((response) => {
-            // console.log("Response", response.data);
             setPointList(response.data)
             console.log("========", response.data);
         });
-    }, [PointList])
+    }, [])
 
 
     // Game modal
     const [GameModal, setGameModalOpen] = useState(false);
-
     function handleGameModalOpen() {
         setGameModalOpen(true);
     }
-
     const handleModalClose = () => setGameModalOpen(false);
 
     //group list
@@ -103,6 +100,10 @@ export default function EventHistory() {
             setGameList(response.data)
             console.log("========", gameList);
         });
+    }
+
+    function getGroupId(gId) {
+        console.log("Group Id", gId);
     }
 
 
@@ -166,7 +167,7 @@ export default function EventHistory() {
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row) => {
                                         return (
-                                            <MenuItem >{row.GroupName}  </MenuItem>
+                                            <MenuItem onClick={() => getGroupId(row._id)}>{row.GroupName}  </MenuItem>
                                         );
                                     })}
                             </Select>
