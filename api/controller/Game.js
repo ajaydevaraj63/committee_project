@@ -171,6 +171,4 @@ exports.FindGamesWithEventId=(async(req,res)=>{
     } catch (error) {
         
     }
-
-
 })
