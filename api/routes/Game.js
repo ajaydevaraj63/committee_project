@@ -10,6 +10,7 @@ const bdyp = require('body-parser');
 const bodyParser = require('body-parser');
 const { error } = require('console');
 app.use(bdyp.json());
+const joi = require('@hapi/joi');
 app.use(bodyParser.urlencoded({extended: false}));
 const joi=require('@hapi/joi')
 const Schema =joi.object().keys({

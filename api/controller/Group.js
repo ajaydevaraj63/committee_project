@@ -38,6 +38,11 @@ exports.UpdateGroupOfAllUsers = async (req, res) => {
 
 
 }
+exports.FindAllCommittee=(req,res)=>{
+    GroupSchema.find(req.body,(error,data)=>{
+        res.send(data)
+    })
+}
 exports.FindAllGroups=(req,res)=>{
     GroupSchema.find({"Delete": "0"},(error,data)=>{
         res.send(data)

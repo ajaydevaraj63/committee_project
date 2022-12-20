@@ -141,6 +141,7 @@ exports.GetInfo = (req, res) => {
     })
 
 }
+
 exports.GetInfo2 = (req, res) => {
 
     PointTable.aggregate([
@@ -165,21 +166,3 @@ exports.GetInfo2 = (req, res) => {
     })
 
 }
-exports.getInfo=((req,res)=>{
-   Point.find({EventId:req.body.EventId}).sort({TotalPoint:-1}).limit(2).exec((err, docs) => {
-    if (err) {
-        const responseObj = {
-        "status": "error",
-        "msg": "Input is missing.",
-        "body": {}
-      }
-      res.status(500).send(responseObj);
-    
-    } 
-    else{
-        res.send(docs)
-    }
-  })
-})
-
-

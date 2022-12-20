@@ -49,7 +49,7 @@ router.post("/csv/Upload", csvAuth)
 router.post("/upload", upload.array("csv"), uploadFiles);
 
 function uploadFiles(req, res) {
-  console.log(req.body);
+  console.log("req.body");
   console.log(req.files);
   csv()
     .fromFile(req.files[0].path)
@@ -75,12 +75,15 @@ function uploadFiles(req, res) {
     
        try{
         if (!errorData.error) {
-          const options = { ordered: true };
-           await UserTable.insertMany(jsonObj, options,(error,data)=>{
+          console.log("hello")
+          let options = { ordered: true };
+          let jsonobj= await userstable.insertMany(jsonObj, options,(error,data)=>{
+            console.log("inside")
             if(error){
-              res.send(error.writeErrors)
+              res.send(error)
             }
           else{
+            console.log("inside")
             res.send(data)
           }
   
