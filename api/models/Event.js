@@ -41,6 +41,12 @@ const EventSchema=mongoose.Schema({
     },
     GamePointTableId: { type: mongoose.Schema.Types.ObjectId, 
         ref: "gamepointtable"  },
+    TotalPoint: {
+        type: Number
+    },
+    GameId: 
+    { type: mongoose.Schema.Types.ObjectId, ref: "Games" }
+    ,
 },{timestamps:true})
 
 module.exports=mongoose.model("events",EventSchema);

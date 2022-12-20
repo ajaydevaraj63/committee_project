@@ -40,6 +40,11 @@ const GameSchema=mongoose.Schema({
     Delete:{
         type:Number,
         default:0
-    },
+    }
+    ,
+    EventId:{
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "event" 
+    }
 },{timestamps:true})
 module.exports=mongoose.model("game",GameSchema);

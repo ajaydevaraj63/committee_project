@@ -1,10 +1,12 @@
 const exp = require("express");
 const Event = require("../models/Event");
+const Game =  require("../models/GameTable");
 const multer = require('multer');
 const { RDS } = require("aws-sdk");
 const app = exp();
   //////////////////akshay/////////////////
-const event = require('../models/Event.js')
+const event = require('../models/Event.js');
+const { error } = require("@hapi/joi/lib/types/alternatives");
 
 
 
@@ -100,4 +102,12 @@ exports.eventSearch = async (req, res) => {
   catch (error) { 
     res.status(404).json({ message: error.message })
   }
+}
+
+exports.eventwithgame = (req, res) => { 
+
+  Event.find((error, data) => {
+    
+  })
+
 }

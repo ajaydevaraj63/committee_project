@@ -4,23 +4,21 @@ const path = require("path");
 const bdyp = require('body-parser')
 app.use(bdyp.json())
 const multer=require('multer')
-const { allevents, event, eventSearch,getEvents } = require("../controller/Event");
+const { allevents, event, eventSearch,getEvents, eventwithgame } = require("../controller/Event");
 const Event = require("../models/Event");
 const bodyParser = require('body-parser');
 const router=express.Router();
 module.exports=router;
 app.use(bodyParser.urlencoded({extended: false}))
-const joi=require('@hapi/joi')
 
+const joi=require('@hapi/joi')
 const Schema =joi.object().keys({
     EventName: joi.string().alphanum().min(3).max(30),
-    EventDescription: joi.string().alphanum().min(3).max(30),
+    EventDescription: joi.string().min(3).max(30),
     StartDate: joi.date(),
     EndDate: joi.date(),
-    UserId: joi.string()
+    UserId: joi.string().alphanum()
 })
-
-
 
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -123,5 +121,7 @@ router.get("/eventSearch", eventSearch);
 router.get("/event/:id" , event);
 router.put("/updateevent/:id", upload.array('File'), eventupdation)
 router.get('/events',getEvents)
+router.get("/eventwithgame/:id", eventwithgame)
+
 
 module.exports = router;

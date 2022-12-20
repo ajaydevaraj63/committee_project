@@ -157,3 +157,20 @@ exports.gameSearch = async (req, res) => {
     }
 
 }
+exports.FindGamesWithEventId=(async(req,res)=>{
+    try {
+        await Game.find(req.body,(data,error) =>{
+            if(!error){
+                res.send(data)
+            }
+            else{
+                res.send(error)
+            }
+
+        })
+    } catch (error) {
+        
+    }
+
+
+})
