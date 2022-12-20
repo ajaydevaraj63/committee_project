@@ -31,26 +31,26 @@ const navConfig = [
     path: '/dashboard/Events',
     icon: icon('event'),
   },
-  {
-    title: 'Meetings',
-    path: '/dashboard/meet',
-    icon: icon('meeting'),
-  },
+  // {
+  //   title: 'Meetings',
+  //   path: '/dashboard/meet',
+  //   icon: icon('meeting'),
+  // },
   {
     title: 'Point Table',
-    path: '/dashboard/PointTable',
+    path: '/dashboard/groupsPoints',
     icon: icon('point_table'),
   },
-  {
-    title: 'login',
-    path: '/login',
-    icon: icon('ic_lock'),
-  },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic_disabled'),
-  },
+  // {
+  //   title: 'login',
+  //   path: '/login',
+  //   icon: icon('ic_lock'),
+  // },
+  // {
+  //   title: 'Not found',
+  //   path: '/404',
+  //   icon: icon('ic_disabled'),
+  // },
 ];
 
 export default navConfig;

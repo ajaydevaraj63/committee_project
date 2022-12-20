@@ -28,7 +28,7 @@ const UserSchema=new moongoose.Schema({
     },
     Designation:{
         type:String,
-        require:true
+       
 
     }
     ,

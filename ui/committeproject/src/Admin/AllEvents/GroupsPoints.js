@@ -1,3 +1,4 @@
+import { Tooltip } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -32,24 +33,32 @@ export default function GroupsPoints() {
 
     let navigate = useNavigate();
 
-    const gamePoints = () => {
+    function gamePoints(gId) {
         let path = `/dashboard/gamePoints`;
         navigate(path);
+
+        sessionStorage.setItem('gId', gId);
+        console.log(gId);
+
+
     }
 
 
     //List Point Table ==========================================================================
 
-    const [PointList, setPointList] = useState([])
+    const [groupPoint, setData] = useState([])
+
 
     useEffect(() => {
-        console.log("PointTable  Api Call===============")
-        axios.get('http://localhost:4006/Point/getinfo/common').then((response) => {
+        console.log("ap call====================");
+        axios.get('http://localhost:4006/Group/findAllGroup').then((response) => {
             console.log("Response", response.data);
-            setPointList(response.data)
-            console.log("========================================================", response.data.gameList.GameName);
+            setData(response.data)
+            console.log(response.data.GroupName);
+
         });
     }, [])
+
 
     // Point Table =================================================================================================
 
@@ -70,25 +79,27 @@ export default function GroupsPoints() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {PointList
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                            {/* .map((row) => {
-                  return ( */}
-                            <TableRow>
-                                <TableCell onClick={gamePoints} sx={{ cursor: 'pointer' }}> Group1 </TableCell>
-                                <TableCell > Total Score </TableCell>
-                                {/* <TableCell >{row.GroupId}</TableCell>
+                            {groupPoint
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row) => {
+                                    return (
+                                        <TableRow>
+                                            <Tooltip title="Click to Add Points to Groups" placement='bottom-start'>
+                                                <TableCell onClick={() => gamePoints(row._id)} sx={{ cursor: 'pointer' }}> {row.GroupName} </TableCell>
+                                            </Tooltip>
+                                            <TableCell > 378 </TableCell>
+                                            {/* <TableCell >{row.GroupId}</TableCell>
                 <TableCell>{row.GamePoint}</TableCell> */}
-                            </TableRow>
-                            {/* );
-                })} */}
+                                        </TableRow>
+                                    );
+                                })}
                         </TableBody>
                     </Table>
                 </TableContainer>
                 <TablePagination
                     rowsPerPageOptions={[3, 5, 10, 100]}
                     component="div"
-                    count={PointList.length}
+                    count={groupPoint.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

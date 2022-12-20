@@ -9,6 +9,7 @@ const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(CLIENT_ID);
 const session = require('express-session')
 const TotalPoint=require('./routes/TotalPoint.js')
+const Desig=require('./routes/Designation.js')
 
 //////////////////////
 
@@ -108,6 +109,8 @@ app.use("/Group", groupRoute);
 app.use("/Point", PointMgmnt);
 app.use("/game",gameRoute);
 app.use("/TotalPoint",TotalPoint);
+
+app.use("/Designation",Desig);
 
 
 
