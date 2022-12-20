@@ -1,5 +1,5 @@
 const TotalPoint = require("../models/TotalPoint")
-
+const mongoose=require('mongoose')
 exports.AddPoint=(req,res)=>{
     TotalPoint.create(req.body,(error,data)=>{
         if(!error){
@@ -23,6 +23,29 @@ exports.getInfoTotalPoint=((req,res)=>{
      }
    })
  })
- 
+ exports.GetInfo = (req, res) => {
+
+    TotalPoint.aggregate([
+        {
+            $match: {
+                "EventId": mongoose.Types.ObjectId(req.body.EventId)
+              
+            }
+        },
+    
+       
+        {
+            $lookup: {
+                from: "groups", localField: "GroupId", foreignField: "_id", as: "grouplist"
+            }
+
+
+        }
+
+    ]).then(result => {
+        res.send(result)
+    })
+
+}
  
  
