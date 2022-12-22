@@ -49,6 +49,7 @@ export default function Groups() {
   const groupNameRef = useRef();
   const groupNameeditRf = useRef();
   const [filelength, setfilelength] = useState(0);
+  const [GrNameerror,setGrNameerror] = useState(null);
 
 
   // filter modal open //
@@ -131,7 +132,6 @@ export default function Groups() {
     if (GroupName.trim().length == 0) {
       setNameerror('This field is required')
       groupNameRef.current.focus();
-
     }
     if (filelength == 0) {
       setFileError('This field is required')
@@ -221,11 +221,11 @@ export default function Groups() {
   const onEditChange = e => {
     e.preventDefault();
     const grname = e.target.value;
-    if (grname.trim().length > 30) {
-      setNameerror('Please enter a valid Group name');
+    if (grname.trim().length > 30 || grname.trim().length==="" || grname.trim().length===null) {
+      setGrNameerror('Please enter a valid Group name');
 
     } else {
-      setNameerror(null);
+      setGrNameerror(null);
       setEdituser({ ...editUser, [e.target.name]: e.target.value })
 
     }
@@ -237,10 +237,10 @@ export default function Groups() {
     const id = sessionStorage.getItem('id')
     console.log('check', id);
     if (GroupName.trim().length == 0) {
-      setNameerror('This field is required')
+      setGrNameerror('This field is required')
       groupNameeditRf.current.focus();
     }
-    if (Nameerror != null) {
+    if (GrNameerror != null) {
       return;
     }
     axios.put("http://localhost:4006/Group/UpdateGroupDetails/".concat(id), editUser).then((response) => {
@@ -498,11 +498,10 @@ export default function Groups() {
                 "& .MuiInputBase-root": {
                   height: 60
                 }
-
               }}
                 autoComplete="off" size="small" id="exampleFormControlInput1" defaultValue={EditPatchValue.GroupName} name='GroupName' onChange={e => onEditChange(e)} label="GroupName" />
             </FormControl>
-            {Nameerror != null ? <p style={{ color: "red" }}>{Nameerror}</p> : ''}
+            {GrNameerror != null ? <p style={{ color: "red" }}>{GrNameerror}</p> : ''}
             <div>
               <div className="col-3"><Button sx={{ m: 2, width: '41ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => EditSubmit()} >Submit</Button></div>
             </div>
@@ -522,7 +521,6 @@ export default function Groups() {
           boxShadow: 24,
           p: 4,
         }}
-
         >
           <form id='regForm'>
             <h4>Change Group Icon</h4>

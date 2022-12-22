@@ -234,7 +234,8 @@ export default function EnhancedTable() {
 
     async function checkgrouptype() {
         const body = {
-            GroupType: 1
+            GroupType: 1,
+            Delete:0
         }
         await axios.post("http://localhost:4006/Group/FindCommittee", body).then((response) => {
             console.log("llllll", response);
@@ -261,7 +262,6 @@ export default function EnhancedTable() {
         axios.get('http://localhost:4006/Group/FindAllUser/inCommittee/'.concat(GetGroupType)).then((response) => {
             console.log("sucess", response.data);
             setData(response.data)
-
         });
     }
 
