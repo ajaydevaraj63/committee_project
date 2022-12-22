@@ -1,31 +1,30 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, TablePagination, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Paper, TablePagination, Typography } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import axios from 'axios';
-// const dotenv = require('dotenv');
-// dotenv.config();
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+
 axios.interceptors.request.use(
     config => {
-      config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
-          return config;
-      },
-      error => {
-          return Promise.reject(error);
-      }
-  );
+        config.headers.Authorization = JSON.parse(localStorage.getItem("Profile")).Token;
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
 
 
 export default function AllEvents() {
 
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -96,51 +95,54 @@ export default function AllEvents() {
                     </AccordionSummary>
                 </Accordion>
 
-                {PointList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    return (
-                        <Accordion expanded={expanded === row._id} onChange={handleChange(row._id)} key={row._id}>
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="panel1bh-content"
-                                id={row._id}
-                                onClick={() => EventClick(row._id)}
-                            >
-                                <Typography sx={{ width: '33%', flexShrink: 0 }}>
-                                    {row.EventName}
-                                </Typography>
-                                <Typography sx={{ color: 'text.secondary', width: '33%', }}>{row.EventDescription}</Typography>
+                <Paper style={{ maxHeight: 525, overflow: 'auto' }}>
 
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <Typography>
-                                    <Table sx={{ marginTop: '25px' }}>
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>Group Name</TableCell>
-                                                <TableCell>Points</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {gameList.map((row) => {
-                                                return (
-                                                    <TableRow key={row._id}>
-                                                        <TableCell>{row.grouplist[0].GroupName}</TableCell>
-                                                        <TableCell>{row.TotalPoint}</TableCell>
-                                                    </TableRow>
-                                                );
-                                            })}
-                                        </TableBody>
-                                    </Table>
-                                </Typography>
-                            </AccordionDetails>
-                        </Accordion>
-                    );
-                })}
+                    {PointList.length> 0 ? PointList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                        return (
+                            <Accordion expanded={expanded === row._id} onChange={handleChange(row._id)} key={row._id}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panel1bh-content"
+                                    id={row._id}
+                                    onClick={() => EventClick(row._id)}
+                                >
+                                    <Typography sx={{ width: '33%', flexShrink: 0 }}>
+                                        {row.EventName}
+                                    </Typography>
+                                    <Typography sx={{ color: 'text.secondary', width: '33%', }}>{row.EventDescription}</Typography>
+
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Typography>
+                                        <Table sx={{ marginTop: '25px' }}>
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell>Group Name</TableCell>
+                                                    <TableCell>Points</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {gameList.length > 0 ? gameList.map((row) => {
+                                                    return (
+                                                        <TableRow key={row._id}>
+                                                            <TableCell>{row.grouplist[0].GroupName}</TableCell>
+                                                            <TableCell>{row.TotalPoint}</TableCell>
+                                                        </TableRow>
+                                                    );
+                                                }):<div> No Data Available </div>}
+                                            </TableBody>
+                                        </Table>
+                                    </Typography>
+                                </AccordionDetails>
+                            </Accordion>
+                        );
+                    }):<div>No Data Available</div>}
+                </Paper>
             </div>
 
             <TablePagination
                 component="div"
-                rowsPerPageOptions={[5, 10, 100]}
+                rowsPerPageOptions={[5, 10, 25]}
                 count={PointList.length}
                 page={page}
                 onPageChange={handleChangePage}

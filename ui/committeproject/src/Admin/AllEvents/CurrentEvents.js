@@ -9,22 +9,22 @@ import axios from 'axios';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+
 axios.interceptors.request.use(
     config => {
-      config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
-          return config;
-      },
-      error => {
-          return Promise.reject(error);
-      }
-  );
-
+        config.headers.Authorization = JSON.parse(localStorage.getItem("Profile")).Token;
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
 
 
 export default function AllEvents() {
 
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -76,7 +76,7 @@ export default function AllEvents() {
                         <Typography sx={{ width: '33%', flexShrink: 0 }}>Event Description</Typography>
                     </AccordionSummary>
                 </Accordion>
-                {PointList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                {PointList.length > 0 ? PointList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     return (
                         <Accordion expanded={expanded === row._id} onChange={handleChange(row._id)} key={row._id}>
                             <AccordionSummary
@@ -110,12 +110,12 @@ export default function AllEvents() {
                             </AccordionDetails>
                         </Accordion>
                     );
-                })}
+                }) : <div>No Data AVailable </div>}
             </div>
 
             <TablePagination
                 component="div"
-                rowsPerPageOptions={[3, 10, 100]}
+                rowsPerPageOptions={[5, 10, 25]}
                 count={PointList.length}
                 page={page}
                 onPageChange={handleChangePage}

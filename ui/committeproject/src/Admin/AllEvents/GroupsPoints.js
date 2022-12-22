@@ -12,15 +12,16 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Modal from 'react-responsive-modal';
+
 axios.interceptors.request.use(
     config => {
-      config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
-          return config;
-      },
-      error => {
-          return Promise.reject(error);
-      }
-  );
+        config.headers.Authorization = JSON.parse(localStorage.getItem("Profile")).Token;
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
 
 const columns = [
     { id: 'Group', label: 'Group Icon', maxWidth: 0 },
@@ -31,7 +32,7 @@ const columns = [
 
 export default function GroupsPoints() {
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -111,7 +112,7 @@ export default function GroupsPoints() {
                     </Table>
                 </TableContainer>
                 <TablePagination
-                    rowsPerPageOptions={[3, 5, 10, 100]}
+                    rowsPerPageOptions={[ 5, 10, 25]}
                     component="div"
                     count={groupPoint.length}
                     rowsPerPage={rowsPerPage}
