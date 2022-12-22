@@ -1,5 +1,5 @@
 const express = require("express");
-const { displayall, updateuser, deleteuser, FindbyNameAndEmail, displayallusers, getGropuMembers, paginationRecord, pagination, AddNewUsersToGroup, searchUser, updatecommittee, committeemember, AddNewUsersToCommittee } = require("../controller/User");
+const { displayall, updateuser, deleteuser, FindbyNameAndEmail, displayallusers, getGropuMembers, paginationRecord, pagination, AddNewUsersToGroup, searchUser, updatecommittee, committeemember, AddNewUsersToCommittee, CommitteMember } = require("../controller/User");
 const UserSchema = require('../models/UserTable')
 const { verifytoken, verifyuser, verifyadmin } = require("../utils/verifytoken");
 const router = express.Router();
@@ -43,20 +43,20 @@ function updateProfileImage(req, res) {
             }
         })
 }
-router.get("/:id", verifyuser, displayall)
+// router.get("/:id",displayall)
 router.get("/Display/FilteredUser",paginationRecord)
-router.put("/put", verifyuser, updateuser)
+router.put("/put",updateuser)
 router.put("/UpdateUser/:id", updateuser)
 router.put("/UpdateUser/GroupRole/:id", updateuser)
 router.put("/UpdateUser/Group/:id", updateuser)
-router.delete("/delete", verifyuser, deleteuser)
+router.delete("/delete",deleteuser)
 router.get("/email/:id", FindbyNameAndEmail)
 router.get('/display/All/user', displayallusers)
 router.get('/group/members', getGropuMembers);
 router.get("/Display/AddUsersToNewGroup",AddNewUsersToGroup)
 router.get("/Display/AddUsersToNewCommittee",AddNewUsersToCommittee)
 router.get("/searchuser", searchUser)
-router.get("/getCommitteMember", committeemember)
+router.get("/getCommitteMember",CommitteMember)
 router.put("/committeeupdate/:id",updatecommittee)
 
 

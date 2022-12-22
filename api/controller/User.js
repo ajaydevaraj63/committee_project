@@ -24,18 +24,18 @@ exports.deleteuser = (req, res) => {
     }
   })
 }
-exports.displayall = (req, res) => {
-  User.find.toArray((error, data) => {
-    if (error) {
-      res.status(500).json(error)
-    }
-    else {
-      const { password, isAdmin, ...otherdetails } = data;
-      res.send({ "data": otherdetails })
-    }
-  })
+// exports.displayall = (req, res) => {
+//   User.find.toArray((error, data) => {
+//     if (error) {
+//       res.status(500).json(error)
+//     }
+//     else {
+//       const { password, isAdmin, ...otherdetails } = data;
+//       res.send({ "data": otherdetails })
+//     }
+//   })
 
-}
+// }
 
 
 
@@ -245,7 +245,7 @@ exports.updatecommittee = (req, res) => {
     }
 }
 
-exports.committeemember = (req, res) => {
+exports.CommitteMember = (req, res) => {
 
   User.find({ CommitteeRole: { $gte: 0 } }, (error, data) => {
     if (!error) {
