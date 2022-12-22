@@ -1,27 +1,31 @@
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import WallpaperIcon from '@mui/icons-material/Wallpaper';
+import { Box, Button, Container, FormControl, Grid, MenuItem, Modal, Stack, TextField, Typography } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import IconButton from '@mui/material/IconButton';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
 import { styled } from '@mui/material/styles';
 import Tooltip from '@mui/material/Tooltip';
 import axios from 'axios';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Swal from 'sweetalert2';
-import InputLabel from '@mui/material/InputLabel';
-import Select from '@mui/material/Select';
-import WallpaperIcon from '@mui/icons-material/Wallpaper';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import { MenuItem, Box, Button, Container, Grid, Stack, TextField, FormControl, Typography } from '@mui/material';
 
-// @mui
-import { Modal } from "react-responsive-modal";
 // components
 import { Link } from 'react-router-dom/dist';
-import { ProductFilterSidebar, ProductSort } from '../../sections/@dashboard/products';
 // mock
-import Iconify from '../../components/iconify';
+axios.interceptors.request.use(
+  config => {
+    config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
 
 
 
@@ -41,8 +45,10 @@ export default function Groups() {
   const [fileError, setFileError] = useState(null);
   const [Nameerror, setNameerror] = useState(null);
   const filetypeRef = useRef();
+  const fileedittyperef = useRef();
   const groupNameRef = useRef();
-  const [filelength,setfilelength] = useState(0);
+  const groupNameeditRf = useRef();
+  const [filelength, setfilelength] = useState(0);
 
 
   // filter modal open //
@@ -59,6 +65,8 @@ export default function Groups() {
 
   const handleOpen = () => {
     setOpensAddGroup(true);
+    checkgrouptype();
+
   };
 
   const handleClose = () => {
@@ -68,13 +76,12 @@ export default function Groups() {
   const onInputFIlechange = e => {
     const fileSelected = e.target.files[0].type;
     console.log()
-    if(fileSelected ==='image/jpg' || fileSelected ==='image/jpeg' || fileSelected ==='image/png')
-    {
-    setFile(e.target.files[0]);
-    setfilelength(e.target.files.length);
-    setFileError(null);
+    if (fileSelected === 'image/jpg' || fileSelected === 'image/jpeg' || fileSelected === 'image/png') {
+      setFile(e.target.files[0]);
+      setfilelength(e.target.files.length);
+      setFileError(null);
     }
-    else{
+    else {
       setFileError('Files only support jpg,jpeg,png format only');
     }
 
@@ -84,7 +91,7 @@ export default function Groups() {
     const grname = e.target.value;
     if (grname === null || grname === "") {
       setNameerror('please enter a valid Group name');
-      
+
     } else {
       setNameerror(null);
       setGroupName(e.target.value)
@@ -112,24 +119,30 @@ export default function Groups() {
     const formdata = new FormData();
     formdata.append('image', file);
     formdata.append('GroupName', GroupName);
-    formdata.append('GroupType', GroupType);
+    if (CheckGroupType.length > 0) {
+      formdata.append('GroupType', 0);
+    }
+    else {
+      formdata.append('GroupType', GroupType);
+    }
     console.log('formdata', formdata);
+
+
     if (GroupName.trim().length == 0) {
       setNameerror('This field is required')
       groupNameRef.current.focus();
 
     }
-    if(filelength == 0 ){
+    if (filelength == 0) {
       setFileError('This field is required')
       filetypeRef.current.focus();
     }
-    if(fileError !=null || Nameerror !=null)
-    if (Nameerror != null) {
-      return;
-    }
+    if (fileError != null || Nameerror != null)
+      if (Nameerror != null) {
+        return;
+      }
     axios.post("http://localhost:4006/Group/create", formdata).then((response) => {
       console.log("check", response.data);
-     
       listgroups();
       handleClose();
     })
@@ -137,6 +150,7 @@ export default function Groups() {
 
   useEffect(() => {
     listgroups();
+    checkgrouptype();
   }, [])
 
   const listgroups = () => {
@@ -167,7 +181,7 @@ export default function Groups() {
       confirmButtonText: 'Yes, delete it!'
     }).then((response) => {
       if (response.isConfirmed) {
-        axios.put("http://localhost:4006/Group/UpdateDelete/".concat(id), body).then((response) => {
+        axios.put("http://localhost:4006/Group/Delete/CommitteeOrGroup/".concat(id)).then((response) => {
           Swal.fire(
             'Deleted!',
             'Your file has been deleted.',
@@ -206,13 +220,29 @@ export default function Groups() {
 
   const onEditChange = e => {
     e.preventDefault();
-    setEdituser({ ...editUser, [e.target.name]: e.target.value })
+    const grname = e.target.value;
+    if (grname.trim().length > 30) {
+      setNameerror('Please enter a valid Group name');
+
+    } else {
+      setNameerror(null);
+      setEdituser({ ...editUser, [e.target.name]: e.target.value })
+
+    }
+    
   }
 
   const EditSubmit = (e) => {
     console.log("EditUser=======");
     const id = sessionStorage.getItem('id')
     console.log('check', id);
+    if (GroupName.trim().length == 0) {
+      setNameerror('This field is required')
+      groupNameeditRf.current.focus();
+    }
+    if (Nameerror != null) {
+      return;
+    }
     axios.put("http://localhost:4006/Group/UpdateGroupDetails/".concat(id), editUser).then((response) => {
       console.log("check", response.data);
       listgroups();
@@ -234,12 +264,36 @@ export default function Groups() {
     const formdata = new FormData();
     formdata.append('image', file);
     console.log('formdata', formdata);
+    if (filelength == 0) {
+      setFileError('This field is required')
+      fileedittyperef.current.focus();
+    }
+    if (fileError != null || Nameerror != null)
+      if (Nameerror != null) {
+        return;
+      }
     axios.put("http://localhost:4006/Group/UpdatePic/".concat(editpicId), formdata).then((response) => {
       console.log("check", response.data);
       handleUpdatepicClose();
       listgroups();
     })
   }
+  // api to check whether committee is there //
+  const [CheckGroupType, setCheckGroupType] = useState('');
+
+  async function checkgrouptype() {
+    const body = {
+      GroupType: 1,
+      Delete: 0
+    }
+    await axios.post("http://localhost:4006/Group/FindCommittee", body).then((response) => {
+      console.log("llllll", response.data);
+      setCheckGroupType(response.data)
+
+    })
+
+  }
+
   return (
     <>
       <Helmet>
@@ -276,7 +330,7 @@ export default function Groups() {
           {
             data.map((value) => {
               return (
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid item xs={12} sm={6} md={3} key={value._id}>
                   <Card>
                     <Tooltip title="View group details" placement="top-start">
                       <Link style={{ textDecoration: 'none' }} to='/dashboard/groupMember' onClick={() => getId(value._id)} >
@@ -335,7 +389,19 @@ export default function Groups() {
       {/* Add Group Modal======================================================= */}
 
       <Modal open={openAddGroup} onClose={handleClose} center>
-        <Box sx={{ width: 500, mx: 9, mt: 3 }}>
+        <Box sx={{
+          position: 'absolute',
+          top: '51%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 650,
+          bgcolor: 'background.paper',
+          border: '2px solid #000',
+          boxShadow: 24,
+          p: 4,
+        }}
+
+        >
           <form id='regForm'>
             <h4>Add Group</h4>
             <FormControl fullwidth sx={{ m: 2 }} >
@@ -350,37 +416,41 @@ export default function Groups() {
                 autoComplete="off" size="small" id="exampleFormControlInput1" name='GroupName' onChange={(e) => onInputNamechange(e)} label="Group name" />
             </FormControl>
             {Nameerror != null ? <p style={{ color: "red" }}>{Nameerror}</p> : ''}
-            <FormControl fullwidth sx={{ m: 2 }} >
-              <Box sx={{
-                width: { sm: 200, md: 200, lg: 480, xl: 400 },
-                "& .MuiInputBase-root": {
-                  height: 54
-                }
+            {CheckGroupType.length == 0 ?
+              <FormControl fullwidth sx={{ m: 2 }} >
+                <Box sx={{
+                  width: { sm: 200, md: 200, lg: 480, xl: 400 },
+                  "& .MuiInputBase-root": {
+                    height: 54
+                  }
 
-              }}>
-                <InputLabel id="demo-simple-select-label">Group Type</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  className="form-control"
-                  name='GroupType'
-                  label="Group Type"
-                  autoComplete="off"
-                  sx={{
-                    width: { sm: 200, md: 200, lg: 300, xl: 400 },
-                    "& .MuiInputBase-root": {
-                      height: 54
-                    }
-                  }}
-                  size="small"
-                  onChange={(e) => setGroupType(e.target.value)}
-                >
-                  <MenuItem value={0}>Main group</MenuItem>
-                  <MenuItem value={1}>Committee</MenuItem>
-                </Select>
-              </Box>
-            </FormControl>
+                }}>
+                  <InputLabel id="demo-simple-select-label">Group Type</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    className="form-control"
+                    name='GroupType'
+                    label="Group Type"
+                    autoComplete="off"
+                    sx={{
+                      width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                      "& .MuiInputBase-root": {
+                        height: 54
+                      }
+                    }}
+                    size="small"
+                    onChange={(e) => setGroupType(e.target.value)}
+                  >
+                    <MenuItem value={0}>Main group</MenuItem>
+                    <MenuItem value={1}>Committee</MenuItem>
+                  </Select>
+                </Box>
+              </FormControl>
+              : ''}
+
             <FormControl fullwidth sx={{ m: 2 }} >
+
 
               <input type="file" accept='image/png,image/jpg,image/jpeg '
                 sx={{
@@ -392,24 +462,38 @@ export default function Groups() {
                 }}
                 autoComplete="off" size="small" id="exampleFormControlInput1" name='GroupImage' onChange={e => onInputFIlechange(e)} label="Group Image" InputLabelProps={{ shrink: true }} />
             </FormControl>
-            {fileError !=null ? <p style={{color:"red"}}>{fileError}</p> : ''} 
-            <div className="row mt-5 ">
+            {fileError != null ? <p style={{ color: "red" }}>{fileError}</p> : ''}
+            <div>
               <div className="col-3"><Button sx={{ m: 2, width: '41ch', height: 40 }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={(e) => handleSubmit(e)}  >Submit</Button></div>
             </div>
           </form>
         </Box>
       </Modal>
 
+      
 
       <Modal open={editopen} onClose={handleeditClose} center>
-        <Box sx={{ width: 500, mx: 9, mt: 3 }}>
+        <Box sx={{
+          position: 'absolute',
+          top: '51%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 650,
+          bgcolor: 'background.paper',
+          border: '2px solid #000',
+          boxShadow: 24,
+          p: 4,
+        }}
+        >
           <form id='regForm'>
             <h4>Edit Group</h4>
             {/* <div className="form-floating mb-3 has-validation">
               <TextField type="text" sx={{ m: 2, width: '35ch' }} defaultValue={EditPatchValue.GroupName} className="form-control" autoComplete="off" id="validationServerUsername" variant="outlined" size="small" name='GroupName' onChange={e => onEditChange(e)} />
             </div> */}
             <FormControl fullwidth sx={{ m: 2 }} >
-              <TextField type="text" sx={{
+              <TextField 
+              ref={groupNameeditRf}
+              type="text" sx={{
                 width: { sm: 200, md: 200, lg: 300, xl: 400 },
                 "& .MuiInputBase-root": {
                   height: 60
@@ -418,7 +502,8 @@ export default function Groups() {
               }}
                 autoComplete="off" size="small" id="exampleFormControlInput1" defaultValue={EditPatchValue.GroupName} name='GroupName' onChange={e => onEditChange(e)} label="GroupName" />
             </FormControl>
-            <div className="row mt-5 ">
+            {Nameerror != null ? <p style={{ color: "red" }}>{Nameerror}</p> : ''}
+            <div>
               <div className="col-3"><Button sx={{ m: 2, width: '41ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => EditSubmit()} >Submit</Button></div>
             </div>
           </form>
@@ -426,16 +511,28 @@ export default function Groups() {
       </Modal>
 
       <Modal open={UpdatepicOpen} onClose={handleUpdatepicClose} center>
-        <Box sx={{ width: 500, mx: 9, mt: 3 }}>
+        <Box sx={{
+          position: 'absolute',
+          top: '51%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 350,
+          bgcolor: 'background.paper',
+          border: '2px solid #000',
+          boxShadow: 24,
+          p: 4,
+        }}
+
+        >
           <form id='regForm'>
             <h4>Change Group Icon</h4>
-            <div className='row m-4'>
+            <div>
               {/* <div className='col col-3'>
                 <TextField sx={{ m: 2, width: '35ch' }} className='form-control' onChange={e => onInputFIlechange(e)} type="file" name='GroupImage' label="Group Image" InputLabelProps={{ shrink: true }} />
               </div> */}
               <FormControl fullwidth sx={{ m: 2 }} >
-                <TextField
-                  type="file" sx={{
+                <input ref={fileedittyperef}
+                  type="file" accept='image/png,image/jpg,image/jpeg' sx={{
                     width: { sm: 200, md: 200, lg: 480, xl: 400 },
                     "& .MuiInputBase-root": {
                       height: 54
@@ -443,8 +540,9 @@ export default function Groups() {
                   }}
                   autoComplete="off" size="small" id="exampleFormControlInput1" name='GroupImage' onChange={e => onInputFIlechange(e)} label="Group Image" InputLabelProps={{ shrink: true }} />
               </FormControl>
+              {fileError != null ? <p style={{ color: "red" }}>{fileError}</p> : ''}
             </div>
-            <div className="row mt-5 ">
+            <div>
               <div className="col-3"><Button sx={{ m: 2, width: '13ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => changePic()} >Submit</Button></div>
             </div>
           </form>

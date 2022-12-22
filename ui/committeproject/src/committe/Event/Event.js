@@ -1,12 +1,26 @@
 import React, { useState } from 'react'
-import './Event.css';
+
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import Button from '@mui/material/Button';
-import { CardContent } from '@mui/material';
+import { CardContent, Input } from '@mui/material';
+import { Typography } from '@material-ui/core';
+
+axios.interceptors.request.use(
+    config => {
+      config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
+          return config;
+      },
+      error => {
+          return Promise.reject(error);
+      }
+  );
+
+
 
 const Event = () => {
+    
     const [file, setFile] = useState('')
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
@@ -16,7 +30,7 @@ const Event = () => {
 
     }
 
-    async function handleSubmit(event) {
+    async function handleSubmits(event) {
         event.preventDefault()
         
         const url = 'http://localhost:4006/event/postevent';
@@ -48,6 +62,9 @@ const Event = () => {
             console.log(error);
         }
     }
+    
+
+
     return (
 
           <div >
@@ -67,27 +84,28 @@ const Event = () => {
                     
            >
               <CardContent>
-              <div className="headContainer">
-                <h1 className="heading" >Create Games</h1>
-                </div>
+              
+              <Typography color="textSecondary" align="center" variant="h4">
+            Create Events
+      </Typography>
                 <hr />
-              <form className='' onSubmit={handleSubmit}>
+              <form className='' onSubmit={handleSubmits}>
             <FormControl fullWidth sx={{ m: 3 }} variant="filled">
-            <TextField id="outlined-basic" label="Game Name" variant="outlined"
-
-                                sx={{
-                                    width: { sm: 200, md: 200, lg: 300, xl: 400 },
-                                    "& .MuiInputBase-root": {
-                                        height: 60
-                                    }
+            <TextField id="outlined-basic" label="Event Name" variant="outlined"
+                              
+                        sx={{ ml:9,
+                             width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                             "& .MuiInputBase-root": {
+                                 height: 60
+                                 }
                                 }}
                                 onChange={(e) => setDescription(e.target.value)} />
 
                          </FormControl>
-                        <FormControl fullWidth sx={{ m: 3 }} variant="filled">
-                        <TextField id="outlined-basic" label="Game Description" variant="outlined"
-
-                                sx={{
+                        <FormControl fullWidth sx={{ m: 3}} variant="filled">
+                        <TextField id="outlined-basic" label="Event Description" variant="outlined"
+                                
+                                sx={{ml:9,
                                     width: { sm: 200, md: 200, lg: 300, xl: 400 },
                                     "& .MuiInputBase-root": {
                                         height: 60
@@ -95,14 +113,37 @@ const Event = () => {
                                 }}
                                 onChange={(e) => setName(e.target.value)} />
                                  </FormControl> 
-                                 <FormControl sx={{ m: 3 }}   >
-                                 <input className='form-control' type="file" onChange={handleChange} 
-                                 />
+                                 <FormControl fullWidth sx={{ m: 3 }} variant="filled">
+                                                        <TextField type="Date"  
+                                                        sx={{ml:9,
+                                                            width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                                                            "& .MuiInputBase-root": {
+                                                                height: 60
+                                                            }
+                                                        }}
+                                                         autoComplete="off" name='Date' size="small" id="exampleFormControlInput1"  onChange={(e) => setName(e.target.value)} label="Start Date" InputLabelProps={{
+                                                            shrink: true,
+                                                        }} />
+                                                     </FormControl>         
+                                                     <FormControl fullWidth sx={{ m: 3 }} variant="filled">
+                                                        <TextField type="Date"  
+                                                        sx={{ml:9,
+                                                            width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                                                            "& .MuiInputBase-root": {
+                                                                height: 60
+                                                            }
+                                                        }}
+                                                         autoComplete="off" name='Date' size="small" id="exampleFormControlInput1"  onChange={(e) => setName(e.target.value)} label="End Date" InputLabelProps={{
+                                                            shrink: true,
+                                                        }} />
+                                                  </FormControl>
+                                 <FormControl sx={{ m: 3}}>
+                                 
+                                    <Input type="file" onChange={handleChange} sx={{ml:9}}/>
                                  </FormControl>
-                                 <Button size="md" onClick={handleSubmit} color="success" >
+                                 <Button size="md" onClick={handleSubmits} color="primary"sx={{mt:3}} >
                                     Upload
-                                    </Button>
-                                    
+                                    </Button>      
                             </form>
               </CardContent>
             </card>

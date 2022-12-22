@@ -1,18 +1,13 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import {
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-  Typography,
-  Stack,
-  Button,
-  Container
+    Box, Button,
+    Container, Modal, Stack, Table,
+    TableBody,
+    TableCell,
+    TableRow,
+    Typography
 } from '@mui/material';
-import Multiselect from 'multiselect-react-dropdown';
-import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
@@ -26,12 +21,20 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
+import Multiselect from 'multiselect-react-dropdown';
 import PropTypes from 'prop-types';
-import { Modal } from "react-responsive-modal";
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState, useRef } from 'react';
 import Swal from 'sweetalert2';
+axios.interceptors.request.use(
+    config => {
+      config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
+          return config;
+      },
+      error => {
+          return Promise.reject(error);
+      }
+  );
 
 
 function createData(UserName, GroupRole, Designation, Email) {
@@ -190,6 +193,8 @@ function EnhancedTableToolbar(props) {
     const [objects, setObjects] = useState([]);
     const [mailist, setMaillist] = useState([]);
     const [employeelist, setEmployeelist] = useState([]);
+    const groupmemberref = useRef();
+    const [groupmembererror, setGroupmembererror] = useState(null)
 
     const disp = (e) => {
 
@@ -246,10 +251,18 @@ function EnhancedTableToolbar(props) {
         const Gid = sessionStorage.getItem('Gid')
         console.log("AddUserto group=======", Gid);
         console.log(emplist);
+        if (groupMember.trim().length == 0) {
+            setGroupmembererror('This field is required')
+            groupmemberref.current.focus();
+
+        }
+        if (groupmembererror != null)
+            if (groupmembererror != null) {
+                return;
+            }
         axios.put("http://localhost:4006/group/Update/Multiple/UsersGroup/".concat(Gid), emplist).then((response) => {
             console.log("check", response);
-
-
+            handleAddmemberclose();
         })
     }
 
@@ -300,28 +313,42 @@ function EnhancedTableToolbar(props) {
                 {/* )} */}
             </Toolbar>
             <Modal open={open} onClose={handleAddmemberclose} center>
-                <Box sx={{ width: 500, mx: 9, mt: 3,height:500 }}>
-                <Container>
-                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Box sx={{
+                    position: 'absolute',
+                    top: '51%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 650,
+                    bgcolor: 'background.paper',
+                    border: '2px solid #000',
+                    boxShadow: 24,
+                    p: 4,
+                }}
 
-                    <Typography variant="h4" gutterBottom>
-                        Add Group Member
-                    </Typography>
-                </Stack>
-                <Stack spacing={6}>
-                    <Multiselect
-                        value={groupMember}
-                        isObject={false}
-                        onRemove={(event) => { disp(event) }}
-                        onSelect={(event) => { disp(event) }}
-                        options={userList}
-                        showCheckbox
-                    />
-                    <Button variant="contained" sx={{ m: 2, width: '15ch' }} onClick={() => Groupmembersubmit()} >
-                        Submit
-                    </Button>
-                </Stack>
-            </Container>
+                >
+                    <Container>
+                        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+
+                            <Typography variant="h4" gutterBottom>
+                                Add Group Member
+                            </Typography>
+                        </Stack>
+                        <Stack spacing={6}>
+                            <Multiselect
+                                ref={groupmemberref}
+                                value={groupMember}
+                                isObject={false}
+                                onRemove={(event) => { disp(event) }}
+                                onSelect={(event) => { disp(event) }}
+                                options={userList}
+                                showCheckbox
+                            />
+                            {groupmembererror != null ? <p style={{ color: "red" }}>{groupmembererror}</p> : ''}
+                            <Button variant="contained" sx={{ m: 2, width: '15ch' }} onClick={() => Groupmembersubmit()} >
+                                Submit
+                            </Button>
+                        </Stack>
+                    </Container>
                 </Box>
             </Modal>
         </>

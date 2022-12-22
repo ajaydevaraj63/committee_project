@@ -21,11 +21,14 @@ const navConfig = [
     path: '/dashboard/Groups',
     icon: icon('committee'),
   },
+
+  // localStorage.getItem("isCommitteeFormed")==true &&
   {
     title: 'Committee',
     path: '/dashboard/Committee',
     icon: icon('groups'),
   },
+
   {
     title: 'Point Table',
     path: '/dashboard/eventHistory',

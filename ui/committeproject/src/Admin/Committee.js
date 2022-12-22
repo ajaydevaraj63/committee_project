@@ -1,48 +1,39 @@
-import * as React from 'react';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { useEffect, useState, useRef } from 'react';
-import PropTypes from 'prop-types';
-import { alpha } from '@mui/material/styles';
+import DeleteIcon from '@mui/icons-material/Delete';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
+import Switch from '@mui/material/Switch';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import Tooltip from '@mui/material/Tooltip';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
-import { Helmet } from 'react-helmet-async';
 import moment from 'moment';
-import InputLabel from '@mui/material/InputLabel';
-import Select from '@mui/material/Select';
-import { Modal } from "react-responsive-modal";
-import { Link } from 'react-router-dom';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
 import Multiselect from 'multiselect-react-dropdown';
+import PropTypes from 'prop-types';
+import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import Swal from 'sweetalert2';
 
+
 import {
-    Table,
-    Stack,
-    Button,
-    Popover,
-    TableRow,
-    MenuItem,
-    TableBody,
-    TableCell,
-    TextField,
-    Typography,
-    Container,
-    Box,
+    Box, Button, Container, Modal, Stack, Table, TableBody,
+    TableCell, TableRow, Typography
 } from '@mui/material';
-import Iconify from '../components/iconify';
+axios.interceptors.request.use(
+    config => {
+      config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
+          return config;
+      },
+      error => {
+          return Promise.reject(error);
+      }
+  );
+
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -185,7 +176,7 @@ function EnhancedTableToolbar(props) {
     const { numSelected } = props;
 
     return (
-       <></>
+        <></>
     );
 }
 
@@ -203,54 +194,83 @@ export default function EnhancedTable() {
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [opens, setOpens] = useState(null);
-    const [editopen, setEditopen] = useState(false);
-    const [useropen, setUserOpens] = useState(false);
     const init = useRef();
     const [EditPatchValue, setEditpatchvalue] = useState([]);
+
+
+
     // CsvModal
-    const [csvModal, setCsvModalOpen] = useState(false);
 
-        // search //
+    // search //
 
-        const [Searchuser, setSearchUser] = useState({
-            UserName: '',
-            currentPage: '',
-            pageSize: '',
-            Designation: '',
+    const [Searchuser, setSearchUser] = useState({
+        UserName: '',
+        currentPage: '',
+        pageSize: '',
+        Designation: '',
+    })
+
+    const onPageChange = e => {
+        e.preventDefault();
+        setSearchUser({ ...Searchuser, [e.target.name]: e.target.value })
+    }
+
+    const onSearch = () => {
+        axios.get('http://localhost:4006/Users/Display/FilteredUser', Searchuser).then((response) => {
+            console.log("sucessssssssssssssssss", response.data);
+
+        });
+    }
+
+    useEffect(() => {
+        console.log("useeffedct");
+        checkgrouptype();
+        FilterdUser();
+    }, [])
+
+    // find committee id //
+
+    const [GetGroupType, setGetGroupId] = useState();
+
+    async function checkgrouptype() {
+        const body = {
+            GroupType: 1
+        }
+        await axios.post("http://localhost:4006/Group/FindCommittee", body).then((response) => {
+            console.log("llllll", response);
+            setGetGroupId(response.data[0]._id);
+
         })
-    
-        const onPageChange = e => {
-            e.preventDefault();
-            setSearchUser({ ...Searchuser, [e.target.name]: e.target.value })
-        }
-
-        const onSearch = () => {
-            axios.get('http://localhost:4006/Users/Display/FilteredUser',Searchuser).then((response) => {
-                console.log("sucessssssssssssssssss", response.data);
-                
-            });
-        }
+    }
 
     // list members API calling//
 
+    useEffect(() => {
+
+        if (GetGroupType) {
+            console.log("committeee");
+            listcommitteemember();
+        }
+    }, [GetGroupType])
+
+
     const [data, setData] = useState([]);
 
-    useEffect(() => {
-        console.log("ap call====================");
-        axios.get('http://localhost:4006/users/display/All/user').then((response) => {
+    const listcommitteemember = () => {
+        console.log("ap call====================", GetGroupType);
+        axios.get('http://localhost:4006/Group/FindAllUser/inCommittee/'.concat(GetGroupType)).then((response) => {
             console.log("sucess", response.data);
             setData(response.data)
+
         });
-
-    }, [])
-
+    }
 
     // Delete API //
 
 
     const deleteUser = (id) => {
         const body = {
-            Delete: 1
+            CommitteeId: 0
         }
         console.log("delete==========");
         console.log(id);
@@ -273,6 +293,7 @@ export default function EnhancedTable() {
                     )
                     console.log(id);
                     console.log("check", response);
+                    checkgrouptype();
                 })
             }
         })
@@ -280,17 +301,17 @@ export default function EnhancedTable() {
 
     // edit API //
 
-    const EditSubmit = (e) => {
-        e.preventDefault();
-        console.log("EditUser=======",editUser);
-        const id = sessionStorage.getItem('id')
-        console.log('check', id);
-        axios.post("http://localhost:4006/auth/update/user/type/".concat(id), editUser).then((response) => {
-            console.log("check", response.data);
-            handleeditClose();
-            window.location.reload();
-        })
-    }
+    // const EditSubmit = (e) => {
+    //     e.preventDefault();
+    //     console.log("EditUser=======",editUser);
+    //     const id = sessionStorage.getItem('id')
+    //     console.log('check', id);
+    //     axios.post("http://localhost:4006/auth/update/user/type/".concat(id), editUser).then((response) => {
+    //         console.log("check", response.data);
+    //         handleeditClose();
+    //         window.location.reload();
+    //     })
+    // }
 
     // add single user API//
 
@@ -363,19 +384,7 @@ export default function EnhancedTable() {
 
     // Edit user modal //
 
-    function handleeditOpen(id) {
-        sessionStorage.setItem('id', id);
-        console.log("vvvvv", id);
-        axios.get("http://localhost:4006/auth/getUser/byId/".concat(id)).then((response) => {
-            console.log("check", response.data);
-            // const editData =response.data;
-            setEditpatchvalue(response.data);
-            console.log("lllllllllllllllllllllllllllllllll", EditPatchValue);
-            setEditopen(true);
-        })
 
-    }
-    const handleeditClose = () => setEditopen(false);
 
     // add user modal // 
 
@@ -411,6 +420,9 @@ export default function EnhancedTable() {
     const [objects, setObjects] = useState([]);
     const [mailist, setMaillist] = useState([]);
     const [employeelist, setEmployeelist] = useState([]);
+    const groupmemberref = useRef();
+    const [groupmembererror, setGroupmembererror] = useState(null)
+
 
     const disp = (e) => {
 
@@ -420,28 +432,39 @@ export default function EnhancedTable() {
         setMaillist(data);
     }
 
+    ////  list filterd users ////
 
-    useEffect(() => {
+
+    const FilterdUser = () => {
+        console.log("filter");
         const listgroupusers = []
         const listobject = []
-        const getUserlist = async () => {
-            console.log("ap call====================");
-            const reqData = await axios.get('http://localhost:4006/users/Display/AddUsersToNewGroup');
-            const reqsData = await reqData.data;
-            console.log("reqData", reqsData);
 
-            for (let i = 0; i < reqsData.length; i += 1) {
-                listgroupusers.push(reqsData[i].Email);
-                listobject.push(reqsData[i]);
-                console.log('kk', listobject);
-            }
-            setUserlist(listgroupusers);
-            setObjects(listobject);
+        const getUserlist = async () => {
+            console.log("apa of  call====================");
+            const reqData = await axios.get("http://localhost:4006/Users/Display/AddUsersToNewCommittee").then((response) => {
+                console.log('........', response)
+                console.log('filterd user', response.data);
+                const reqsData = response.data;
+                console.log("reqData", reqsData);
+
+                for (let i = 0; i < reqsData.length; i += 1) {
+                    listgroupusers.push(reqsData[i].Email);
+                    listobject.push(reqsData[i]);
+                    console.log('kk', listobject);
+                }
+                setUserlist(listgroupusers);
+                setObjects(listobject);
+            })
+
 
         }
-        getUserlist();
 
-    }, []);
+        getUserlist();
+    }
+
+
+    /// finish /////
 
     const Groupmembersubmit = async () => {
         const emplist = []
@@ -464,17 +487,25 @@ export default function EnhancedTable() {
             setEmployeelist(emplist);
         });
         console.log('success', employeelist);
-        const Gid = sessionStorage.getItem('Gid')
-        console.log("AddUserto group=======", Gid);
-        console.log(emplist);
-        axios.put("http://localhost:4006/group/Update/Multiple/UsersGroup/".concat(Gid), emplist).then((response) => {
-            console.log("check", response);
+        console.log(emplist, GetGroupType);
+        if (groupMember.trim().length == 0) {
+            setGroupmembererror('This field is required')
+            groupmemberref.current.focus();
 
+        }
+        if (groupmembererror != null)
+            if (groupmembererror != null) {
+                return;
+            }
+        axios.put("http://localhost:4006/group/Update/Multiple/UsersCommittee/".concat(GetGroupType), emplist).then((response) => {
+            console.log("check", response);
+            handleAddmemberclose();
 
         })
+        checkgrouptype();
     }
 
-    
+
 
     return (
         <>
@@ -495,7 +526,7 @@ export default function EnhancedTable() {
                         <GroupAddIcon />
                     </IconButton>
                 </Tooltip>
-                
+
             </Stack>
             {/* <TextField
                 id="filled-search"
@@ -508,7 +539,7 @@ export default function EnhancedTable() {
             {/* <Button variant="contained" onClick={(e) => onSearch(e)} startIcon={<Iconify icon="eva:plus-fill" />}>
                     Search
                 </Button> */}
-                 {/* <Button variant="" sx={{color:'gray',mt:1}} onClick={(e) => onSearch(e)} >
+            {/* <Button variant="" sx={{color:'gray',mt:1}} onClick={(e) => onSearch(e)} >
                     Search
                 </Button> */}
             <Box sx={{ width: '100%' }}>
@@ -543,8 +574,8 @@ export default function EnhancedTable() {
                                                 role="checkbox"
                                                 aria-checked={isItemSelected}
                                                 tabIndex={-1}
-                                                key={row._id}   
-                                                // selected={isItemSelected}
+                                                key={row._id}
+                                            // selected={isItemSelected}
                                             >
                                                 {/* <TableCell padding="checkbox">
                                                     <Checkbox
@@ -618,33 +649,45 @@ export default function EnhancedTable() {
                     label="Dense padding"
                 />
             </Box>
-
             <Modal open={open} onClose={handleAddmemberclose} center>
-                <Box sx={{ width: 400, mx: 9, mt: 3,height:500 }}>
-                <Container>
-                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Box sx={{
+                    position: 'absolute',
+                    top: '51%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 650,
+                    bgcolor: 'background.paper',
+                    border: '2px solid #000',
+                    boxShadow: 24,
+                    p: 4,
+                }}
 
-                    <Typography variant="h4" gutterBottom>
-                        Add Group Member
-                    </Typography>
-                </Stack>
-                <Stack spacing={6}>
-                    <Multiselect
-                        value={groupMember}
-                        isObject={false}
-                        onRemove={(event) => { disp(event) }}
-                        onSelect={(event) => { disp(event) }}
-                        options={userList}
-                        showCheckbox
-                    />
-                    <Button variant="contained" sx={{ m: 2, width: '15ch' }} onClick={() => Groupmembersubmit()} >
-                        Submit
-                    </Button>
-                </Stack>
-            </Container>
+                >
+                    <Container>
+                        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+
+                            <Typography variant="h4" gutterBottom>
+                                Add Committee Member
+                            </Typography>
+                        </Stack>
+                        <Stack spacing={6}>
+                            <Multiselect
+                                value={groupMember}
+                                isObject={false}
+                                onRemove={(event) => { disp(event) }}
+                                onSelect={(event) => { disp(event) }}
+                                options={userList}
+                                showCheckbox
+                            />
+                            {groupmembererror != null ? <p style={{ color: "red" }}>{groupmembererror}</p> : ''}
+                            <Button variant="contained" sx={{ m: 2, width: '15ch' }} onClick={() => Groupmembersubmit()} >
+                                Submit
+                            </Button>
+                        </Stack>
+                    </Container>
                 </Box>
             </Modal>
-            
+
 
             {/* New use Popover */}
 

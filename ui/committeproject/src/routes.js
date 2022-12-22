@@ -28,10 +28,16 @@ import UserPageInno from './Innovature/UserPage';
 import DashboardAppInno from './Innovature/DashboardAppPage';
 import PointTableCurrent from './Innovature/PointTableCurrent';
 
-import Event from './components/Event/Event';
+
 // import GamesCreate from './components/Games/Games';
-import CommitteManage from './committe/Committee';
+
 import EventHistory from './Admin/AllEvents/EventHistory';
+import Event from './committe/Event/Event';
+import Games from './committe/Games';
+import ListGames from './committe/ListGames';
+import CommitteeRole from './committe/CommitteeRole';
+import HomeCommitte from './committe/Home/DashboardAppPage';
+
 
 
 
@@ -71,14 +77,24 @@ export default function Router() {
       ],
     },
     {
-      path: '/dashboardCommitte',
-      element: <DashboardLayoutCommitte />,
-      children: [
-        { element: <Navigate to="/dashboardCommitte/app" />, index: true },
-        { path: 'Event', element: <Event /> },
-        // { path: 'GamesCreate', element: <GamesCreate /> },
-        { path: 'Committe', element: <CommitteManage /> },
+      // path: '/dashboardCommitte',
+      // element: <DashboardLayoutCommitte />,
+      // children: [
+      //   { element: <Navigate to="/dashboardCommitte/app" />, index: true },
+      //   { path: 'Event', element: <Event /> },
+      //   // { path: 'GamesCreate', element: <GamesCreate /> },
+      //   { path: 'Committe', element: <CommitteManage /> },
 
+        path: '/dashboardCommitte',
+        element: <DashboardLayoutCommitte />,
+        children: [
+          { element: <Navigate to="/dashboardCommitte/app" />, index: true },
+          { path: 'app', element: <DashboardAppPage/> },
+          {path:'Event', element : <Event/>},
+          {path:'Games', element : <Games/>},
+          {path:'ListGames', element: <ListGames />},
+          {path:'CommitteeRole', element : <CommitteeRole/>},
+          {path:'Home', element : <HomeCommitte/>},
 
 
 

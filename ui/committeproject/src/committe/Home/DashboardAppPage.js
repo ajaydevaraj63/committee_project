@@ -1,9 +1,10 @@
 import { React, useState, useEffect } from "react";
 import axios from "axios";
-import "./GroupMembers.css";
+import "./Dashboard.css";
 import { Helmet } from "react-helmet-async";
 import Post from "./Imagepost";
 import Share from "./share/Share";
+
 // import { Users } from "./dummyData";
 
 // import { Posts } from "./dummyData";
@@ -11,8 +12,6 @@ import Share from "./share/Share";
 // @mui
 // import { useTheme } from "@mui/material/styles";
 import { Box, Grid, Container, Typography } from "@mui/material";
-import { DisplayAllPost } from "src/api";
-const API = axios.create({ baseURL: "http://localhost:4006" });
 axios.interceptors.request.use(
   config => {
     config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
@@ -23,22 +22,17 @@ axios.interceptors.request.use(
     }
 );
 
-//for adding the json token to the middleware,
-
 export default function DashboardAppPage() {
   // const theme = useTheme();
+
   const [posts, setPosts] = useState([]);
 
   const [Posts, setPosts1] = useState([]);
 
-  API.interceptors.request.use((req) => {
-    if (localStorage.getItem("Profile")) {
-      req.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
-    }
-    return req;
-  });
   useEffect(() => {
-    API.get("/users/display/All/user").then((res) => {
+    axios
+      .get("http://localhost:4006/users/display/All/user")
+      .then((res) => {
         console.log(res);
         setPosts(res.data);
       })
@@ -46,17 +40,7 @@ export default function DashboardAppPage() {
         console.log("Error: " + err);
       });
   }, []);
-  // useEffect(() => {
-    
-  //   API.get("/post/allposts")
-  //     .then((res) => {
-  //       console.log(res);
-  //       setPosts1(res.data);
-  //     })
-  //     .catch((err) => {
-  //       console.log("Error: " + err);
-  //     });
-  // }, []);
+
   useEffect(() => {
     axios
       .get("http://localhost:4006/post/allposts")
@@ -110,8 +94,7 @@ export default function DashboardAppPage() {
           <Grid className="Grid2" item xs={1} sm={6} md={2.8}>
             <div className="flex-container">
               <div className="Icons2">
-                <h2 className="heading">Kalakachi</h2>
-                <hr></hr>
+                <h4 className="heading">Kalakachi</h4>
                 {posts.map((post) => {
                   return (
                     <div className="container-fluid  ">

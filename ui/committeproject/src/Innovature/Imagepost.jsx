@@ -22,21 +22,22 @@ export default function Post({ post }) {
   return (
     <div className="post">
       <div className="postWrapper">
-        <div className="postTop">
+      <div className="postTop">
           <div className="postTopLeft">
             <img className="postProfileImg" src="https://as2.ftcdn.net/v2/jpg/00/65/77/27/1000_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg" alt="" />{" "}
-            {post.User.map((value) => (
-              <span className="postUsername">{value.username}</span>
-            ))}
+            {post.userlist.map((value) => (
+              <span className="postUsername">{value.UserName}</span>
+            ))} 
             <span className="postDate">
               {new Date(post.createdAt).toLocaleDateString("en-us", options)}
             </span>
           </div>
         </div>
         <div className="postCenter">
-          <span className="postText">{post.EventDescription}</span><br />
+          <span className="postText">{post.PostDescription}</span><br />
           <img className="postImg" src={post.File} alt="" download/>
-          <a  href={post.File} download><InsertDriveFileRoundedIcon  className="svg_icons"/></a>
+          <img className="postImg" src="https://picsum.photos/600/450?random=2"></img>
+          {/* <a  href={post.File} download><InsertDriveFileRoundedIcon  className="svg_icons"/></a> */}
         </div>
         <div className="postBottom">
           {/* <div className="postBottomLeft">

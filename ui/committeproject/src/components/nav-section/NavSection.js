@@ -16,7 +16,10 @@ export default function NavSection({ data = [], ...other }) {
     <Box {...other}>
       <List disablePadding sx={{ p: 1 }}>
         {data.map((item) => (
+        //  (localStorage.getItem("isCommitteeFormed") != true && item.title != "Committee" ?
           <NavItem key={item.title} item={item} />
+          // :localStorage.getItem("isCommitteeFormed") == true ?
+          // <NavItem key={item.title} item={item} />:'')
         ))}
       </List>
     </Box>

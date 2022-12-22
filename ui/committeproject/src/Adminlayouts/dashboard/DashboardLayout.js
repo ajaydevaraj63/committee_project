@@ -1,10 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
+
 // @mui
 import { styled } from '@mui/material/styles';
 //
 import Header from './header';
 import Nav from './nav';
+import axios from 'axios';
+axios.interceptors.request.use(
+  config => {
+    config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
+
 
 // ----------------------------------------------------------------------
 
@@ -34,6 +46,25 @@ const Main = styled('div')(({ theme }) => ({
 
 export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
+  const [CheckGroupType, setCheckGroupType] = useState('');
+
+  useEffect(() => {
+    const body = {
+      GroupType: 1,
+      Delete:0
+    }
+    console.log("jjjjjjjjjjjjjjjjjjjjjjjjj")
+    axios.post("http://localhost:4006/Group/FindCommittee", body).then((response) => {
+      console.log("nav", response.data);
+
+      if( response && response.data.length>0){
+        localStorage.setItem('isCommitteeFormed',true);
+      }else{
+        localStorage.setItem('isCommitteeFormed',false);
+      }
+      setCheckGroupType(response.data);
+    })
+  }, [])
 
   return (
     <StyledRoot>

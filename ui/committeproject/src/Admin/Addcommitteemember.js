@@ -10,6 +10,15 @@ import {
     Typography,
 } from '@mui/material';
 // import Iconify from '../components/iconify';
+axios.interceptors.request.use(
+    config => {
+      config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
+          return config;
+      },
+      error => {
+          return Promise.reject(error);
+      }
+  );
 
 
 

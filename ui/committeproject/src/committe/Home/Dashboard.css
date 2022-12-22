@@ -1,6 +1,6 @@
 @media only screen and (max-width: 2000px) {
   .Icons2 {
-    background-color:#edeff2;
+    background-color: #edeff2;
 
     padding-top: 20px;
 
@@ -94,8 +94,8 @@
     background-color: #edeff2;
   }
   .heading {
-    background-color: rgb(255, 255, 255);
-    font-size: 1rem;
+    background-color:  #edeff2;
+
     margin-left: 27%;
   }
 }
@@ -195,7 +195,7 @@
   font-size: 15px;
 }
 .heading {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
 }
 /* @media only screen and (max-width: 600px) {
 .Grid{
@@ -218,18 +218,20 @@
 .post-scroll {
   grid-area: post;
   background-color: #f9fafb;
-  height: 86.7vh;
+  height: 91.7vh;
   width: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
+  scrollbar-width: none;
 }
 .group {
   grid-area: group;
-  background-color:#f9fafb;
-  height: 86.7vh;
+  background-color: #edeff2;
+  height: 91.7vh;
   width: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
+  scrollbar-width: none;
   border-radius: 30px;
 }
 .post-sub {

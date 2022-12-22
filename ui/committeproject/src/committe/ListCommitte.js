@@ -3,6 +3,15 @@ import { Card, TableBody } from '@mui/material'
 import axios from 'axios';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
+axios.interceptors.request.use(
+    config => {
+      config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
+          return config;
+      },
+      error => {
+          return Promise.reject(error);
+      }
+  );
 
 
 export const ListCommittee = () => {

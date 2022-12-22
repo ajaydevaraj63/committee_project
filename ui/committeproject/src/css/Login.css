@@ -11,7 +11,7 @@
     height: 100%;
     padding: 50px;
     background-image: url("https://innovature.letsachieve.co/images/illustration/img-1.png"), linear-gradient(#7181f7, #525252);
-     background-repeat: no-repeat;
+     background-repeat: no-repeat;
     background-size: 100% 100%;
   } */
 
@@ -60,19 +60,21 @@ opacity: 1;
 }
 }
 
-.btn {
+.btn1 {
 
-    background-image: url("https://freepngimg.com/save/24227-vector-hd/800x600");
-    background-position:30%  ;
+    /* background-image: url("https://freepngimg.com/save/24227-vector-hd/800x600"); */
+    background-position:50%  ;
+    padding: 40px;
+    
     outline: none;
     box-shadow: rgba(205, 205, 205, 0.3) 0px 19px 38px, rgba(209, 209, 209, 0.22) 0px 15px 12px;
-
+    min-height:0;
     cursor: pointer;
     -webkit-transition: all ease-in .1s;
     transition: all ease-in .1s
     
 }
-.btn:hover{
+.btn1:hover{
     opacity: 1;
     cursor: pointer;
    border-color: #ffffff;
@@ -81,7 +83,7 @@ opacity: 1;
     -webkit-transition: all ease-in .3s;
     transition: all ease-in .1s;
     transform: scale(1.03);
-    box-shadow: rgba(205, 205, 205, 0.3) 0px 19px 38px, rgba(209, 209, 209, 0.22) 0px 15px 12px;
+    box-shadow: rgba(108, 108, 108, 0.3) 0px 19px 38px, rgba(125, 242, 255, 0.22) 0px 15px 12px;
 
 }
 
@@ -102,8 +104,8 @@ opacity: 1;
         position: relative;
 
     }
-    .btn {
-    background-image: url("https://freepngimg.com/save/24227-vector-hd/800x600");
+    .btn1 {
+    /* background-image: url("https://freepngimg.com/save/24227-vector-hd/800x600"); */
     background-position: 0%  ;
   
     outline: none;
@@ -132,10 +134,10 @@ opacity: 1;
         position: relative;
 
     }
-    .btn {
-        background-image: url("https://freepngimg.com/save/24227-vector-hd/800x600");
+    .btn1 {
+        /* background-image: url("https://freepngimg.com/save/24227-vector-hd/800x600"); */
         background-position: 40%  ;
-      
+        
         outline: none;
         
         cursor: pointer;
@@ -167,4 +169,7 @@ font-weight: 500;
     flex-direction: row;
     justify-content:space-between;
    
+}
+.box1{
+    margin-top: 50%;
 }

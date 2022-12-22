@@ -1,27 +1,28 @@
-import AddIcon from '@mui/icons-material/Add';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import Paper from '@mui/material/Paper';
+import { Accordion, AccordionDetails, AccordionSummary, TablePagination, Typography } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import axios from 'axios';
 import moment from 'moment';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-
-const columns = [
-    { id: 'Events', label: 'Event Name', minWidth: 150 },
-    { id: 'description', label: 'Description', minWidth: 150 },
-    { id: 'file', label: 'File', minWidth: 150 },
-    { id: 'Action', label: '', minWidth: 150 },
-];
-
+axios.interceptors.request.use(
+    config => {
+      config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
+          return config;
+      },
+      error => {
+          return Promise.reject(error);
+      }
+  );
 export default function History() {
+
+
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -30,10 +31,18 @@ export default function History() {
     };
 
     const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(+event.target.value);
+        setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
 
+
+
+    //on Click toggle 
+    const [expanded, setExpanded] = React.useState(false);
+
+    const handleChange = (panel) => (event, isExpanded) => {
+        setExpanded(isExpanded ? panel : false);
+    };
 
     //List Point Table ==========================================================================
     const [PointList, setPointList] = useState([])
@@ -65,16 +74,8 @@ export default function History() {
 
 
 
-    //on Click toggle 
 
-    const useToggle = (initialState) => {
-        const [toggleValue, setToggleValue] = useState(initialState);
 
-        const toggler = () => { setToggleValue(!toggleValue) };
-        return [toggleValue, toggler]
-    };
-
-    const [toggle, setToggle] = useToggle();
 
     // Point Table =================================================================================================
 
@@ -82,73 +83,77 @@ export default function History() {
         <><Helmet>
             <title> Admin | Events History  </title>
         </Helmet>
-            <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-                <TableContainer sx={{ maxHeight: 700 }}>
-                    <Table stickyHeader aria-label="sticky table">
-                        <TableHead>
-                            <TableRow>
-                                {columns.map((column) => (
-                                    <TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
-                                        {column.label}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {PointList
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row) => {
-                                    return (
-                                        <><TableRow>
-                                            <TableCell> {row.EventName}  </TableCell>
-                                            <TableCell> {row.EventDescription}  </TableCell>
-                                            <TableCell><a href={row.File} download><PictureAsPdfIcon /></a></TableCell>
-                                            <TableCell  ><AddIcon onClick={() => { EventClick(row._id); setToggle(); }} />
-                                            </TableCell>
-                                        </TableRow>
-                                            <TableRow>
-                                                {/* OnClick toggle========================================================================================================== */}
-                                                {toggle && (
-                                                    <Table sx={{ marginTop: '25px', marginLeft: '40%' }}>
-                                                        <TableHead>
-                                                            <TableRow>
-                                                                <TableCell>Game Name</TableCell>
-                                                                <TableCell>Description</TableCell>
-                                                                <TableCell>Start Date</TableCell>
-                                                                <TableCell>End Date</TableCell>
-                                                            </TableRow>
-                                                        </TableHead>
-                                                        <TableBody>
-                                                            {gameList
-                                                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                                                .map((row) => {
-                                                                    return (
-                                                                        <TableRow>
-                                                                            <TableCell>{row.GameName}</TableCell>
-                                                                            <TableCell>{row.GameDesc}</TableCell>
-                                                                            <TableCell>{moment(row.StartDate).format('DD/MM/YYYY')}</TableCell>
-                                                                            <TableCell>{moment(row.EndDate).format('DD/MM/YYYY')}</TableCell>
-                                                                        </TableRow>
-                                                                    );
-                                                                })}
-                                                        </TableBody>
-                                                    </Table>
-                                                )}
-                                            </TableRow></>
-                                    );
-                                })}
 
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[10, 25, 100]}
-                    component="div"
-                    count={PointList.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage} />
-            </Paper></>
+            <div>
+                <Accordion sx={{ backgroundColor: '#F4F6F8' }}>
+                    <AccordionSummary>
+                        <Typography sx={{ width: '32%', flexShrink: 0 }}>Event Name</Typography>
+                        <Typography sx={{ width: '33%', flexShrink: 0 }}>Event Description</Typography>
+                        <Typography sx={{ width: '33%', flexShrink: 0 }}>File</Typography>
+                    </AccordionSummary>
+                </Accordion>
+
+                {
+                    PointList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                        .map((row) => {
+                            return (
+
+                                <Accordion expanded={expanded === row._id} onChange={handleChange(row._id)} key={row._id}>
+                                    <AccordionSummary
+                                        expandIcon={<ExpandMoreIcon />}
+                                        aria-controls="panel1bh-content"
+                                        id={row._id}
+                                        onClick={() => EventClick(row._id)}
+                                    >
+                                        <Typography sx={{ width: '33%', flexShrink: 0 }}>
+                                            {row.EventName}
+                                        </Typography>
+                                        <Typography sx={{ color: 'text.secondary', width: '33%', }}>{row.EventDescription}</Typography>
+                                        <Typography sx={{ color: 'text.secondary' }}><a href={row.File} download style={{ color: 'black' }}><PictureAsPdfIcon /></a></Typography>
+
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <Typography>
+                                            <Table >
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell>Game Name</TableCell>
+                                                        <TableCell>Description</TableCell>
+                                                        <TableCell>Start Date</TableCell>
+                                                        <TableCell>End Date</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {gameList
+                                                        .map((row) => {
+                                                            return (
+                                                                <TableRow key={row._id}>
+                                                                    <TableCell>{row.GameName}</TableCell>
+                                                                    <TableCell>{row.GameDesc}</TableCell>
+                                                                    <TableCell>{moment(row.StartDate).format('DD/MM/YYYY')}</TableCell>
+                                                                    <TableCell>{moment(row.EndDate).format('DD/MM/YYYY')}</TableCell>
+                                                                </TableRow>
+                                                            );
+                                                        })}
+                                                </TableBody>
+                                            </Table>
+                                        </Typography>
+                                    </AccordionDetails>
+                                </Accordion>
+                            );
+                        })}
+            </div>
+            <TablePagination
+                rowsPerPageOptions={[10, 20, 100]}
+                component="div"
+                count={PointList.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+
+
+        </>
     );
 }

@@ -12,6 +12,15 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Modal from 'react-responsive-modal';
+axios.interceptors.request.use(
+    config => {
+      config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
+          return config;
+      },
+      error => {
+          return Promise.reject(error);
+      }
+  );
 
 const columns = [
     { id: 'Group', label: 'Group Icon', maxWidth: 0 },
@@ -90,7 +99,7 @@ export default function GroupsPoints() {
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row) => {
                                     return (
-                                        <TableRow>
+                                        <TableRow key={row._id}>
                                             <TableCell><Avatar src={row.GroupImage}></Avatar></TableCell>
                                             <TableCell sx={{ cursor: 'pointer' }}> {row.GroupName} </TableCell>
                                             <TableCell > 378 </TableCell>
