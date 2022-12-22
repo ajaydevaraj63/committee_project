@@ -12,8 +12,9 @@ const EventSchema=mongoose.Schema({
     EventDescription:{
         type:String
     },
-    UserId:{
-        type:String
+    UserId: {
+        type: mongoose.Schema.Types.ObjectId, ref: "userstable"
+
     },
     StartDate:{
         type:Date,

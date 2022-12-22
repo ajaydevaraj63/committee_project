@@ -70,7 +70,7 @@ exports.displayallusers = (req, res) => {
       res.status(500).json(error)
     }
     else {
-
+console.log(data)
       res.send(data)
     }
   })
@@ -147,7 +147,7 @@ exports.paginationRecord = async(req, res, next) => {
 }
 
 exports.AddNewUsersToGroup = (req, res) => {
-  User.find({$and:[{ GroupId: "0" },{Delete:"0"}]}, (error, data) => {
+  User.find({$and:[{ GroupId: "0" },{Delete:0}]}, (error, data) => {
     if (error) {
       res.status(500).json(error)
     }
@@ -159,7 +159,18 @@ exports.AddNewUsersToGroup = (req, res) => {
 
 }
 
+exports.AddNewUsersToCommittee = (req, res) => {
+  User.find({$and:[{ CommitteeId: "0" },{Delete:0}]},(error, data) => {   
+    if (error) {
+      res.status(500).json(error)
+    }
+    else {
 
+      res.send(data)
+    }
+  })
+
+}
 exports.searchUser = async (req, res) => {
   const { searchQuery } = req.query
   try {

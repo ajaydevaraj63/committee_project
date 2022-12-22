@@ -1,5 +1,5 @@
 const express = require("express");
-const { displayall, updateuser, deleteuser, FindbyNameAndEmail, displayallusers, getGropuMembers, paginationRecord, pagination, AddNewUsersToGroup, searchUser, updatecommittee, committeemember } = require("../controller/User");
+const { displayall, updateuser, deleteuser, FindbyNameAndEmail, displayallusers, getGropuMembers, paginationRecord, pagination, AddNewUsersToGroup, searchUser, updatecommittee, committeemember, AddNewUsersToCommittee } = require("../controller/User");
 const UserSchema = require('../models/UserTable')
 const { verifytoken, verifyuser, verifyadmin } = require("../utils/verifytoken");
 const router = express.Router();
@@ -54,8 +54,10 @@ router.get("/email/:id", FindbyNameAndEmail)
 router.get('/display/All/user', displayallusers)
 router.get('/group/members', getGropuMembers);
 router.get("/Display/AddUsersToNewGroup",AddNewUsersToGroup)
+router.get("/Display/AddUsersToNewCommittee",AddNewUsersToCommittee)
 router.get("/searchuser", searchUser)
 router.get("/getCommitteMember", committeemember)
 router.put("/committeeupdate/:id",updatecommittee)
+
 
 module.exports = router

@@ -1,3 +1,4 @@
+const { string } = require('@hapi/joi');
 const { default: mongoose } = require('mongoose')
 const moongoose = require('mongoose')
 
@@ -48,7 +49,8 @@ const UserSchema = new moongoose.Schema({
     }
     ,
     CommitteeId: {
-        type: mongoose.Schema.Types.ObjectId, ref: "Groups"
+        default:0,
+        type: String
 
     }
     ,

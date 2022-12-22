@@ -176,7 +176,6 @@ exports.newlogin = async (req, res, next) => {
 
 
 }
-
 exports.updateUserType= (req,res)=>{
    UserTable.findByIdAndUpdate(req.params.id,{$set:req.body},(error,data)=>{
             if(error){
@@ -192,6 +191,8 @@ exports.updateUserType= (req,res)=>{
 exports.deleteUser= (req,res)=>{
 
    UserTable.findByIdAndUpdate(req.params.id,{$set:req.body},(error,data)=>{
+    console.log(req.params.id)
+    console.log(req.body)
             if(error){
                 res.send(error )
             }

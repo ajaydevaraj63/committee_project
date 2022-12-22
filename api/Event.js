@@ -15,8 +15,8 @@ const joi=require('@hapi/joi')
 const Schema =joi.object().keys({
     EventName: joi.string().alphanum().min(3).max(30),
     EventDescription: joi.string().min(3).max(30),
-    // StartDate: joi.date(),
-    // EndDate: joi.date(),
+    StartDate: joi.date(),
+    EndDate: joi.date(),
     UserId: joi.string().alphanum()
 })
 

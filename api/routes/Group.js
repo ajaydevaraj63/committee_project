@@ -8,13 +8,13 @@ const multer = require('multer');
 app.use(bodyParser.urlencoded({ extended: false }));
 const router = exp.Router();
 const GroupTable = require('../models/Groups.js');
-const { updatesingleuser, UpdateGroupOfAllUsers, FindAllGroups, findGroupById, FindUsersOfAGroup, updateGroupDetails, GroupDelete, FindAllCommittee } = require('../controller/Group.js');
+const { updatesingleuser, UpdateGroupOfAllUsers, FindAllGroups, findGroupById, FindUsersOfAGroup, updateGroupDetails, GroupDelete, FindAllCommittee, findCommity, UpdateCommitteeOfAllUsers, FindUsersOfACommittee, FindUsersOfACommitteeDelete } = require('../controller/Group.js');
 const { verify } = require('crypto');
 const Joi = require('@hapi/joi');
 
 const schema = Joi.object().keys({
-  GroupName: Joi.string().alphanum().max(30).required(),
-  GroupType: Joi.string().alphanum().max(30).required()
+  GroupName: Joi.string().max(30).required(),
+  GroupType: Joi.string().max(30)
 
 });
 
@@ -98,12 +98,16 @@ function updateProfileImage(req, res) {
 }
 router.put("/Update/Single/UserGroup/:id", updatesingleuser);
 router.put("/Update/Multiple/UsersGroup/:id", UpdateGroupOfAllUsers)
+router.put("/Update/Multiple/UsersCommittee/:id", UpdateCommitteeOfAllUsers)
 router.get("/findAllGroup",FindAllGroups)
 router.get("/findGroupById/:id",findGroupById)
 router.get("/FindAllUser/inGroup/:id",FindUsersOfAGroup)
+router.put("/FindAllUser/inCommittee/:id",FindUsersOfACommittee)
+router.put("/Delete/CommitteeOrGroup/:id",FindUsersOfACommitteeDelete)
 router.post("/FindCommittee",FindAllCommittee);
 router.put("/UpdateGroupDetails/:id",updateGroupDetails)
 router.put("/UpdateDelete/:id",GroupDelete)
+router.get("/GetDataOfCommittee",findCommity)
 module.exports = router;
 
 

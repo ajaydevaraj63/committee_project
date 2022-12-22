@@ -1,4 +1,5 @@
 ///google login/////////
+const PORT = process.env.port || 4006;
 const cookieSession = require("cookie-session"); //npm i  express pasport cors  cookie-session
 const cors = require("cors");
 require("./passport.js");
@@ -10,7 +11,8 @@ const client = new OAuth2Client(CLIENT_ID);
 const session = require('express-session')
 const TotalPoint=require('./routes/TotalPoint.js')
 const Desig=require('./routes/Designation.js')
-
+const dotenv = require('dotenv');
+dotenv.config();
 //////////////////////
 
 const mongoose = require('mongoose')
@@ -29,7 +31,7 @@ const PointMgmnt = require('./routes/PointTable.js')
 const gameRoute =require('./routes/Game.js');
 app.use(urlencoded({ extended: true }))
 app.use(bdyp.json())
-
+const postRoute=require('./routes/Post.js')
 ////////////google Login////////////
  app.use(
    cookieSession({ name: "cookie", keys: ["lama"], maxAge: 24 * 60 * 60 * 100 })
@@ -87,7 +89,7 @@ app.use("/Group", groupRoute);
 app.use("/Point", PointMgmnt);
 app.use("/game",gameRoute);
 app.use("/TotalPoint",TotalPoint)
-
+app.use("/post",postRoute)
 app.use("/Designation",Desig);
 
 app.use("/Designation",Desig);
@@ -99,7 +101,7 @@ app.use("/Designation",Desig);
 
 
 
-app.listen(4006, () => {
+app.listen(PORT||4006, () => {
     connect();
     console.log("port is running")
 })
