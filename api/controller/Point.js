@@ -166,3 +166,57 @@ exports.GetInfo2 = (req, res) => {
     })
 
 }
+
+//alans
+exports.AddPointAll = (req, res) => {
+    const list = req.body.data;
+    const data = req.body;
+    const listForJson = [];
+
+    for (const element of list) {
+        const data1 = {
+
+            "EventId": req.body.EventId,
+            "GroupId": req.body.GroupId,
+            "GameId": element.GameId,
+            "TotalPoint": element.TotalPoint
+
+        }
+
+
+
+
+        listForJson.push(data1)
+    }
+    console.log(listForJson)
+    TotalPoint.insertMany(listForJson, (data, error) => {
+        if (!error) {
+
+            res.send(data)
+        }
+        else {
+            res.send(error)
+        }
+
+    })
+
+}
+
+
+
+
+exports.findByGIdAndEvntId=((req,res)=>{
+    TotalPoint.aggregate([{$match:{EventId: mongoose.Types.ObjectId("63a1ed4f48a858c442d78448"),GroupId: mongoose.Types.ObjectId("6395a2c45831d2c96d22a6d2")}}
+   ,
+   {
+                   $lookup: {
+           from: "games", localField: "GameId", foreignField: "_id", as: "gamelist"
+       }
+   
+   
+   }
+   
+   ]).then((response)=>{
+       res.send(response)
+    })
+   })
