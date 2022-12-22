@@ -405,6 +405,7 @@ export default function EnhancedTable() {
     init.current = user
 
     const [NameError, setNameError] = useState(null);
+    const [EmailError,setEmailError] = useState(null);
 
 
     const onInputChange = e => {
@@ -420,37 +421,32 @@ export default function EnhancedTable() {
             setUser({ ...user, [e.target.name]: e.target.value })
         }
 
-        // if (e.target.name === "Email") {
-        //     let email = e.target.value
-        //     let emailCheck = new RegExp(/^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/g).test(email);
-        //     if (email === '') {
-        //         setEmailError("Email is required")
-        //     }
-        //     else if (!emailCheck) {
-        //         setEmailError('Enter valid Email')
-        //     }
-        //     else {
-        //         setEmailError(null);
-        //         setUser({ ...user, [e.target.name]: e.target.value })
-        //     }
-        // }
+        if (e.target.name === "Email") {
+            let email = e.target.value
+            let emailCheck = new RegExp(/^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/g).test(email);
+            if (email === '') {
+                setEmailError("Email is required")
+            }
+            else if (!emailCheck) {
+                setEmailError('Enter valid Email')
+            }
+            else {
+                setEmailError(null);
+                setUser({ ...user, [e.target.name]: e.target.value })
+            }
 
-
-        // if (e.target.name === "Email" && e.target.value === '') {
-        //     setNameError("Email is required");
-        // } else if (e.target.name === "Email" && e.target.value >= 30) {
-        //     setNameError("Please enter mail id between 1 and 30")
-        // }
-        // else {
-        //     setNameError(null)
-        //     setUser({ ...user, [e.target.name]: e.target.value })
-        // }
-
+            if (e.target.name === "DOB" && e.target.value === '') {
+                setNameError("Date of Bith is required");
+            } else if (e.target.name === "DOB" && e.target.value >= 30) {
+                setNameError("Please enter a name between 1 and 30")
+            }
+            else {
+                setNameError(null)
+                setUser({ ...user, [e.target.name]: e.target.value })
+            }
+                
         }
-
     }
-
-
 
         const handleRequestSort = (event, property) => {
             const isAsc = orderBy === property && order === 'asc';

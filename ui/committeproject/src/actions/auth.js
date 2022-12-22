@@ -16,7 +16,7 @@ export const signIn = (formData, navigate) => async (dispatch) => {
 
 
     console.log("111", formData);
-    var data = { "Email": formData.Email }
+    var data = { "Email": formData.Email,"Delete":"0" }
     console.log("@@@@@", data)
     //log in action
     const UserData = await api.signin(data); //data containes token and result
