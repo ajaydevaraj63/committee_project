@@ -16,7 +16,7 @@ exports.AddPoint = (req, res) => {
     })
 }
 exports.AddPointAll = (req, res) => {
-    const list = req.body.data;
+    const list = req.body.Data;
     const data = req.body;
     const listForJson = [];
 
@@ -146,7 +146,7 @@ exports.GetInfoTotalpointeqGroup = (req, res) => {
 }
 
 exports.findByGIdAndEvntId=((req,res)=>{
- TotalPoint.aggregate([{$match:{EventId: mongoose.Types.ObjectId("63a1ed4f48a858c442d78448"),GroupId: mongoose.Types.ObjectId("6395a2c45831d2c96d22a6d2")}}
+ TotalPoint.aggregate([{$match:{EventId: mongoose.Types.ObjectId(req.body.EventId),GroupId: mongoose.Types.ObjectId(req.body.GroupID)}}
 ,
 {
                 $lookup: {
@@ -164,12 +164,12 @@ exports.findByGIdAndEvntId=((req,res)=>{
 
 
 
-
-exports.updateAll = (req, res) => {
+exports.updateAll = async(req, res) => {
     const list = req.body.data;
     const data = req.body;
     const listForJson = [];
 
+  try {
     for (const element of list) {
         const data1 = {
 
@@ -186,7 +186,7 @@ exports.updateAll = (req, res) => {
         listForJson.push(data1)
     }
     for (const element of listForJson) {
-        const data2 = {
+        const data = {
 
             "EventId": req.body.EventId,
             "GroupId": req.body.GroupId,
@@ -194,63 +194,32 @@ exports.updateAll = (req, res) => {
             "TotalPoint": element.TotalPoint
 
         }
-      TotalPoint.update({GroupId: req.params.GroupId},data2).then((response)=>{
-       console.log(data2)
-      })
-
-}
-request.send("saved")
-}
-
-
-exports.findByGIdAndEvntId=((req,res)=>{
- TotalPoint.aggregate([{$match:{EventId: mongoose.Types.ObjectId("63a1ed4f48a858c442d78448"),GroupId: mongoose.Types.ObjectId("6395a2c45831d2c96d22a6d2")}}
-,
-{
-                $lookup: {
-        from: "games", localField: "GameId", foreignField: "_id", as: "gamelist"
-    }
-
-
-}
-
-]).then((response)=>{
-    res.send(response)
- })
-})
-
-
-exports.updateAll = (req, res) => {
-    const list = req.body.data;
-    const data = req.body;
-    const listForJson = [];
-
-    for (const element of list) {
-        const data1 = {
-
-            "EventId": req.body.EventId,
-            "GroupId": req.body.GroupId,
-            "GameId": element.GameId,
-            "TotalPoint": element.TotalPoint
-
+       await  TotalPoint.aggregate([{$match:{EventId: mongoose.Types.ObjectId(req.body.EventId),GroupId: mongoose.Types.ObjectId(req.body.GroupId),GameId: mongoose.Types.ObjectId(element.GameId)}}
+        ,
+        {
+                        $lookup: {
+                from: "games", localField: "GameId", foreignField: "_id", as: "gamelist"
+            }
+        
+        
         }
+        
+        ]).then(async(response)=>{
+            console.log(response)
+           TTable.findByIdAndUpdate(response[0]._id,{TotalPoint:element.TotalPoint},(error,data)=>{
+                if(!error){
+                    console.log(data)
+                }
+                else{
+                    console(error)
+                }
+            })
+         })
+      }
 
-
-
-
-        listForJson.push(data1)
-    }
-    for (const element of listForJson) {
-        const data2 = {
-
-            "EventId": req.body.EventId,
-            "GroupId": req.body.GroupId,
-            "GameId": element.GameId,
-            "TotalPoint": element.TotalPoint
-
-        }
-      TotalPoint.update({GroupId: req.params.GroupId,GameId:element.GameId,EventId:req.body.EventId},data2).then((response)=>{
-       console.log(data2)
-      })}
-
+    
+  } catch (error) {
+    throw error
+    
+  }
 }

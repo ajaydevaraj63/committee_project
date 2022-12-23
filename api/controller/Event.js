@@ -185,3 +185,38 @@ exports.getcurrentEvents = (req, res) => {
       })
 
 }
+
+exports.geteventswithgroup = (req, res) => { 
+            
+  totalpoint.aggregate([
+    {
+        $match: {
+            "GroupId" : mongoose.Types.ObjectId(req.body.GroupId)
+        },
+
+    },
+
+    {
+
+      $lookup: {
+
+      from: "events", localField: "EventId", foreignField: "_id", as: "eventlist"
+      }
+
+
+
+    }
+]).exec((error, result) => 
+  {
+
+    if(!error) { 
+      console.log(result);
+      res.send(result)
+
+    }
+    else {
+        console.log(error);
+    }
+
+  });
+}

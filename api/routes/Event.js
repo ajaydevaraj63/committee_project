@@ -4,7 +4,7 @@ const path = require("path");
 const bdyp = require('body-parser')
 app.use(bdyp.json())
 const multer=require('multer')
-const { allevents, event, eventSearch, getEvents, eventDelete, getcurrentEvents } = require("../controller/Event");
+const { allevents, event, eventSearch, getEvents, eventDelete, getcurrentEvents, geteventswithgroup } = require("../controller/Event");
 const Event = require("../models/Event");
 const bodyParser = require('body-parser');
 const router=express.Router();
@@ -128,6 +128,7 @@ router.put("/updateevent/:id", upload.array('File'), eventupdation)
 router.get('/events',getEvents)
 router.get('/currentevents',getcurrentEvents)
 router.delete('/eventDelete/:id',eventDelete)
+router.get("/eventswithgroupame", geteventswithgroup)
 
 
 
