@@ -1,10 +1,13 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import {
-    Box, Table, TableBody,
-    TableCell, TableRow, Typography
+    Box, Button,
+    Container, Modal, Stack, Table,
+    TableBody,
+    TableCell,
+    TableRow,
+    Typography
 } from '@mui/material';
-import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
@@ -18,11 +21,20 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
+import Multiselect from 'multiselect-react-dropdown';
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState, useRef } from 'react';
 import Swal from 'sweetalert2';
+axios.interceptors.request.use(
+    config => {
+      config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
+          return config;
+      },
+      error => {
+          return Promise.reject(error);
+      }
+  );
 
 
 function createData(UserName, GroupRole, Designation, Email) {
@@ -111,7 +123,7 @@ function EnhancedTableHead(props) {
     return (
         <TableHead>
             <TableRow>
-                <TableCell padding="checkbox">
+                {/* <TableCell padding="checkbox">
                     <Checkbox
                         color="primary"
                         indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -121,7 +133,7 @@ function EnhancedTableHead(props) {
                             'aria-label': 'select all desserts',
                         }}
                     />
-                </TableCell>
+                </TableCell> */}
                 {headCells.map((headCell) => (
                     <TableCell
                         key={headCell.id}
@@ -146,6 +158,7 @@ function EnhancedTableHead(props) {
             </TableRow>
         </TableHead>
     );
+
 }
 
 EnhancedTableHead.propTypes = {
@@ -160,25 +173,112 @@ EnhancedTableHead.propTypes = {
 // Add GRoup member routing
 
 
-const handleAddMembers = () => {
-    console.log('loooo');
-}
+
 
 function EnhancedTableToolbar(props) {
     const { numSelected } = props;
 
+    // close and open of modal for add user //
+
+    const [open, setOpen] = useState(false);
+    const handleAddMembers = (e) => {
+        setOpen(true);
+    }
+    const handleAddmemberclose = () => {
+        setOpen(false);
+    }
+
+    const [groupMember, setGroupmemebr] = useState('select');
+    const [userList, setUserlist] = useState([]);
+    const [objects, setObjects] = useState([]);
+    const [mailist, setMaillist] = useState([]);
+    const [employeelist, setEmployeelist] = useState([]);
+    const groupmemberref = useRef();
+    const [groupmembererror, setGroupmembererror] = useState(null)
+
+    const disp = (e) => {
+
+        console.log("efewfwef", e)
+        const data = e;
+        console.log('data', e);
+        setMaillist(data);
+    }
+
+
+    useEffect(() => {
+        const listgroupusers = []
+        const listobject = []
+        const getUserlist = async () => {
+            console.log("ap call====================");
+            const reqData = await axios.get('http://localhost:4006/users/Display/AddUsersToNewGroup');
+            const reqsData = await reqData.data;
+            console.log("reqData", reqsData);
+
+            for (let i = 0; i < reqsData.length; i += 1) {
+                listgroupusers.push(reqsData[i].Email);
+                listobject.push(reqsData[i]);
+                console.log('kk', listobject);
+            }
+            setUserlist(listgroupusers);
+            setObjects(listobject);
+
+        }
+        getUserlist();
+
+    }, []);
+
+    const Groupmembersubmit = async () => {
+        const emplist = []
+        console.log('nnnnnnnnnnnnnnnnnnnnnnnn', mailist);
+        console.log('ooooooooooooooooo', objects)
+        const promise1 = new Promise((resolve, reject) => {
+
+            for (let i = 0; i < mailist.length; i += 1) {
+                for (let j = 0; j < objects.length; j += 1) {
+                    if (mailist[i] === objects[j].Email) {
+                        console.log(objects[i]._id)
+                        emplist.push(objects[j]._id);
+                        console.log('bbbbbbbbbbbb', emplist);
+                    }
+                }
+            }
+            resolve();
+        });
+        promise1.then(() => {
+            setEmployeelist(emplist);
+        });
+        console.log('success', employeelist);
+        const Gid = sessionStorage.getItem('Gid')
+        console.log("AddUserto group=======", Gid);
+        console.log(emplist);
+        if (groupMember.trim().length == 0) {
+            setGroupmembererror('This field is required')
+            groupmemberref.current.focus();
+
+        }
+        if (groupmembererror != null)
+            if (groupmembererror != null) {
+                return;
+            }
+        axios.put("http://localhost:4006/group/Update/Multiple/UsersGroup/".concat(Gid), emplist).then((response) => {
+            console.log("check", response);
+            handleAddmemberclose();
+        })
+    }
+
     return (
-        <Toolbar
-            sx={{
-                pl: { sm: 2 },
-                pr: { xs: 1, sm: 1 },
-                ...(numSelected > 0 && {
-                    bgcolor: (theme) =>
-                        alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-                }),
-            }}
-        >
-            {numSelected > 0 ? (
+        <>
+            <Toolbar
+                sx={{
+                    pl: { sm: 2 },
+                    pr: { xs: 1, sm: 1 },
+                    ...(numSelected > 0 && {
+                        bgcolor: (theme) =>
+                            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+                    }),
+                }}
+            >
+                {/* {numSelected > 0 ? (
                 <Typography
                     sx={{ flex: '1 1 100%' }}
                     color="inherit"
@@ -187,7 +287,7 @@ function EnhancedTableToolbar(props) {
                 >
                     {numSelected} selected
                 </Typography>
-            ) : (
+            ) : ( */}
                 <Typography
                     sx={{ flex: '1 1 100%' }}
                     variant="h6"
@@ -196,24 +296,65 @@ function EnhancedTableToolbar(props) {
                 >
                     Group members
                 </Typography>
-            )}
+                {/* )} */}
 
-            {numSelected > 0 ? (
+                {/* {numSelected > 0 ? (
                 <Tooltip title="Delete">
                     <IconButton>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
-            ) : (
+            ) : ( */}
                 <Tooltip title="Add Group Member">
-                    <IconButton onClick={handleAddMembers} >
-                        <Link to="/dashboard/addMember">
-                            <PersonAddAltIcon /></Link>
+                    <IconButton onClick={(e) => handleAddMembers(e)} >
+                        <PersonAddAltIcon />
                     </IconButton>
                 </Tooltip>
-            )}
-        </Toolbar>
+                {/* )} */}
+            </Toolbar>
+            <Modal open={open} onClose={handleAddmemberclose} center>
+                <Box sx={{
+                    position: 'absolute',
+                    top: '51%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 650,
+                    bgcolor: 'background.paper',
+                    border: '2px solid #000',
+                    boxShadow: 24,
+                    p: 4,
+                }}
+
+                >
+                    <Container>
+                        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+
+                            <Typography variant="h4" gutterBottom>
+                                Add Group Member
+                            </Typography>
+                        </Stack>
+                        <Stack spacing={6}>
+                            <Multiselect
+                                ref={groupmemberref}
+                                value={groupMember}
+                                isObject={false}
+                                onRemove={(event) => { disp(event) }}
+                                onSelect={(event) => { disp(event) }}
+                                options={userList}
+                                showCheckbox
+                            />
+                            {groupmembererror != null ? <p style={{ color: "red" }}>{groupmembererror}</p> : ''}
+                            <Button variant="contained" sx={{ m: 2, width: '15ch' }} onClick={() => Groupmembersubmit()} >
+                                Submit
+                            </Button>
+                        </Stack>
+                    </Container>
+                </Box>
+            </Modal>
+        </>
+
     );
+
 }
 
 EnhancedTableToolbar.propTypes = {
@@ -227,6 +368,11 @@ export default function EnhancedTable() {
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [open, setopen] = useState(false);
+
+    const handleaddmembr = () => {
+        setopen(true);
+    }
 
     // list members API calling//
 
@@ -270,6 +416,7 @@ export default function EnhancedTable() {
                     )
                     console.log(id);
                     console.log("check", response);
+                    window.location.reload();
                 })
             }
         })
@@ -366,7 +513,7 @@ export default function EnhancedTable() {
                                             key={row._id}
                                             selected={isItemSelected}
                                         >
-                                            <TableCell padding="checkbox">
+                                            {/* <TableCell padding="checkbox">
                                                 <Checkbox
                                                     color="primary"
                                                     checked={isItemSelected}
@@ -374,7 +521,7 @@ export default function EnhancedTable() {
                                                         'aria-labelledby': labelId,
                                                     }}
                                                 />
-                                            </TableCell>
+                                            </TableCell> */}
                                             <TableCell
                                                 component="th"
                                                 id={labelId}
@@ -384,11 +531,23 @@ export default function EnhancedTable() {
                                             >
                                                 {row.UserName}
                                             </TableCell>
-                                            <TableCell align='left'>{row.GroupRole}</TableCell>
+
+                                            <TableCell align='left'>
+                                                <div>
+                                                    {row.GroupRole === 1 ? (
+                                                        <p className="post-body">Captain</p>
+                                                    ) : row.GroupRole === 2 ? (
+                                                        <p className="post-body">Vice captain</p>
+                                                    ) : (
+                                                        <p> Group member</p>
+                                                    )}
+                                                </div>
+
+                                            </TableCell>
                                             <TableCell align='left'>{row.Designation}</TableCell>
                                             <TableCell align='left'>{row.Email}</TableCell>
                                             <Tooltip title="Delete" sx={{ mb: 2 }}>
-                                                <IconButton onClick={() => deleteUser(row._id)}>
+                                                <IconButton onClick={() => deleteUser(row._id)} color="error">
                                                     <DeleteIcon />
                                                 </IconButton>
                                             </Tooltip>
@@ -424,4 +583,5 @@ export default function EnhancedTable() {
             />
         </Box>
     );
+
 }

@@ -18,7 +18,15 @@ import Iconify from '../components/iconify';
 import { UserListHead } from '../sections/@dashboard/user';
 
 // ----------------------------------------------------------------------
-
+axios.interceptors.request.use(
+  config => {
+    config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
 
 const TABLE_HEAD = [
   { id: 'UserName', label: 'Name', alignRight: false },

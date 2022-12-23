@@ -24,7 +24,7 @@ export default function Post({ post }) {
       <div className="postWrapper">
         <div className="postTop">
           <div className="postTopLeft">
-            <img className="postProfileImg" src={post.File} alt="" />{" "}
+            <img className="postProfileImg" src="https://as2.ftcdn.net/v2/jpg/00/65/77/27/1000_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg" alt="" />{" "}
             {post.User.map((value) => (
               <span className="postUsername">{value.username}</span>
             ))}
@@ -39,7 +39,7 @@ export default function Post({ post }) {
           <a  href={post.File} download><InsertDriveFileRoundedIcon  className="svg_icons"/></a>
         </div>
         <div className="postBottom">
-          <div className="postBottomLeft">
+          {/* <div className="postBottomLeft">
             <img
               className="likeIcon"
               src="../assets/assets/heart.png"
@@ -47,7 +47,7 @@ export default function Post({ post }) {
               alt=""
             />
             <span className="postLikeCounter">{like} people like it</span>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

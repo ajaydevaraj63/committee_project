@@ -22,16 +22,21 @@ import UserPage from './Admin/UserPage';
 
 import EventsMain from './Admin/AllEvents/EventsMain';
 import GroupsPoints from './Admin/AllEvents/GroupsPoints';
-import GamePoints from './Admin/AllEvents/GamePoints';
 
 import BlogPage from './Innovature/BlogPage';
 import UserPageInno from './Innovature/UserPage';
 import DashboardAppInno from './Innovature/DashboardAppPage';
 import PointTableCurrent from './Innovature/PointTableCurrent';
 
-import Event from './components/Event/Event';
+
 // import GamesCreate from './components/Games/Games';
-import CommitteManage from './committe/Committee';
+
+import EventHistory from './Admin/AllEvents/EventHistory';
+import Event from './committe/Event/Event';
+import Games from './committe/Games';
+import ListGames from './committe/ListGames';
+import CommitteeRole from './committe/CommitteeRole';
+import HomeCommitte from './committe/Home/DashboardAppPage';
 
 
 
@@ -45,7 +50,7 @@ export default function Router() {
       element: <DashboardLayout />,
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
-        { path: 'app', element: <DashboardAppPage/> },
+        { path: 'app', element: <DashboardAppPage /> },
         { path: 'user', element: <UserPage /> },
         { path: 'Groups', element: <Groups /> },
         { path: 'Committee', element: <Committee /> },
@@ -56,8 +61,7 @@ export default function Router() {
 
         { path: 'events', element: <EventsMain /> },
         { path: 'groupsPoints', element: <GroupsPoints /> },
-        { path: 'gamePoints', element: <GamePoints /> },
-
+        { path: 'eventHistory', element: <EventHistory /> }
       ],
     },
     {
@@ -73,21 +77,31 @@ export default function Router() {
       ],
     },
     {
-      path: '/dashboardCommitte',
-      element: <DashboardLayoutCommitte />,
-      children: [
-        { element: <Navigate to="/dashboardCommitte/app" />, index: true },
-        { path: 'Event', element: <Event /> },
-        // { path: 'GamesCreate', element: <GamesCreate /> },
-        { path: 'Committe', element: <CommitteManage /> },
+      // path: '/dashboardCommitte',
+      // element: <DashboardLayoutCommitte />,
+      // children: [
+      //   { element: <Navigate to="/dashboardCommitte/app" />, index: true },
+      //   { path: 'Event', element: <Event /> },
+      //   // { path: 'GamesCreate', element: <GamesCreate /> },
+      //   { path: 'Committe', element: <CommitteManage /> },
 
+        path: '/dashboardCommitte',
+        element: <DashboardLayoutCommitte />,
+        children: [
+          { element: <Navigate to="/dashboardCommitte/app" />, index: true },
+          { path: 'app', element: <DashboardAppPage/> },
+          {path:'Event', element : <Event/>},
+          {path:'Games', element : <Games/>},
+          {path:'ListGames', element: <ListGames />},
+          {path:'CommitteeRole', element : <CommitteeRole/>},
+          {path:'Home', element : <HomeCommitte/>},
 
 
 
 
       ],
     },
-    { path: '/', element: <Login />, index: true  },
+    { path: '/', element: <Login />, index: true },
     {
       element: <SimpleLayout />,
       children: [

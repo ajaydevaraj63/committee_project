@@ -14,28 +14,18 @@ const navConfig = [
   {
     title: 'Event',
     path: '/dashboardInno/Events',
-    icon: icon('ic_user'),
+    icon: icon('event'),
   },
   {
     title: 'EventPoint',
     path: '/dashboardInno/eventPoints',
-    icon: icon('committee'),
+    icon: icon('point_table'),
   },
-  {
-    title: 'Committee',
+  { 
+    title: 'Game',
     path: '/dashboardInno/gamePoint',
-    icon: icon('groups'),
-  },
-  {
-    title: 'login',
-    path: '/login',
-    icon: icon('ic_lock'),
-  },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic_disabled'),
-  },
+    icon: icon('point_table'),
+  }
 ];
 
 export default navConfig;

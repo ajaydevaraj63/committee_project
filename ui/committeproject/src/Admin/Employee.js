@@ -2,6 +2,7 @@ import * as React from 'react';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import { alpha } from '@mui/material/styles';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
@@ -11,16 +12,24 @@ import Toolbar from '@mui/material/Toolbar';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl'
 import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
 import { Helmet } from 'react-helmet-async';
 import moment from 'moment';
-import { Modal } from "react-responsive-modal";
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import Swal from 'sweetalert2';
+import { toast } from "react-toastify";
+import validator from 'validator'
+import { Link } from 'react-router-dom/dist';
 import {
     Table,
     Stack,
@@ -32,9 +41,20 @@ import {
     TableCell,
     TextField,
     Typography,
+    FormControl,
     Box,
+    Modal,
 } from '@mui/material';
 import Iconify from '../components/iconify';
+axios.interceptors.request.use(
+    config => {
+        config.headers.Authorization = JSON.parse(localStorage.getItem("Profile")).Token;
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -117,11 +137,10 @@ function EnhancedTableHead(props) {
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
-
     return (
         <TableHead>
             <TableRow>
-                <TableCell padding="checkbox">
+                {/* <TableCell padding="checkbox">
                     <Checkbox
                         color="primary"
                         indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -131,7 +150,8 @@ function EnhancedTableHead(props) {
                             'aria-label': 'select all desserts',
                         }}
                     />
-                </TableCell>
+                </TableCell> */}
+                <TableCell />
                 {headCells.map((headCell) => (
                     <TableCell
                         key={headCell.id}
@@ -167,6 +187,9 @@ EnhancedTableHead.propTypes = {
     rowCount: PropTypes.number.isRequired,
 };
 
+
+
+
 // Add GRoup member routing
 
 
@@ -174,44 +197,11 @@ function EnhancedTableToolbar(props) {
     const { numSelected } = props;
 
     return (
-        <Toolbar
-            sx={{
-                pl: { sm: 2 },
-                pr: { xs: 1, sm: 1 },
-                ...(numSelected > 0 && {
-                    bgcolor: (theme) =>
-                        alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-                }),
-            }}
-        >
-            {numSelected > 0 ? (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    color="inherit"
-                    variant="subtitle1"
-                    component="div"
-                >
-                    {numSelected} selected
-                </Typography>
-            ) : (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    variant="h6"
-                    id="tableTitle"
-                    component="div"
-                >
-                    User
-                </Typography>
-            )}
-            <TextField
-                id="filled-search"
-                label="Search field"
-                type="search"
-                variant="filled"
-            />
-        </Toolbar>
+        <></>
     );
 }
+
+
 
 EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
@@ -224,51 +214,85 @@ export default function EnhancedTable() {
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [opens, setOpens] = useState(null);
+    const [opens, setOpens] = useState(false);
     const [editopen, setEditopen] = useState(false);
     const [useropen, setUserOpens] = useState(false);
     const init = useRef();
     const [EditPatchValue, setEditpatchvalue] = useState([]);
-
+    const [designation, setdesignation] = useState([]);
     // CsvModal
     const [csvModal, setCsvModalOpen] = useState(false);
+    // search //
+
+    const [Searchuser, setSearchUser] = useState({
+        UserName: '',
+        currentPage: '',
+        pageSize: '',
+        Designation: '',
+    })
+
+    const onPageChange = e => {
+        e.preventDefault();
+        setSearchUser({ ...Searchuser, [e.target.name]: e.target.value })
+    }
+
+    const onSearch = () => {
+        axios.get('http://localhost:4006/Users/Display/FilteredUser', Searchuser).then((response) => {
+            console.log("sucessssssssssssssssss", response.data);
+
+        });
+    }
 
     function handleCsvModalOpen() {
         setCsvModalOpen(true);
         handleClose();
     }
 
-    const handleModalClose = () => setCsvModalOpen(false);
+    const handleModalClose = () => {
+        setCsvModalOpen(false);
+        setFileError(null);
+    }
 
 
     const [selectedFile, setSelectedFile] = useState();
+    const [fileError, setFileError] = useState(null);
+    const filetypeRef = useRef();
+    const [filelength, setfilelength] = useState(0);
 
-    const changeHandler = (event) => {
-        setSelectedFile(event.target.files[0]);
 
+    const changeHandler = (e) => {
+        const fileSelected = e.target.files[0].type;
+
+        if (fileSelected === 'text/csv') {
+            console.log("inside if ")
+            setSelectedFile(e.target.files[0]);
+            setfilelength(e.target.files.length);
+            setFileError(null);
+        }
+        else {
+            setFileError('Files only support CSV format');
+        }
     };
 
     const handleSubmission = () => {
         const formData = new FormData();
         formData.append('csv', selectedFile);
         console.log("csv=============================");
+        if (filelength == 0) {
+            setFileError('This field is required')
+            filetypeRef.current.focus();
+        }
+        if (fileError != null)
+            if (fileError != null) {
+                return;
+            }
+
         axios.post("http://localhost:4006/Auth/upload", formData).then((response) => {
             console.log("============================");
-            Swal.fire({
-                icon: 'success',
-                title: 'File has been uploaded',
-                showConfirmButton: false,
-                timer: 1500
-            })
             console.log("Response", response.error);
         })
             .catch((error) => {
                 console.log(error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Something went wrong!',
-                })
             });
     }
 
@@ -278,23 +302,49 @@ export default function EnhancedTable() {
 
     const [data, setData] = useState([]);
 
-    useEffect(() => {
+    const listusers = () => {
+        toast.success("Deleted Successfully !");
         console.log("ap call====================");
         axios.get('http://localhost:4006/users/display/All/user').then((response) => {
             console.log("sucess", response.data);
             setData(response.data)
         });
+        toast.success("Deleted Successfully !");
+
+    }
+    const listdesignation = async () => {
+        const listdesignation = []
+        console.log("ap call====================");
+        const des = await axios.get('http://localhost:4006/Designation/get').then((response) => {
+            console.log("sucessdesignations", response.data);
+            const designationdata = response.data
+            console.log('jjjjjjjjjjjjjj', response.data[0].Designation);
+            for (let i = 0; i < designationdata.length; i += 1) {
+                listdesignation.push(designationdata[i].Designation);
+                console.log('kk', listdesignation);
+            }
+            setdesignation(listdesignation)
+            console.log('designation', designation)
+        });
+    }
+
+    useEffect(() => {
+        listusers();
+        listdesignation();
 
     }, [])
-
 
     // Delete API //
 
 
     const deleteUser = (id) => {
         const body = {
-            Delete: 1
+            Delete: 1,
+            GroupId: 0,
+            CommitteeId: 0
         }
+
+
         console.log("delete==========");
         console.log(id);
 
@@ -308,12 +358,15 @@ export default function EnhancedTable() {
             confirmButtonText: 'Yes, delete it!'
         }).then((response) => {
             if (response.isConfirmed) {
+                console.log("innov");
                 axios.post("http://localhost:4006/auth/delete/user/".concat(id), body).then((response) => {
                     Swal.fire(
                         'Deleted!',
                         'Your file has been deleted.',
                         'success'
                     )
+                    listusers();
+                    
                     console.log(id);
                     console.log("check", response);
                 })
@@ -323,29 +376,9 @@ export default function EnhancedTable() {
 
     // edit API //
 
-    const EditSubmit = () => {
-        console.log("EditUser=======");
-        const id = sessionStorage.getItem('id')
-        console.log('check', id);
-        axios.post("http://localhost:4006/auth/update/user/type/".concat(id), editUser).then((response) => {
-            console.log("check", response.data);
-            handleeditClose();
-            window.location.reload();
-        })
-    }
 
-    // add single user API//
 
-    const handleSubmit = () => {
-        console.log("AddUser=======");
-        axios.post("http://localhost:4006/auth/add/user/manually", user).then((response) => {
-            console.log(user);
-            console.log("check", response.data);
-            handleClose();
-            window.location.reload();
 
-        })
-    }
 
     const [user, setUser] = useState({
         UserName: '',
@@ -355,14 +388,136 @@ export default function EnhancedTable() {
     })
     init.current = user
 
+    const [NameError, setNameError] = useState(null);
+    const [EmailError, setEmailError] = useState(null);
+    const [DobError, setDobError] = useState(null);
+    const [DesignationError, setDesignationError] = useState(null);
+    const userNameRef = useRef();
+    const emailRef = useRef();
+    const dobRef = useRef();
+    const designationRef = useRef();
+
 
     const onInputChange = e => {
         e.preventDefault();
         setUser({ ...user, [e.target.name]: e.target.value })
 
+        if (e.target.name === "UserName" && e.target.value === '') {
+            setNameError("Name is required");
+        } else if (e.target.name === "UserName" && e.target.value >= 30) {
+            setNameError("Please enter a name between 1 and 30")
+        }
+        else {
+            if (e.target.name === "UserName") {
+                setNameError(null)
+                setUser({ ...user, [e.target.name]: e.target.value })
+            }
+        }
+        if (e.target.name === "Email") {
+            let email = e.target.value
+            let emailCheck = new RegExp(/^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/g).test(email);
+            if (email === '') {
+                setEmailError("Email is required")
+            }
+            else if (!emailCheck) {
+                setEmailError('Enter valid Email')
+            }
+            else {
+                if (e.target.name === "Email") {
+                    setEmailError(null);
+                    setUser({ ...user, [e.target.name]: e.target.value })
+                }
+
+            }
+        }
+
+
+            if (e.target.name === "DOB" && e.target.value === '') {
+                console.log("inside if of dob");
+                setDobError("Date of Bith is required");
+            }
+            else 
+            {
+                console.log("date",e.target.value);
+                if (e.target.name === "DOB") {
+                    setDobError(null)
+                    setUser({ ...user, [e.target.name]: e.target.value })
+                }
+            }
+            if (e.target.name === "Designation" && e.target.value === '') {
+                setDesignationError("Designation is required");
+            }
+            else {
+                if (e.target.name === "Designation") {
+                    setDesignationError(null)
+                    setUser({ ...user, [e.target.name]: e.target.value })
+                }
+        }
     }
 
+    const EditSubmit = (e) => {
+        e.preventDefault();
+        console.log("EditUser=======", editUser);
+        const id = sessionStorage.getItem('id')
+        console.log('check', id);
+        axios.post("http://localhost:4006/auth/update/user/type/".concat(id), editUser).then((response) => {
+            console.log("check", response.data);
+            handleeditClose();
+            setTimeout(() => {
+                listusers();
+            }, 1500);
+            
+            // <Alert severity="error">This is an error alert — check it out!</Alert>
 
+        })
+    }
+
+    // add single user API//
+
+    const handleSubmit = (e) => {
+        console.log("kkkk", user.DOB);
+
+        if (user.UserName.trim().length == 0) {
+            setNameError('This field is required')
+            userNameRef.current.focus();
+        }
+        if (user.Email.trim().length == 0) {
+            setEmailError('This field is required')
+            emailRef.current.focus();
+        }
+        if (user.DOB == null || user.DOB == '') {
+            console.log("inside if of dob");
+            setDobError('This field is required')
+            dobRef.current.focus();
+        }
+        if (user.Designation.value == null) {
+            console.log("in side if of desig");
+            setDesignationError('This field is required')
+            designationRef.current.focus();
+        }
+        if (NameError != null || EmailError != null || DobError != null || DesignationError != null) {
+            return;
+        }
+        console.log("AddUser=======", designation);
+        axios.post("http://localhost:4006/auth/add/user/manually", user).then((response) => {
+            console.log(user);
+            console.log("check", response.data);
+            handleCloseUser();
+            toast.success("Registered Successfully !");
+            setTimeout(() => {
+                listusers();
+            }, 1500);
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Your work has been saved',
+                showConfirmButton: false,
+                timer: 1500
+              })
+            
+            // listusers();
+        })
+    }
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -419,7 +574,7 @@ export default function EnhancedTable() {
     };
 
     const handleClose = () => {
-        setOpens(null);
+        setOpens(false);
     };
 
     // Edit user modal //
@@ -454,8 +609,6 @@ export default function EnhancedTable() {
 
     const [editUser, setEdituser] = useState({
         Type: '',
-        GroupRole: '',
-        GroupId: '',
     })
 
     const onEditChange = e => {
@@ -463,16 +616,38 @@ export default function EnhancedTable() {
         setEdituser({ ...editUser, [e.target.name]: e.target.value })
     }
 
+    const modalRef = useRef(null);
+
+
     return (
         <>
             <Helmet>
                 <title> Innovatures </title>
             </Helmet>
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                <Button variant="contained" onClick={handleOpen} startIcon={<Iconify icon="eva:plus-fill" />}>
+                <Typography variant="h4" gutterBottom>
+                    Innovatures
+                </Typography>
+                {/* <Button variant="contained" onClick={handleOpen} startIcon={<Iconify icon="eva:plus-fill" />}>
                     New User
-                </Button>
+                </Button> */}
+                <Tooltip title="Add User">
+                    <IconButton onClick={handleOpen} >
+                        <PersonAddAltIcon color="secondary" />
+                    </IconButton>
+                </Tooltip>
             </Stack>
+            {/* <TextField
+                id="filled-search"
+                label="Search field"
+                type="search"
+                variant="filled"
+                name='UserName'
+                onChange={e => onPageChange(e)}
+            /> */}
+            {/* <Button variant="" sx={{ color: 'gray', mt: 1 }} onClick={(e) => onSearch(e)} >
+                Search
+            </Button> */}
             <Box sx={{ width: '100%' }}>
                 <Paper sx={{ width: '100%', mb: 2 }}>
                     <EnhancedTableToolbar numSelected={selected.length} />
@@ -507,16 +682,8 @@ export default function EnhancedTable() {
                                                 tabIndex={-1}
                                                 key={row._id}
                                                 selected={isItemSelected}
-                                            >
-                                                <TableCell padding="checkbox">
-                                                    <Checkbox
-                                                        color="primary"
-                                                        checked={isItemSelected}
-                                                        inputProps={{
-                                                            'aria-labelledby': labelId,
-                                                        }}
-                                                    />
-                                                </TableCell>
+                                            >   <TableCell />
+
                                                 <TableCell
                                                     component="th"
                                                     id={labelId}
@@ -532,9 +699,9 @@ export default function EnhancedTable() {
                                                 <TableCell align='left'>
                                                     <div>
                                                         {row.Type === 1 ? (
-                                                            <p className="post-body">Committee member</p>
+                                                            <p >Committee member</p>
                                                         ) : row.Type === 2 ? (
-                                                            <p className="post-body">Admin</p>
+                                                            <p>Admin</p>
                                                         ) : (
                                                             <p> Innovatures</p>
                                                         )}
@@ -542,8 +709,19 @@ export default function EnhancedTable() {
 
                                                 </TableCell>
                                                 <Stack direction="row" spacing={2} sx={{ mt: 1.2 }}>
-                                                    <Button variant="outline" startIcon={<EditIcon />} onClick={() => handleeditOpen(row._id)} >Type</Button>
-                                                    <Button variant="outlined" color="error" startIcon={<DeleteIcon />} onClick={() => deleteUser(row._id)}>Delete</Button>
+                                                    {/* <Button variant="outline" startIcon={<EditIcon />} onClick={() => handleeditOpen(row._id)} >Type</Button> */}
+                                                    {/* <Button variant="outlined" color="error" startIcon={<DeleteIcon />} onClick={() => deleteUser(row._id)}>Delete</Button> */}
+                                                    {/* <Tooltip title="Edit">
+                                                        <IconButton onClick={() => handleeditOpen(row._id)} color="secondary">
+                                                            <EditIcon />
+                                                        </IconButton>
+                                                    </Tooltip> */}
+                                                    <Tooltip title="Delete" sx={{ ml: 2.6 }}>
+                                                        <IconButton onClick={() => deleteUser(row._id)} color="error">
+                                                            <DeleteIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
+
                                                 </Stack>
                                             </TableRow>
                                         );
@@ -598,7 +776,7 @@ export default function EnhancedTable() {
                 }}
             >
                 <MenuItem onClick={() => handleCsvModalOpen()}>
-                    <Iconify icon={'eos-icons:csv-file'} sx={{ mr: 2 }}  />
+                    <Iconify icon={'eos-icons:csv-file'} sx={{ mr: 2 }} />
                     Csv Upload
                 </MenuItem>
                 <MenuItem onClick={() => handleOpenUser()} >
@@ -609,42 +787,123 @@ export default function EnhancedTable() {
 
             {/* Add single user modal */}
 
-            <Modal open={useropen} onClose={handleCloseUser} center>
-                <Box sx={{ width: 500, mx: 9, mt: 3 }}>
-                    <form id='regForm'>
+            <Modal
+                open={useropen}
+                onClose={handleCloseUser}
+                initialFocusRef={modalRef}
+                center
+            >
+                <Box sx={{
+                      position: 'absolute',
+                      top: '51%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: 650,
+                      bgcolor: 'background.paper',
+                      border: '2px solid #000',
+                      borderRadius: '20px',
+  
+                      boxShadow: 24,
+                      p: 4,
+
+                }}>
+                    <span onClick={handleCloseUser} style={{
+                            cursor: 'pointer',
+                            position: 'absolute',
+                            top: '50 %',
+                            right: '0 %',
+                            padding: '0px 0px',
+                            marginLeft:'70%',
+                            transform: 'translate(0 %, -50 %)'
+                        }}
+                        ><CloseIcon/></span>
+                    <form sx={{ textAlign: 'center', }}>
                         <h4>Add User</h4>
-                        <FormControl  fullwidth sx={{m:3}} >
-                            <TextField type="text"      sx={{
-                                                            width: { sm: 200, md: 200, lg: 300, xl: 400 },
-                                                            "& .MuiInputBase-root": {
-                                                                height: 60
-                                                            }
-                                                        }}
-                                                         autoComplete="off" name='DOB' size="small" id="exampleFormControlInput1"  name='UserName' onChange={e => onInputChange(e)} label="Name" />
+
+                        {/* <div className="form-floating mb-3 has-validation">
+                            <TextField type="text" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" id="validationServerUsername" variant="outlined" size="small" name='UserName' onChange={e => onInputChange(e)} label="Name" />
+                        </div> */}
+                        <FormControl fullwidth sx={{ m: 2 }} >
+                            <TextField ref={userNameRef} type="text" sx={{
+                                width: { sm: 200, md: 200, lg: 480, xl: 400 },
+                                "& .MuiInputBase-root": {
+                                    height: 54
+                                }
+                            }}
+                                autoComplete="off" size="small" id="exampleFormControlInput1" name='UserName' onChange={e => onInputChange(e)} label="Name" />
                         </FormControl>
-                        <FormControl  fullwidth sx={{m:3}}>
-                            <TextField type="text"  sx={{
-                                                            width: { sm: 200, md: 200, lg: 300, xl: 400 },
-                                                            "& .MuiInputBase-root": {
-                                                                height: 60
-                                                            }
-                                                        }}
-                                                         autoComplete="off" name='DOB' size="small" id="exampleFormControlInput1"  name='UserName' onChange={e => onInputChange(e)} label="Email" />
+                        {NameError != null ? <p style={{ color: "red" }}>{NameError}</p> : ''}
+
+                        {/* <div className="form-floating mb-3 ">
+                            <TextField type="text" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" name='Email' size="small" id="exampleFormControlInput1" onChange={e => onInputChange(e)} label="Email" />
+                        </div> */}
+                        <FormControl fullwidth sx={{ m: 2 }} >
+                            <TextField ref={emailRef} type="text" sx={{
+                                width: { sm: 200, md: 200, lg: 480, xl: 400 },
+                                "& .MuiInputBase-root": {
+                                    height: 54
+                                }
+                            }}
+                                autoComplete="off" size="small" id="exampleFormControlInput1" name='Email' onChange={e => onInputChange(e)} label="Email" />
                         </FormControl>
-                        <div className=" mb-3 ">
+                        {EmailError != null ? <p style={{ color: "red" }}>{EmailError}</p> : ''}
+
+                        {/* <div className="form-floating mb-3 ">
                             <TextField type="Date" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" name='DOB' size="small" id="exampleFormControlInput1" onChange={e => onInputChange(e)} label="Dob" InputLabelProps={{ shrink: true }} />
-                        </div>
-                        {/* <div className="form-floating mb-3 ">
- <TextField type="number" sx={{ m: 2, width: '35ch' }} className="form-control" name='Type' value={Type} size="small" id="exampleFormControlInput1" autoComplete="off" onChange={e => onInputChange(e)} label="Type" />
- </div> */}
-                        {/* <div className="form-floating mb-3 ">
- <TextField type="number" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" name='GroupRole' value={GroupRole} size="small" id="exampleFormControlInput1" onChange={e => onInputChange(e)} label="Group role" />
- </div> */}
-                        <div className=" mb-3 ">
-                            <TextField type="text" sx={{ m: 2, width: '35ch' }} className="form-control" name='Designation' size="small" id="exampleFormControlInput1" autoComplete="off" onChange={e => onInputChange(e)} label="Designation" />
-                        </div>
-                        <div className=" mt-5 ">
-                            <div className="col-3"><Button sx={{ m: 2, width: '41ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => handleSubmit()} >Submit</Button></div>
+                        </div> */}
+                        <FormControl fullwidth sx={{ m: 2 }} >
+                            <TextField ref={dobRef} type="Date" sx={{
+                                width: { sm: 200, md: 200, lg: 480, xl: 400 },
+                                "& .MuiInputBase-root": {
+                                    height: 54
+                                }
+                            }}
+                                autoComplete="off" size="small" id="exampleFormControlInput1" name='DOB' onChange={e => onInputChange(e)} label="Dob" InputLabelProps={{ shrink: true }} />
+                        </FormControl>
+                        {DobError != null ? <p style={{ color: "red" }}>{DobError}</p> : ''}
+
+                        <FormControl fullwidth sx={{ m: 2 }} >
+                            <Box sx={{
+                                width: { sm: 200, md: 200, lg: 480, xl: 400 },
+                                "& .MuiInputBase-root": {
+                                    height: 54
+                                }
+
+                            }}>
+                                <InputLabel ref={designationRef} id="demo-simple-select-label">Designation</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    name='Designation'
+                                    label="Designation"
+                                    sx={{
+                                        width: { sm: 200, md: 200, lg: 480, xl: 400 },
+                                        "& .MuiInputBase-root": {
+                                            height: 54
+                                        }
+
+                                    }}
+                                    onChange={e => onInputChange(e)}
+                                >{designation.map((data, value) => {
+                                    return <MenuItem value={data}>{data}</MenuItem>
+
+                                })}
+                                </Select>
+                            </Box>
+                        </FormControl>
+                        {DesignationError != null ? <p style={{ color: "red" }}>{DesignationError}</p> : ''}
+
+                        {/* <FormControl fullwidth sx={{ m: 2 }} >
+                            <TextField type="text" sx={{
+                                width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                                "& .MuiInputBase-root": {
+                                    height: 60
+                                }
+                            }}
+                                autoComplete="off" size="small" id="exampleFormControlInput1" name='Designation' onChange={e => onInputChange(e)} label="Designation" />
+                        </FormControl> */}
+                        <div>
+                        <Button sx={{ m: 2, width: '15%', height: 35,marginLeft:'80%' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={(e) => handleSubmit(e)} >Submit</Button>
                         </div>
                     </form>
                 </Box>
@@ -653,28 +912,70 @@ export default function EnhancedTable() {
             {/* edit modal */}
 
             <Modal open={editopen} onClose={handleeditClose} center>
-                <Box sx={{ width: 400, mx: 9 }}>
+                <Box sx={{
+                    position: 'absolute',
+                    top: '51%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 650,
+                    bgcolor: 'background.paper',
+                    border: '2px solid #000',
+                    boxShadow: 24,
+                    p: 4,
+                }}
+                >
                     <form id='EditForm'>
                         <h4> Edit Type</h4>
-                        <div className="form-floating mb-3 ">
+                        {/* <div className="form-floating mb-3 ">
                             <TextField sx={{ m: 2, width: '35ch' }} type="number" defaultValue={EditPatchValue.Type} className="form-control" name='Type' id="exampleFormControlInput1" autoComplete="off" onChange={e => onEditChange(e)} label="Type" />
-                        </div>
-                        <div className="row mt-5 ">
-                            <div className="col-3"><Button sx={{ mx: 2, m: 2 }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => EditSubmit()}>Submit</Button></div>
-                        </div>
+                        </div> */}
+                        <Box sx={{ minWidth: 120 }}>
+                            <InputLabel id="demo-simple-select-label">Type</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                name='Type'
+                                label="Type"
+                                defaultValue={EditPatchValue.Type}
+
+                                sx={{ m: 2, width: '35ch' }}
+                                onChange={e => onEditChange(e)}
+                            >
+                                <MenuItem value={1}>Committee member</MenuItem>
+                                <MenuItem value={2}>Admin</MenuItem>
+                                <MenuItem value={0}>Innovatures</MenuItem>
+                            </Select>
+                        </Box>
+
+                        <div className="col-3"><Button sx={{ mx: 2, m: 2 }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={(e) => EditSubmit(e)}>Submit</Button></div>
+                        {/* <Alert severity="error">This is an error alert — check it out!</Alert> */}
                     </form>
                 </Box>
             </Modal>
+            {/* add user modal */}
 
             <Modal open={csvModal} onClose={handleModalClose} center>
-                <Box sx={{ width: 100, mx: 17, marginLeft: '9vh' }}>
+                <Box sx={{
+                     position: 'absolute',
+                     top: '51%',
+                     left: '50%',
+                     transform: 'translate(-50%, -50%)',
+                     width: 300,
+                     bgcolor: 'background.paper',
+                     border: '2px solid #000',
+                     boxShadow: 24,
+                     p: 4,
+                }}
+
+                >
                     <h4>Upload CSV</h4>
                     <label htmlFor="inputTag">  <CloudUploadIcon sx={{ mr: 9, fontSize: '100px' }} />
                         <br />
-                        <input type="file" accept=".csv" name="file" id="inputTag" onChange={changeHandler} />
+                        <input ref={filetypeRef} type="file" accept='text/csv' name="file" id="inputTag" onChange={changeHandler} />
                     </label>
+                    {fileError != null ? <p style={{ color: "red" }}>{fileError}</p> : ''}
                     <br />
-                    <Button onClick={() => handleSubmission()}>Upload</Button>
+                    <Button sx={{ m: 2, width: '15%', height: 35,marginLeft:'3%' }} type='button' onClick={() => handleSubmission()} variant='contained' size="small" style={{ backgroundColor: '#144399' }} >Upload</Button>
                 </Box>
             </Modal>
 

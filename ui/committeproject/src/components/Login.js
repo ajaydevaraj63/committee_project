@@ -45,7 +45,7 @@ const Login = () => {
 
     google.accounts.id.renderButton(
       document.getElementById("signInDiv"),
-      { theme: 'dark', size: "large", width: "100px" }
+      { theme: 'dark', size: "large", width: "100%" }
     );
 
     return () => {
@@ -83,17 +83,6 @@ const Login = () => {
   };
   return (
    
-//       <div class="ContainerMain bg-img ">
-
-
-// <div class="container56">
-//     <div class="row">
-//         <div class="col-sm-6 col-md-4 col-md-offset-4">
-//         <div id='signInDiv'></div>
-
-//         </div>
-//     </div>
-// </div>
 
 
 
@@ -103,16 +92,17 @@ const Login = () => {
 <div class="d-flex justify-content-center h-100">
   <div class="image_outer_container">
     <div class="green_icon"></div>
+   
     <div class="image_inner_container">
-      
+    <div class="box1" >
+    <div class="btn1" >
     <div id='signInDiv'></div>
+    </div>
+    </div>
     </div>
   </div>
 </div>
 </div>
-
-
-
 
 
 

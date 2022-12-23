@@ -3,6 +3,8 @@ const UserTables = require('../models/UserTable.js')
 const Event = require('../models/Event.js')
 const Group = require('../models/Groups.js')
 const Joi = require('@hapi/joi');
+const Point = require('../models/TotalPoint.js');
+const mongoose=require('mongoose')
 
 const schema = Joi.object().keys({
     GamePoint: Joi.number().required(),
@@ -25,7 +27,7 @@ exports.AddPoint = async (req, res) => {
             GamePoint: req.body.GamePoint,
 
         }
-        var Validation = schema.validate(JsonObj)
+        const Validation = schema.validate(JsonObj)
         if (!Validation.error) {
             const NewPointEntry = new PointTable(req.body);
             await NewPointEntry.save((error, data) => {
@@ -52,7 +54,7 @@ exports.AddPoint = async (req, res) => {
 exports.UpdatePointTable = async (req, res) => {
     try {
 
-        var Validation = schemaForUpdate.validate(req.body)
+        const Validation = schemaForUpdate.validate(req.body)
         console.log(Validation.error)
         if (!Validation.error) {
             if (req.body) {
@@ -139,3 +141,82 @@ exports.GetInfo = (req, res) => {
     })
 
 }
+
+exports.GetInfo2 = (req, res) => {
+
+    PointTable.aggregate([
+        {
+            $match: {
+                "GameId": mongoose.Types.ObjectId(req.body.GameId)
+              
+            }
+        },
+    
+       
+        {
+            $lookup: {
+                from: "groups", localField: "GroupId", foreignField: "_id", as: "grouplist"
+            }
+
+
+        }
+
+    ]).then(result => {
+        res.send(result)
+    })
+
+}
+
+//alans
+exports.AddPointAll = (req, res) => {
+    const list = req.body.data;
+    const data = req.body;
+    const listForJson = [];
+
+    for (const element of list) {
+        const data1 = {
+
+            "EventId": req.body.EventId,
+            "GroupId": req.body.GroupId,
+            "GameId": element.GameId,
+            "TotalPoint": element.TotalPoint
+
+        }
+
+
+
+
+        listForJson.push(data1)
+    }
+    console.log(listForJson)
+    TotalPoint.insertMany(listForJson, (data, error) => {
+        if (!error) {
+
+            res.send(data)
+        }
+        else {
+            res.send(error)
+        }
+
+    })
+
+}
+
+
+
+
+exports.findByGIdAndEvntId=((req,res)=>{
+    TotalPoint.aggregate([{$match:{EventId: mongoose.Types.ObjectId("63a1ed4f48a858c442d78448"),GroupId: mongoose.Types.ObjectId("6395a2c45831d2c96d22a6d2")}}
+   ,
+   {
+                   $lookup: {
+           from: "games", localField: "GameId", foreignField: "_id", as: "gamelist"
+       }
+   
+   
+   }
+   
+   ]).then((response)=>{
+       res.send(response)
+    })
+   })

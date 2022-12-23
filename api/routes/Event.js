@@ -4,13 +4,21 @@ const path = require("path");
 const bdyp = require('body-parser')
 app.use(bdyp.json())
 const multer=require('multer')
-const { allevents, event, eventSearch,getEvents } = require("../controller/Event");
+const { allevents, event, eventSearch, getEvents, eventDelete, getcurrentEvents, geteventswithgroup } = require("../controller/Event");
 const Event = require("../models/Event");
 const bodyParser = require('body-parser');
 const router=express.Router();
 module.exports=router;
 app.use(bodyParser.urlencoded({extended: false}))
 
+const joi=require('@hapi/joi')
+const Schema =joi.object().keys({
+    EventName: joi.string().alphanum().min(3).max(30),
+    EventDescription: joi.string().min(3).max(30),
+    // StartDate: joi.date(),
+    // EndDate: joi.date(),
+    UserId: joi.string().alphanum()
+})
 
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -24,64 +32,104 @@ let storage = multer.diskStorage({
   });
 
   
-let upload = multer({ storage: storage });
+let upload = multer({ storage: storage,
+  fileFilter: function(req, file, callback) {
+    let ext = path.extname(file.originalname);
+    if(ext !== '.svg' && ext !== '.txt') {
+              return callback(new Error('Only	pdf, ppt files are allowed!'));
+
+    }
+    callback(null, true)
+
+  }
+ });
    
-function postevent (req, res, next) {
+ function postevent (req, res, next) {
 
+  try{
+    
+    let Validation=Schema.validate(req.body)
+    if(!Validation.error){
 
-  
-    const newevent = new Event({
+              const newevent = new Event({
+                EventName: req.body.EventName,
+                EventDescription: req.body.EventDescription,
+                StartDate: req.body.StartDate,
+                EndDate: req.body.EndDate,
+                UserId: req.body.UserId
+            })
+            newevent.File = 'http://localhost:4006/' + req.files[0].path;
+            newevent.save((error, data) => {
+                    try {
 
-        EventName: req.body.EventName,
-        EventDescription: req.body.EventDescription,
-        UserId: req.body.UserId
+                      res.send(data)
 
-    })
+                    }
+                    catch (error) {
 
-    console.log(req.files);
-    newevent.File = 'http://localhost:4006/images/'+req.files[0].filename
-    newevent.save((error, data) => {
-      try { 
+                      console.log(error);
 
-        res.send(data)
+                    }
+          next();
+          });
+    
+    }
+    else{
+        res.send(Validation.error)
+    }
+  }
+  catch(error){
 
-      }
-      catch (error) {
-
-        console.log(error);
-
-      }
-    next();
-    }); 
+  }
 
 }
 
 function eventupdation (req, res) {
+  const date = new Date();
+
+  try{
+    
+    let Validation=Schema.validate(req.body)
+    if(!Validation.error){
   
-  Event.findById( req.params.id, (error, data) => {
-      Event.findByIdAndUpdate( req.params.id, { $set: req.body, File: req.files[0].path }, (error, data) => { 
-        try{
-  
-          res.send(data)
-  
-        }
-        catch (error) {
-          
-          console.log(error);
-          res.send(error);
-  
-        }
-      })
-    })
+                Event.findById( req.params.id, (error, data) => {
+                    Event.findByIdAndUpdate( req.params.id, { $set: req.body, File: req.files[0].path }, (error, data) => { 
+                      try{
+                
+                        res.send(data)
+                
+                      }
+                      catch (error) {
+                        
+                        console.log(error);
+                        res.send(error);
+                
+                      }
+                    })
+                  })
+              }
+
+  else{
+      res.send(Validation.error)
   }
+  }
+  catch(error){
+  
+  }
+}
 
 
 
 router.post("/postevent", upload.array('File') ,postevent);
 router.get("/allevent" , allevents);
 router.get("/eventSearch", eventSearch);
-router.get("/event/:id" , event);
+router.get("/event" , event);
 router.put("/updateevent/:id", upload.array('File'), eventupdation)
 router.get('/events',getEvents)
+router.get('/currentevents',getcurrentEvents)
+router.delete('/eventDelete/:id',eventDelete)
+router.get("/eventswithgroupame", geteventswithgroup)
+
+
 
 module.exports = router;

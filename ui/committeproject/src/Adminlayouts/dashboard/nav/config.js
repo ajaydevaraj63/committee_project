@@ -21,36 +21,39 @@ const navConfig = [
     path: '/dashboard/Groups',
     icon: icon('committee'),
   },
+
+  // localStorage.getItem("isCommitteeFormed")==true &&
   {
     title: 'Committee',
     path: '/dashboard/Committee',
     icon: icon('groups'),
   },
-  {
-    title: 'Events',
-    path: '/dashboard/Events',
-    icon: icon('event'),
-  },
-  {
-    title: 'Meetings',
-    path: '/dashboard/meet',
-    icon: icon('meeting'),
-  },
+
   {
     title: 'Point Table',
-    path: '/dashboard/PointTable',
+    path: '/dashboard/eventHistory',
+    icon: icon('event'),
+  },
+  // {
+  //   title: 'Meetings',
+  //   path: '/dashboard/meet',
+  //   icon: icon('meeting'),
+  // },
+  {
+    title: 'Event History',
+    path: '/dashboard/events',
     icon: icon('point_table'),
   },
-  {
-    title: 'login',
-    path: '/login',
-    icon: icon('ic_lock'),
-  },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic_disabled'),
-  },
+  // {
+  //   title: 'login',
+  //   path: '/login',
+  //   icon: icon('ic_lock'),
+  // },
+  // {
+  //   title: 'Not found',
+  //   path: '/404',
+  //   icon: icon('ic_disabled'),
+  // },
 ];
 
 export default navConfig;

@@ -23,6 +23,15 @@ import Iconify from "../components/iconify";
 import Scrollbar from "../components/scrollbar";
 // sections
 import { UserListHead, UserListToolbar } from "../sections/@dashboard/user";
+axios.interceptors.request.use(
+  config => {
+    config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
 // mock
 // import USERLIST from "../_mock/user";
 
@@ -32,7 +41,6 @@ const TABLE_HEAD = [
   { id: "", label: "", alignRight: false },
 
   { id: "", label: "Game", alignRight: false },
-  { id: "", label: "Group", alignRight: false },
   { id: "", label: "Event", alignRight: false },
   { id: "", label: "point", alignRight: false },
   { id: "", label: "createDate", alignRight: false },
@@ -71,9 +79,7 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(3);
 
-  // const handleOpenMenu = (event) => {
-  //   setOpen(event.currentTarget);
-  // };
+ 
 
   const handleCloseMenu = () => {
     setOpen(null);
@@ -91,7 +97,7 @@ export default function UserPage() {
     console.log("ap call====================");
     axios.get("http://localhost:4006/Point/getAll").then((response) => {
       console.log("sucess", response.data);
-      setData(response.data);
+      setData([{"GameName":"cricket"},{"EventName":"sports"},{"TotalPoint":"200"},{"Date":"05-07-2023"}]);
     });
   }, []);
 
@@ -121,23 +127,7 @@ export default function UserPage() {
     setSelected([]);
   };
 
-  // const handleClick = (event, UserName) => {
-  //   const selectedIndex = selected.indexOf(UserName);
-  //   let newSelected = [];
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, UserName);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(
-  //       selected.slice(0, selectedIndex),
-  //       selected.slice(selectedIndex + 1)
-  //     );
-  //   }
-  //   setSelected(newSelected);
-  // };
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -217,7 +207,6 @@ export default function UserPage() {
                         GameId,
                         // role,
                         Eventlist,
-                        grouplist,
                         createdAt,
                         gameList,
                         GamePoint,
@@ -248,19 +237,7 @@ export default function UserPage() {
                             </Typography>))}
                             {/* </Stack> */}
                           </TableCell>
-                          <TableCell component="th" scope="row" padding="">
-                            {/* <Stack
-                              direction="row"
-                              alignItems="center"
-                              spacing={2}
-                            > */}
-                            {/* <Avatar alt={UserName} src={avatarUrl} /> */}
-                            {grouplist.map((value) => (
-                            <Typography variant="subtitle2" noWrap>
-                              {value.GroupName}
-                            </Typography>))}
-                            {/* </Stack> */}
-                          </TableCell>
+                          
                           <TableCell component="th" scope="row" padding="">
                             {/* <Stack
                               direction="row"

@@ -1,3 +1,4 @@
+import { Avatar, Box, Button, Input } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -10,16 +11,28 @@ import axios from 'axios';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import Modal from 'react-responsive-modal';
+
+axios.interceptors.request.use(
+    config => {
+        config.headers.Authorization = JSON.parse(localStorage.getItem("Profile")).Token;
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
 
 const columns = [
+    { id: 'Group', label: 'Group Icon', maxWidth: 0 },
     { id: 'Groups', label: 'Groups', minWidth: 150 },
     { id: 'Points', label: 'Points', minWidth: 150 },
+    { id: 'Action', label: '', minWidth: 150 }
 ];
 
 export default function GroupsPoints() {
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -30,26 +43,39 @@ export default function GroupsPoints() {
         setPage(0);
     };
 
-    let navigate = useNavigate();
 
-    const gamePoints = () => {
-        let path = `/dashboard/gamePoints`;
-        navigate(path);
+    // Game modal
+    const [GameModal, setGameModalOpen] = useState(false);
+
+    function handleGameModalOpen(gId) {
+
+        sessionStorage.setItem('gId', gId);
+        console.log(gId);
+        setGameModalOpen(true);
+
     }
+
+    const handleModalClose = () => setGameModalOpen(false);
+
+
+
 
 
     //List Point Table ==========================================================================
 
-    const [PointList, setPointList] = useState([])
+    const [groupPoint, setData] = useState([])
+
 
     useEffect(() => {
-        console.log("PointTable  Api Call===============")
-        axios.get('http://localhost:4006/Point/getinfo/common').then((response) => {
+        console.log("ap call====================");
+        axios.get('http://localhost:4006/Group/findAllGroup').then((response) => {
             console.log("Response", response.data);
-            setPointList(response.data)
-            console.log("========================================================", response.data.gameList.GameName);
+            setData(response.data)
+            console.log(response.data.GroupName);
+
         });
     }, [])
+
 
     // Point Table =================================================================================================
 
@@ -70,29 +96,62 @@ export default function GroupsPoints() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {PointList
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                            {/* .map((row) => {
-                  return ( */}
-                            <TableRow>
-                                <TableCell onClick={gamePoints} sx={{ cursor: 'pointer' }}> Group1 </TableCell>
-                                <TableCell > Total Score </TableCell>
-                                {/* <TableCell >{row.GroupId}</TableCell>
-                <TableCell>{row.GamePoint}</TableCell> */}
-                            </TableRow>
-                            {/* );
-                })} */}
+                            {groupPoint
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((row) => {
+                                    return (
+                                        <TableRow key={row._id}>
+                                            <TableCell><Avatar src={row.GroupImage}></Avatar></TableCell>
+                                            <TableCell sx={{ cursor: 'pointer' }}> {row.GroupName} </TableCell>
+                                            <TableCell > 378 </TableCell>
+                                            <TableCell><Button onClick={() => handleGameModalOpen(row._id)}>Add</Button></TableCell>
+                                        </TableRow>
+                                    );
+                                })}
                         </TableBody>
                     </Table>
                 </TableContainer>
                 <TablePagination
-                    rowsPerPageOptions={[3, 5, 10, 100]}
+                    rowsPerPageOptions={[ 5, 10, 25]}
                     component="div"
-                    count={PointList.length}
+                    count={groupPoint.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage} />
-            </Paper></>
+            </Paper>
+
+
+            <Modal open={GameModal} onClose={handleModalClose} center>
+                <Box sx={{ width: 600, marginLeft: '1vh' }}>
+                    <Table stickyHeader aria-label="sticky table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell style={{ minWidth: '300' }}>Game</TableCell>
+                                <TableCell>Score</TableCell>
+                            </TableRow>
+                        </TableHead>
+
+                        <TableBody>
+                            <TableRow>
+                                <TableCell>Game</TableCell>
+                                <TableCell><Input type='number' placeholder='score' /> </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell>Game</TableCell>
+                                <TableCell><Input type='number' placeholder='score' /> </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                    <Button>submit</Button>
+
+                </Box>
+            </Modal>
+
+
+        </>
+
+
     );
 }
+

@@ -6,7 +6,8 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import AllEvents from './AllEvents';
 import CurrentEvents from './CurrentEvents';
-import EventsHistory from './EventsHistory';
+import History from './History';
+
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -58,7 +59,7 @@ export default function EventsMain() {
                 </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
-                <EventsHistory />
+                <History />
             </TabPanel>
             <TabPanel value={value} index={1}>
                 <AllEvents />

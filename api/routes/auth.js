@@ -1,18 +1,18 @@
-var csv = require('csvtojson');
+let csv = require('csvtojson');
 const exp = require('express');
 const app = exp();
 ///////////////////////json body validation///////////////////////
 const Joi = require('@hapi/joi');
-var path = require('path');
+let path = require('path');
 const userstable = require('../models/UserTable.js')
 const bodyParser = require('body-parser')
 const { newvalidation } = require("../utils/UserValidation");
-var errorData;
+let errorData;
 //fetch data from the request
 const multer = require('multer');
 app.use(bodyParser.urlencoded({ extended: false }));
 
-var storage = multer.diskStorage({
+let storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, './assets/data/uploads');
   },
@@ -21,7 +21,7 @@ var storage = multer.diskStorage({
   }
 });
 
-var upload = multer({ storage: storage,fileFilter: function(req, file, callback) {
+let upload = multer({ storage: storage,fileFilter: function(req, file, callback) {
   if(path.extname(file.originalname) !== '.csv') {
     return callback(new Error('Only	csv files allowed!'));
   }
@@ -49,7 +49,7 @@ router.post("/csv/Upload", csvAuth)
 router.post("/upload", upload.array("csv"), uploadFiles);
 
 function uploadFiles(req, res) {
-  console.log(req.body);
+  console.log("req.body");
   console.log(req.files);
   csv()
     .fromFile(req.files[0].path)
@@ -75,12 +75,15 @@ function uploadFiles(req, res) {
     
        try{
         if (!errorData.error) {
-          const options = { ordered: true };
-          const result = await UserTable.insertMany(jsonObj, options,(error,data)=>{
+          console.log("hello")
+          let options = { ordered: true };
+          let jsonobj= await userstable.insertMany(jsonObj, options,(error,data)=>{
+            console.log("inside")
             if(error){
-              res.send(error.writeErrors)
+              res.send(error)
             }
           else{
+            console.log("inside")
             res.send(data)
           }
   
@@ -94,7 +97,7 @@ function uploadFiles(req, res) {
        }  
     }
     );
-  // res.send(req.files[0].path)
+
 
 
 }
