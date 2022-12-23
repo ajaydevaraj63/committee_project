@@ -10,6 +10,7 @@ import TableRow from '@mui/material/TableRow';
 import axios from 'axios';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import Configuration from '../Configuration'
 import { Helmet } from 'react-helmet-async';
 import Modal from 'react-responsive-modal';
 
@@ -68,7 +69,7 @@ export default function GroupsPoints() {
 
     useEffect(() => {
         console.log("ap call====================");
-        axios.get('http://localhost:4006/Group/findAllGroup').then((response) => {
+        axios.get(Configuration.devUrl+'Group/findAllGroup').then((response) => {
             console.log("Response", response.data);
             setData(response.data)
             console.log(response.data.GroupName);

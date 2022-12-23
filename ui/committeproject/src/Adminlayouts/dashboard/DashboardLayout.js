@@ -7,6 +7,7 @@ import { styled } from '@mui/material/styles';
 import Header from './header';
 import Nav from './nav';
 import axios from 'axios';
+import Configuration from '../Configuration'
 axios.interceptors.request.use(
   config => {
     config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
@@ -54,7 +55,7 @@ export default function DashboardLayout() {
       Delete:0
     }
     console.log("jjjjjjjjjjjjjjjjjjjjjjjjj")
-    axios.post("http://localhost:4006/Group/FindCommittee", body).then((response) => {
+    axios.post(Configuration.devUrl+"Group/FindCommittee", body).then((response) => {
       console.log("nav", response.data);
 
       if( response && response.data.length>0){

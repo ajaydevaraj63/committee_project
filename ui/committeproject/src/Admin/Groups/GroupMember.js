@@ -19,6 +19,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
+import Configuration from '../Configuration'
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
 import Multiselect from 'multiselect-react-dropdown';
@@ -215,7 +216,7 @@ function EnhancedTableToolbar(props) {
         const listobject = []
         const getUserlist = async () => {
             console.log("ap call====================");
-            const reqData = await axios.get('http://localhost:4006/users/Display/AddUsersToNewGroup');
+            const reqData = await axios.get(Configuration.devUrl+'users/Display/AddUsersToNewGroup');
             const reqsData = await reqData.data;
             console.log("reqData", reqsData);
 
@@ -237,7 +238,7 @@ function EnhancedTableToolbar(props) {
     // const listgroupmember = () => {
     //     const Gid = sessionStorage.getItem('Gid')
     //     console.log("ap call====================");
-    //     axios.get('http://localhost:4006/Group/FindAllUser/inGroup/'.concat(Gid)).then((response) => {
+    //     axios.get(Configuration.devUrl+'Group/FindAllUser/inGroup/'.concat(Gid)).then((response) => {
     //         console.log("sucess", response.data);
     //         if(response.data.length == 0){
     //             setNodataErr("No data Available");
@@ -279,7 +280,7 @@ function EnhancedTableToolbar(props) {
         if (groupmembererror != null){
                 return;
             }
-        axios.put("http://localhost:4006/group/Update/Multiple/UsersGroup/".concat(Gid), emplist).then((response) => {
+        axios.put(Configuration.devUrl+"group/Update/Multiple/UsersGroup/".concat(Gid), emplist).then((response) => {
             console.log("check", response);
             handleAddmemberclose();
             //  listgroupmember();
@@ -406,7 +407,7 @@ export default function EnhancedTable() {
       const listgroupmember = () => {
         const Gid = sessionStorage.getItem('Gid')
         console.log("ap call====================");
-        axios.get('http://localhost:4006/Group/FindAllUser/inGroup/'.concat(Gid)).then((response) => {
+        axios.get(Configuration.devUrl+'Group/FindAllUser/inGroup/'.concat(Gid)).then((response) => {
             console.log("sucess", response.data);
             if(response.data.length == 0){
                 setNodataErr("No data Available");
@@ -437,7 +438,7 @@ export default function EnhancedTable() {
             confirmButtonText: 'Yes, delete it!'
         }).then((response) => {
             if (response.isConfirmed) {
-                axios.put("http://localhost:4006/Group/Update/Single/UserGroup/".concat(id), body).then((response) => {
+                axios.put(Configuration.devUrl+"Group/Update/Single/UserGroup/".concat(id), body).then((response) => {
                     Swal.fire(
                         'Deleted!',
                         'Your file has been deleted.',

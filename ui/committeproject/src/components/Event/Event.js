@@ -20,7 +20,7 @@ const Event = () => {
     async function handleSubmit(event) {
         event.preventDefault()
         
-        const url = 'http://localhost:4006/event/postevent';
+        const url = Configuration.devUrl+'event/postevent';
         const formData = new FormData();
         formData.append('File', file);
         formData.append('EventName', name);

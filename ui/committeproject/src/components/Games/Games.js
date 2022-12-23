@@ -31,7 +31,7 @@
 
 
 
-//         const url = 'http://localhost:4006/game/postgame';
+//         const url = Configuration.devUrl+'game/postgame';
 //         const formData = new FormData();
 //         formData.append('RulesPdf', file);
 //         formData.append('GameName', name);

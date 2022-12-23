@@ -8,6 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import axios from 'axios';
 import moment from 'moment';
+import Configuration from '../Configuration'
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -51,7 +52,7 @@ export default function History() {
 
     useEffect(() => {
         console.log("PointTable  Api Call===============")
-        axios.get('http://localhost:4006/event/allevent?page=1&LIMIT=10&sortOrder=1&sortBy=EventName').then((response) => {
+        axios.get(Configuration.devUrl+'event/allevent?page=1&LIMIT=10&sortOrder=1&sortBy=EventName').then((response) => {
             console.log("Response", response.data);
             setPointList(response.data.data)
             console.log("========", PointList);
@@ -71,7 +72,7 @@ export default function History() {
         }
         
         console.log("GameTable  Api Call===============")
-        axios.post('http://localhost:4006/game/EventId', obj).then((response) => {
+        axios.post(Configuration.devUrl+'game/EventId', obj).then((response) => {
             console.log("Response", response.data);
             setGameList(response.data)
             console.log("========", gameList);

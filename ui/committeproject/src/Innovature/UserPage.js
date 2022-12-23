@@ -95,7 +95,7 @@ export default function UserPage() {
 
   useEffect(() => {
     console.log("ap call====================");
-    axios.get("http://localhost:4006/Point/getAll").then((response) => {
+    axios.get(Configuration.devUrl+"Point/getAll").then((response) => {
       console.log("sucess", response.data);
       setData([{"GameName":"cricket"},{"EventName":"sports"},{"TotalPoint":"200"},{"Date":"05-07-2023"}]);
     });

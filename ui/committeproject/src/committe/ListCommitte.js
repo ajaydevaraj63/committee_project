@@ -19,7 +19,7 @@ export const ListCommittee = () => {
     const [data, setData] = useState([]);
     useEffect(() => {
         console.log("api cal====");
-        axios.get('http://localhost:4006/users/getCommitteMember').then((response) => {
+        axios.get(Configuration.devUrl+'users/getCommitteMember').then((response) => {
             console.log("sucess", response.data);
             setData(response.data)
         });

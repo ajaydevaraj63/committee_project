@@ -9,6 +9,7 @@ import axios from 'axios';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import Configuration from '../Configuration'
 
 axios.interceptors.request.use(
     config => {
@@ -48,7 +49,7 @@ export default function AllEvents() {
 
     useEffect(() => {
         console.log("PointTable  Api Call===============")
-        axios.get('http://localhost:4006/event/allevent?page=1&LIMIT=10&sortOrder=1&sortBy=EventName').then((response) => {
+        axios.get(Configuration.devUrl+'event/allevent?page=1&LIMIT=10&sortOrder=1&sortBy=EventName').then((response) => {
             console.log("Response", response.data);
             setPointList(response.data.data)
             console.log("========", PointList);
@@ -67,7 +68,7 @@ export default function AllEvents() {
         console.log("GroupTable  Api Call===============")
         const obj = { "EventId": eId }
         console.log("obj", obj);
-        axios.post('http://localhost:4006/TotalPoint/Get/Point', obj).then((response) => {
+        axios.post(Configuration.devUrl+'TotalPoint/Get/Point', obj).then((response) => {
             console.log("Response", response);
             list = response.data
             console.log("list", list)

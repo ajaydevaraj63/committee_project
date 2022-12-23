@@ -9,6 +9,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Toolbar from '@mui/material/Toolbar';
+import Configuration from './Configuration'
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -237,7 +238,7 @@ export default function EnhancedTable() {
     }
 
     const onSearch = () => {
-        axios.get('http://localhost:4006/Users/Display/FilteredUser', Searchuser).then((response) => {
+        axios.get(Configuration.devUrl+'Users/Display/FilteredUser', Searchuser).then((response) => {
             console.log("sucessssssssssssssssss", response.data);
 
         });
@@ -287,7 +288,7 @@ export default function EnhancedTable() {
                 return;
             }
 
-        axios.post("http://localhost:4006/Auth/upload", formData).then((response) => {
+        axios.post(Configuration.devUrl+"Auth/upload", formData).then((response) => {
             console.log("============================");
             console.log("Response", response.error);
         })
@@ -306,7 +307,7 @@ export default function EnhancedTable() {
     const listusers = () => {
         toast.success("Deleted Successfully !");
         console.log("ap call====================");
-        axios.get('http://localhost:4006/users/display/All/user').then((response) => {
+        axios.get(Configuration.devUrl+'users/display/All/user').then((response) => {
             console.log("sucess", response.data);
             if (response.data.length == 0) {
                 setNodataErr("No data Available");
@@ -319,7 +320,7 @@ export default function EnhancedTable() {
     const listdesignation = async () => {
         const listdesignation = []
         console.log("ap call====================");
-        const des = await axios.get('http://localhost:4006/Designation/get').then((response) => {
+        const des = await axios.get(Configuration.devUrl+'Designation/get').then((response) => {
             console.log("sucessdesignations", response.data);
             const designationdata = response.data
             console.log('jjjjjjjjjjjjjj', response.data[0].Designation);
@@ -363,7 +364,7 @@ export default function EnhancedTable() {
         }).then((response) => {
             if (response.isConfirmed) {
                 console.log("innov");
-                axios.post("http://localhost:4006/auth/delete/user/".concat(id), body).then((response) => {
+                axios.post(Configuration.devUrl+"auth/delete/user/".concat(id), body).then((response) => {
                     Swal.fire(
                         'Deleted!',
                         'Your file has been deleted.',
@@ -419,7 +420,7 @@ export default function EnhancedTable() {
         }
         if (e.target.name === "Email") {
             let email = e.target.value
-            let emailCheck = new RegExp(/^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/g).test(email);
+            let emailCheck = new RegExp(/^[\w-]+@([\w-])+[\w-]{2,4}$/g).test(email);
             if (email === '') {
                 setEmailError("Email is required")
             }
@@ -463,7 +464,7 @@ export default function EnhancedTable() {
         console.log("EditUser=======", editUser);
         const id = sessionStorage.getItem('id')
         console.log('check', id);
-        axios.post("http://localhost:4006/auth/update/user/type/".concat(id), editUser).then((response) => {
+        axios.post(Configuration.devUrl+"auth/update/user/type/".concat(id), editUser).then((response) => {
             console.log("check", response.data);
             handleeditClose();
             setTimeout(() => {
@@ -504,7 +505,7 @@ export default function EnhancedTable() {
             return;
         }
         console.log("AddUser=======", designation);
-        axios.post("http://localhost:4006/auth/add/user/manually", user).then((response) => {
+        axios.post(Configuration.devUrl+"auth/add/user/manually", user).then((response) => {
             console.log(user);
             console.log("check", response.data);
             handleCloseUser();
@@ -587,7 +588,7 @@ export default function EnhancedTable() {
     function handleeditOpen(id) {
         sessionStorage.setItem('id', id);
         console.log("vvvvv", id);
-        axios.get("http://localhost:4006/auth/getUser/byId/".concat(id)).then((response) => {
+        axios.get(Configuration.devUrl+"auth/getUser/byId/".concat(id)).then((response) => {
             console.log("check", response.data);
             // const editData =response.data;
             setEditpatchvalue(response.data);

@@ -9,6 +9,7 @@ import axios from 'axios';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import Configuration from '../Configuration'
 
 axios.interceptors.request.use(
     config => {
@@ -55,7 +56,7 @@ export default function AllEvents() {
 
     useEffect(() => {
         console.log("PointTable  Api Call===============")
-        axios.get('http://localhost:4006/Event/currentevents').then((response) => {
+        axios.get(Configuration.devUrl+'Event/currentevents').then((response) => {
             console.log("Response", response.data);
             setPointList(response.data.data)
             console.log("========", PointList);

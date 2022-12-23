@@ -18,12 +18,13 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Swal from 'sweetalert2';
-
+import Configuration from './Configuration'
 
 import {
     Box, Button, Container, Modal, Stack, Table, TableBody,
     TableCell, TableRow, Typography
 } from '@mui/material';
+
 axios.interceptors.request.use(
     config => {
         config.headers.Authorization = JSON.parse(localStorage.getItem("Profile")).Token;
@@ -216,7 +217,7 @@ export default function EnhancedTable() {
     }
 
     const onSearch = () => {
-        axios.get('http://localhost:4006/Users/Display/FilteredUser', Searchuser).then((response) => {
+        axios.get(Configuration.devUrl+'Users/Display/FilteredUser', Searchuser).then((response) => {
             console.log("sucessssssssssssssssss", response.data);
 
         });
@@ -237,13 +238,14 @@ export default function EnhancedTable() {
             GroupType: 1,
             Delete: 0
         }
-        await axios.post("http://localhost:4006/Group/FindCommittee", body).then((response) => {
+        console.log("Strating api call"+Configuration.devUrl);
+        await axios.post(Configuration.devUrl+"Group/FindCommittee", body).then((response) => {
             if (response) {
                 console.log("llllll", response);
                 setGetGroupId(response.data[0]._id);
                 if (response.data[0]._id) {
                     console.log(GetGroupType)
-                    axios.get('http://localhost:4006/Group/FindAllUser/inCommittee/'.concat(response.data[0]._id)).then((response) => {
+                    axios.get(Configuration.devUrl+'Group/FindAllUser/inCommittee/'.concat(response.data[0]._id)).then((response) => {
                         console.log("sucess", response.data);
                         if (response.data.length == 0) {
                             setNodataErr("No data Available");
@@ -276,7 +278,7 @@ export default function EnhancedTable() {
 
     const listcommitteemember = async () => {
         console.log("ap call====================", GetGroupType);
-        await axios.get('http://localhost:4006/Group/FindAllUser/inCommittee/'.concat(GetGroupType)).then((response) => {
+        await axios.get(Configuration.devUrl+'Group/FindAllUser/inCommittee/'.concat(GetGroupType)).then((response) => {
             console.log("sucess", response.data);
             if (response.data.length == 0) {
                 setNodataErr("No data Available");
@@ -306,7 +308,7 @@ export default function EnhancedTable() {
             confirmButtonText: 'Yes, delete it!'
         }).then((response) => {
             if (response.isConfirmed) {
-                axios.post("http://localhost:4006/auth/delete/user/".concat(id), body).then((response) => {
+                axios.post(Configuration.devUrl+"auth/delete/user/".concat(id), body).then((response) => {
                     if (response) {
                         Swal.fire(
                             'Deleted!',
@@ -331,7 +333,7 @@ export default function EnhancedTable() {
     //     console.log("EditUser=======",editUser);
     //     const id = sessionStorage.getItem('id')
     //     console.log('check', id);
-    //     axios.post("http://localhost:4006/auth/update/user/type/".concat(id), editUser).then((response) => {
+    //     axios.post(Configuration.devUrl+"auth/update/user/type/".concat(id), editUser).then((response) => {
     //         console.log("check", response.data);
     //         handleeditClose();
     //         window.location.reload();
@@ -471,7 +473,7 @@ export default function EnhancedTable() {
 
         const getUserlist = async () => {
             console.log("apa of  call====================");
-            const reqData = await axios.get("http://localhost:4006/Users/Display/AddUsersToNewCommittee").then((response) => {
+            const reqData = await axios.get(Configuration.devUrl+"Users/Display/AddUsersToNewCommittee").then((response) => {
                 console.log('........', response)
                 console.log('filterd user', response.data);
                 const reqsData = response.data;
@@ -525,7 +527,7 @@ export default function EnhancedTable() {
         if (groupmembererror != null) {
             return;
         }
-        axios.put("http://localhost:4006/group/Update/Multiple/UsersCommittee/".concat(GetGroupType), emplist).then((response) => {
+        axios.put(Configuration.devUrl+"group/Update/Multiple/UsersCommittee/".concat(GetGroupType), emplist).then((response) => {
             console.log("check", response);
             handleAddmemberclose();
             // checkgrouptype();

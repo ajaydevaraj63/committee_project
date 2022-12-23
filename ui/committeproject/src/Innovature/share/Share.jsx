@@ -19,7 +19,7 @@ export default function AddPost() {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    const url = "http://localhost:4006/post/postimage";
+    const url = Configuration.devUrl+"post/postimage";
     const formData = new FormData();
     formData.append("PostImage", file);
     formData.append("PostDescription", description);

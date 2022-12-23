@@ -59,7 +59,7 @@ export default function DashboardAppPage() {
   // }, []);
   useEffect(() => {
     axios
-      .get("http://localhost:4006/post/allposts")
+      .get(Configuration.devUrl+"post/allposts")
       .then((res) => {
         console.log(res);
         setPosts1(res.data);
@@ -71,7 +71,7 @@ export default function DashboardAppPage() {
 
   // useEffect(() => {
   //   fetch(
-  //     "http://localhost:4006/group/FindAllUser/inGroup/638db2be7b587b964c7debfe"
+  //     Configuration.devUrl+"group/FindAllUser/inGroup/638db2be7b587b964c7debfe"
   //   )
   //     .then((response) => response.json())
   //     .then((data) => {

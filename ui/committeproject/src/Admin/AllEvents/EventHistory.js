@@ -10,6 +10,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import Configuration from '../Configuration'
 import axios from 'axios';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
@@ -60,7 +61,7 @@ export default function EventHistory() {
 
     useEffect(() => {
         console.log("PointTable  Api Call===============")
-        axios.get('http://localhost:4006/Point/getinfo/common').then((response) => {
+        axios.get(Configuration.devUrl+'Point/getinfo/common').then((response) => {
             setPointList(response.data)
             console.log("========", response.data);
         });
@@ -88,7 +89,7 @@ export default function EventHistory() {
 
     useEffect(() => {
         console.log("ap call====================");
-        axios.get('http://localhost:4006/Group/findAllGroup').then((response) => {
+        axios.get(Configuration.devUrl+'Group/findAllGroup').then((response) => {
             console.log("Response", response.data);
             setData(response.data)
             console.log(response.data.GroupName);
@@ -101,7 +102,7 @@ export default function EventHistory() {
 
     useEffect(() => {
         console.log("eventList  Api Call===============")
-        axios.get('http://localhost:4006/event/allevent').then((response) => {
+        axios.get(Configuration.devUrl+'event/allevent').then((response) => {
             console.log("Response", response.data);
             setEventList(response.data.data)
             console.log("========", eventList);
@@ -119,7 +120,7 @@ export default function EventHistory() {
         console.log(eId);
         let obj = { "EventId": eId }
         console.log("GameTable  Api Call===============")
-        axios.post('http://localhost:4006/game/EventId', obj).then((response) => {
+        axios.post(Configuration.devUrl+'game/EventId', obj).then((response) => {
             console.log("Response", response);
             setGameList(response.data)
 
@@ -155,7 +156,7 @@ export default function EventHistory() {
         grpPoints.EventId = sessionStorage.getItem("eventId")
         grpPoints.GroupId = sessionStorage.getItem("EditGroupId")
         console.log(grpPoints);
-        axios.post('http://localhost:4006/TotalPoint/Get/EventId/GroupId', grpPoints).then((response) => {
+        axios.post(Configuration.devUrl+'TotalPoint/Get/EventId/GroupId', grpPoints).then((response) => {
             console.log("Response", response);
             setgameName(response.data)
             console.log(gameName);
@@ -209,7 +210,7 @@ export default function EventHistory() {
         let obj={"GroupId": sessionStorage.getItem("GroupID"),"EventId": sessionStorage.getItem("eventId"),"Data":dataset}
 
 
-        axios.post("http://localhost:4006/TotalPoint/New/Point",obj).then((response) => {
+        axios.post(Configuration.devUrl+"TotalPoint/New/Point",obj).then((response) => {
 
             console.log(grpPoint);
             console.log("check", response.data);
@@ -263,7 +264,7 @@ export default function EventHistory() {
 
         debugger;
 
-        axios.post("http://localhost:4006/TotalPoint/Get/Update/"+gpId,obj).then((error,response) => {
+        axios.post(Configuration.devUrl+"TotalPoint/Get/Update/"+gpId,obj).then((error,response) => {
             handleEditModalClose()
             if(response){
                 console.log(response);

@@ -9,6 +9,7 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import { deepOrange} from '@mui/material/colors';
 import Avatar from '@mui/material/Avatar';
+import Configuration from './Configuration'
 
 axios.interceptors.request.use(
     config => {
@@ -73,7 +74,7 @@ export default function Committee() {
         sessionStorage.setItem('id', id);
         console.log("vvvvv", id);
         setRoleopen(true);
-        axios.get("http://localhost:4006/users/getCommitteMember".concat(id)).then((response) => {
+        axios.get(Configuration.devUrl+"users/getCommitteMember".concat(id)).then((response) => {
             console.log("check", response.data);
             
         })
@@ -92,7 +93,7 @@ export default function Committee() {
         e.preventDefault();
         const id = sessionStorage.getItem('id')
         console.log('check', id);
-        axios.put("http://localhost:4006/users/committeeupdate/".concat(id), JsonRole).then((response) => {
+        axios.put(Configuration.devUrl+"users/committeeupdate/".concat(id), JsonRole).then((response) => {
             console.log("check", response.data);
             handleCommitteeModaClose();
             
@@ -104,7 +105,7 @@ export default function Committee() {
     const [data, setData] = useState([]);
     useEffect(() => {
         console.log("api cal====");
-        axios.get('http://localhost:4006/users/getCommitteMember').then((response) => {
+        axios.get(Configuration.devUrl+'users/getCommitteMember').then((response) => {
             console.log("sucess", response.data);
             setData(response.data)
         });

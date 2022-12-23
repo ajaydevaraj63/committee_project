@@ -1,7 +1,7 @@
 
 
 function environment() {
-    const Api_Url = "http://localhost:4006/"
+    const Api_Url = Configuration.devUrl+""
 }
 
 export default environment;

@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
 import Multiselect from 'multiselect-react-dropdown';
 import axios from 'axios';
+import Configuration from '../Configuration'
 import {
     Stack,
     Button,
@@ -43,7 +44,7 @@ export default function AddMember() {
         const listobject = []
         const getUserlist = async () => {
             console.log("ap call====================");
-            const reqData = await axios.get('http://localhost:4006/users/Display/AddUsersToNewGroup');
+            const reqData = await axios.get(Configuration.devUrl+'users/Display/AddUsersToNewGroup');
             const reqsData = await reqData.data;
             console.log("reqData", reqsData);
 
@@ -84,7 +85,7 @@ export default function AddMember() {
         const Gid = sessionStorage.getItem('Gid')
         console.log("AddUserto group=======", Gid);
         console.log(emplist);
-        axios.put("http://localhost:4006/group/Update/Multiple/UsersGroup/".concat(Gid), emplist).then((response) => {
+        axios.put(Configuration.devUrl+"group/Update/Multiple/UsersGroup/".concat(Gid), emplist).then((response) => {
             console.log("check", response);
 
 

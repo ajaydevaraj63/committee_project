@@ -8,6 +8,7 @@ import { Helmet } from 'react-helmet-async';
 import { Modal } from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
 import Swal from 'sweetalert2';
+import Configuration from './Configuration'
 // @mui
 import {
   Box, Button, MenuItem, Popover, Stack, Table, TableBody, TableCell, TableRow, TextField, Typography
@@ -116,7 +117,7 @@ export default function UserPage() {
 
   useEffect(() => {
     console.log("ap call====================");
-    axios.get('http://localhost:4006/users/display/All/user').then((response) => {
+    axios.get(Configuration.devUrl+'users/display/All/user').then((response) => {
       console.log("success", response.data);
       setData(response.data)
     });
@@ -139,7 +140,7 @@ export default function UserPage() {
       confirmButtonText: 'Yes, delete it!'
     }).then((response) => {
       if (response.isConfirmed) {
-        axios.post("http://localhost:4006/auth/delete/user/".concat(id), body).then((response) => {
+        axios.post(Configuration.devUrl+"auth/delete/user/".concat(id), body).then((response) => {
           Swal.fire(
             'Deleted!',
             'Your file has been deleted.',
@@ -156,7 +157,7 @@ export default function UserPage() {
     const formData = new FormData();
     formData.append('csv', selectedFile);
     console.log("csv=============================");
-    axios.post("http://localhost:4006/Auth/upload", formData).then((response) => {
+    axios.post(Configuration.devUrl+"Auth/upload", formData).then((response) => {
       console.log("============================");
       Swal.fire({
         icon: 'success',
@@ -179,7 +180,7 @@ export default function UserPage() {
 
   const handleSubmit = () => {
     console.log("AddUser=======");
-    axios.post("http://localhost:4006/auth/add/user/manually", user).then((response) => {
+    axios.post(Configuration.devUrl+"auth/add/user/manually", user).then((response) => {
       console.log(user);
       console.log("check", response.data);
       handleClose();
@@ -191,7 +192,7 @@ export default function UserPage() {
     console.log("EditUser=======");
     const id = sessionStorage.getItem('id')
     console.log('check', id);
-    axios.post("http://localhost:4006/auth/update/user/type/".concat(id), editUser).then((response) => {
+    axios.post(Configuration.devUrl+"auth/update/user/type/".concat(id), editUser).then((response) => {
       console.log(user);
       console.log("check", response.data);
       handleeditClose();

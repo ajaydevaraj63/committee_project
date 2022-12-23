@@ -13,6 +13,7 @@ import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Swal from 'sweetalert2';
+import Configuration from '../Configuration'
 
 // components
 import { Link } from 'react-router-dom/dist';
@@ -143,7 +144,7 @@ export default function Groups() {
       if (Nameerror != null) {
         return;
       }
-    axios.post("http://localhost:4006/Group/create", formdata).then((response) => {
+    axios.post(Configuration.devUrl+"Group/create", formdata).then((response) => {
       console.log("check", response.data);
       listgroups();
       handleClose();
@@ -157,7 +158,7 @@ export default function Groups() {
 
   const listgroups = () => {
     console.log("ap call====================");
-    axios.get('http://localhost:4006/Group/findAllGroup').then((response) => {
+    axios.get(Configuration.devUrl+'Group/findAllGroup').then((response) => {
       console.log("Response", response.data);
       setData(response.data)
       console.log(response.data.GroupName);
@@ -183,7 +184,7 @@ export default function Groups() {
       confirmButtonText: 'Yes, delete it!'
     }).then((response) => {
       if (response.isConfirmed) {
-        axios.put("http://localhost:4006/Group/Delete/CommitteeOrGroup/".concat(id)).then((response) => {
+        axios.put(Configuration.devUrl+"Group/Delete/CommitteeOrGroup/".concat(id)).then((response) => {
           Swal.fire(
             'Deleted!',
             'Your file has been deleted.',
@@ -208,7 +209,7 @@ export default function Groups() {
   function handleeditOpen(id) {
     sessionStorage.setItem('id', id);
     console.log("vvvvv", id);
-    axios.get("http://localhost:4006/Group/findGroupById/".concat(id)).then((response) => {
+    axios.get(Configuration.devUrl+"Group/findGroupById/".concat(id)).then((response) => {
       console.log("check", response.data);
       const editData = response.data;
       setEditpatchvalue(editData);
@@ -256,7 +257,7 @@ export default function Groups() {
       return;
     }
 
-    axios.put("http://localhost:4006/Group/UpdateGroupDetails/".concat(id), editUser).then((response) => {
+    axios.put(Configuration.devUrl+"Group/UpdateGroupDetails/".concat(id), editUser).then((response) => {
       console.log("check", response.data);
       listgroups();
       handleeditClose();
@@ -288,7 +289,7 @@ export default function Groups() {
       if (Nameerror != null) {
         return;
       }
-    axios.put("http://localhost:4006/Group/UpdatePic/".concat(editpicId), formdata).then((response) => {
+    axios.put(Configuration.devUrl+"Group/UpdatePic/".concat(editpicId), formdata).then((response) => {
       console.log("check", response.data);
       handleUpdatepicClose();
       listgroups();
@@ -302,7 +303,7 @@ export default function Groups() {
       GroupType: 1,
       Delete: 0
     }
-    await axios.post("http://localhost:4006/Group/FindCommittee", body).then((response) => {
+    await axios.post(Configuration.devUrl+"Group/FindCommittee", body).then((response) => {
       console.log("llllll", response.data);
       setCheckGroupType(response.data)
 

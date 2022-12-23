@@ -43,7 +43,7 @@ export default function Addcommitteemember() {
         const listobject = []
         const getUserlist = async () => {
             console.log("ap call====================");
-            const reqData = await axios.get('http://localhost:4006/users/Display/AddUsersToNewGroup');
+            const reqData = await axios.get(Configuration.devUrl+'users/Display/AddUsersToNewGroup');
             const reqsData = await reqData.data;
             console.log("reqData", reqsData);
 
@@ -84,7 +84,7 @@ export default function Addcommitteemember() {
         const Gid = sessionStorage.getItem('Gid')
         console.log("AddUserto group=======", Gid);
         console.log(emplist);
-        axios.put("http://localhost:4006/group/Update/Multiple/UsersGroup/".concat(Gid), emplist).then((response) => {
+        axios.put(Configuration.devUrl+"group/Update/Multiple/UsersGroup/".concat(Gid), emplist).then((response) => {
             console.log("check", response);
 
 

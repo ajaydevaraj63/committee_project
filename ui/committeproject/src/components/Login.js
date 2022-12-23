@@ -69,7 +69,7 @@ const Login = () => {
   //  const loginFun=()=>{
 
   //   console.log("hello")
-  //   window.open("http://localhost:4006/auth/Googlogin/google", "_self");
+  //   window.open(Configuration.devUrl+"auth/Googlogin/google", "_self");
 
   //    }
   const successResponse = async (res) => {

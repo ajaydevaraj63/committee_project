@@ -8,6 +8,7 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import { Typography } from '@material-ui/core';
 import Button from '@mui/material/Button';
+import Configuration from './Configuration'
 
 
 const Games = () => {
@@ -20,7 +21,7 @@ const Games = () => {
 
     useEffect(() => {
         console.log("Event Name=====");
-        axios.get('http://localhost:4006/Event/events').then((response) => {
+        axios.get(Configuration.devUrl+'Event/events').then((response) => {
             console.log("sucess", response.data);
             setData(response.data);
         });
@@ -50,7 +51,7 @@ const Games = () => {
 
 
 
-        const url = 'http://localhost:4006/game/postgame';
+        const url = Configuration.devUrl+'game/postgame';
         const formData = new FormData();
         formData.append('RulesPdf', file);
         formData.append('GameName', name);

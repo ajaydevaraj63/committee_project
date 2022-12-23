@@ -6,6 +6,7 @@ import axios from 'axios';
 import Button from '@mui/material/Button';
 import { CardContent, Input } from '@mui/material';
 import { Typography } from '@material-ui/core';
+import Configuration from '../Configuration'
 
 axios.interceptors.request.use(
     config => {
@@ -33,7 +34,7 @@ const Event = () => {
     async function handleSubmits(event) {
         event.preventDefault()
         
-        const url = 'http://localhost:4006/event/postevent';
+        const url = Configuration.devUrl+'event/postevent';
         const formData = new FormData();
         formData.append('File', file);
         formData.append('EventName', name);

@@ -249,7 +249,7 @@
     const [data,setData]=useState([]);
     useEffect(() => {
             console.log("api cal====");
-            axios.get('http://localhost:4006/game/allgame').then((response) => {
+            axios.get(Configuration.devUrl+'game/allgame').then((response) => {
                 console.log("sucess",response.data);
                 setData(response.data)
             });

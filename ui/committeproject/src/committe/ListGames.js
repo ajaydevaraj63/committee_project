@@ -19,6 +19,7 @@ import { FormControl, TextField,Button } from '@mui/material';
 import { Modal } from "react-responsive-modal";
 import EditIcon from '@mui/icons-material/Edit';
 import moment from 'moment';
+import Configuration from './Configuration'
 axios.interceptors.request.use(
     config => {
       config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
@@ -181,7 +182,7 @@ export default function EnhancedTable() {
     
     sessionStorage.setItem('id', id);
     console.log("idddd",id);
-    axios.get("http://localhost:4006/game/game/".concat(id)).then((response) => {
+    axios.get(Configuration.devUrl+"game/game/".concat(id)).then((response) => {
      console.log("datas",response.data);
      const editData = response.data;
      setEditpatchvalues(editData);
@@ -202,7 +203,7 @@ export default function EnhancedTable() {
     console.log("edit=====");
     const id = sessionStorage.getItem('id')
     console.log('update'.id);
-    axios.put("http://localhost:4006/game/updategame/".concat(id), editGame).then((response) => {
+    axios.put(Configuration.devUrl+"game/updategame/".concat(id), editGame).then((response) => {
      console.log("check",response.data);
      handleEditClose();
 
@@ -214,7 +215,7 @@ export default function EnhancedTable() {
     const [data, setData] = useState([]);
     useEffect(() => {
         console.log("api cal====");
-        axios.get('http://localhost:4006/game/allgame').then((response) => {
+        axios.get(Configuration.devUrl+'game/allgame').then((response) => {
             console.log("sucess", response.data.data);
             setData(response.data.data)
         });
@@ -281,7 +282,7 @@ export default function EnhancedTable() {
 
     const eventDetail = (id) => {
         console.log("game id : "+ id)
-        axios.get('http://localhost:4006/game/game/'+id).then((response) => {
+        axios.get(Configuration.devUrl+'game/game/'+id).then((response) => {
             console.log("detailed", response);
             // setData(response.data.data)
         });
