@@ -4,7 +4,7 @@ const path = require("path");
 const bdyp = require('body-parser')
 app.use(bdyp.json())
 const multer=require('multer')
-const { allevents, event, eventSearch, getEvents, eventDelete, getcurrentEvents, geteventswithgroup } = require("../controller/Event");
+const { allevents, event, eventSearch, getEvents, eventDelete, getcurrentEvents, geteventswithgroup, getcurrenteventswithgroup } = require("../controller/Event");
 const Event = require("../models/Event");
 const bodyParser = require('body-parser');
 const router=express.Router();
@@ -15,11 +15,11 @@ const joi=require('@hapi/joi')
 const Schema =joi.object().keys({
     EventName: joi.string().alphanum().min(3).max(30),
     EventDescription: joi.string().min(3).max(30),
-    // StartDate: joi.date(),
-    // EndDate: joi.date(),
+    StartDate: joi.date(),
+    EndDate: joi.date(),
     UserId: joi.string().alphanum()
 })
-
+app.use(express.static(__dirname + '/api/images'));
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, './images');
@@ -93,6 +93,8 @@ function eventupdation (req, res) {
     if(!Validation.error){
   
                 Event.findById( req.params.id, (error, data) => {
+                  const sd = data.StartDate;
+                  if ( sd < date ) {
                     Event.findByIdAndUpdate( req.params.id, { $set: req.body, File: req.files[0].path }, (error, data) => { 
                       try{
                 
@@ -106,6 +108,10 @@ function eventupdation (req, res) {
                 
                       }
                     })
+                  }
+                  else { 
+                    res.send("Event Started Further Updation Not Possible")
+                  }
                   })
               }
 
@@ -129,6 +135,7 @@ router.get('/events',getEvents)
 router.get('/currentevents',getcurrentEvents)
 router.delete('/eventDelete/:id',eventDelete)
 router.get("/eventswithgroupame", geteventswithgroup)
+router.get("/currenteventswithgroupame", getcurrenteventswithgroup)
 
 
 

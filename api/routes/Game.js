@@ -3,22 +3,23 @@ const app = express();
 const path = require("path");
 const multer=require('multer')
 const Game = require('../models/GameTable')
-const { allgames, game, gameactivation, gameSearch, FindGamesWithEventId, deleteGame } = require("../controller/Game");
+const { allgames, game, gameactivation, gameSearch, FindGamesWithEventId, deleteGame, onegame } = require("../controller/Game");
 const router=express.Router();
 module.exports=router;
 const bdyp = require('body-parser');
 const bodyParser = require('body-parser');
-const { error } = require('console');
+const TotalPoint = require('../models/TotalPoint.js')
+const { error, log } = require('console');
 app.use(bdyp.json());
 app.use(bodyParser.urlencoded({extended: false}));
 const joi=require('@hapi/joi')
 const Schema =joi.object().keys({
   GameName: joi.string().alphanum().min(3).max(30),
-  GameDesc: joi.string().min(3).max(100),
-  // StartDate: joi.date(),
-  // EndDate: joi.date(),
+  GameDesc: joi.string().min(3).max(30),
+  StartDate: joi.date(),
+  EndDate: joi.date(),
   UserId: joi.string().alphanum(),
-  EventId: joi.string().alphanum()
+  EventId: joi.string().alphanum(),
 })
 
 let storage = multer.diskStorage({
@@ -37,7 +38,6 @@ let upload = multer({ storage: storage,
     let ext = path.extname(file.originalname);
     if(ext !== '.pdf' && ext !== '.txt') {
               return callback(new Error('Only	pdf, text files are allowed!'));
-
     }
     callback(null, true)
 
@@ -62,12 +62,28 @@ function postgame(req, res, next) {
                 EventId: req.body.EventId
                 
             })
-            newgame.RulesPdf = req.files[0].path
+            newgame.RulesPdf = 'http://localhost:4006/'+ req.files[0].path
             newgame.save((error, data) => {
                     try {
+                    //   const newpoint = new TotalPoint({
 
+                    //           EventId: req.body.EventId,
+                    //           GameId: data._id,
+                    //           TotalPoint: "0"
+
+                    //   })
+                    //   newpoint.save((error, data) => 
+                    //   {
+                    //     if(!error) 
+                    //     {
+                    //       console.log(data);
+                    //     }
+                    //     else 
+                    //     {
+                    //       console.log(error);
+                    //     }
+                    //   })
                       res.send(data)
-
                     }
                     catch (error) {
 
@@ -76,9 +92,9 @@ function postgame(req, res, next) {
                     }
           next();
           });
-    
     }
-    else{
+
+    else {
         res.send(Validation.error)
     }
   }
@@ -89,13 +105,16 @@ function postgame(req, res, next) {
 }
 
 function gameupdation (req, res) {
-  const date = new Date();
+  const cd = new Date();
+  const date = cd.getTime()
+  console.log(cd);
   try{
   
-    let Validation=Schema.validate(req.body)
-    if(!Validation.error){
+    // let Validation=Schema.validate(req.body)
+    // if(!Validation.error){
         Game.findById( req.params.id, (error, data) => {
-        const sd = Game.StartDate;
+        const sd = data.StartDate.getTime();
+        console.log(data.StartDate);
         if ( sd < date ) {
 
               Game.findByIdAndUpdate( req.params.id, { $set: req.body, RulesPdf: req.files[0].path }, (error, data) => { 
@@ -118,11 +137,10 @@ function gameupdation (req, res) {
 
       }
     })
-}
-
-else{
-  res.send(Validation.error)
-}
+// }
+// else{
+//   res.send(Validation.error)
+// }
 }
 catch(error){
 
@@ -135,8 +153,9 @@ router.put("/activategame/:id", gameactivation)
 router.put("/updategame/:id", upload.array('RulesPdf'), gameupdation)
 router.get("/allgame" , allgames);
 router.get("/game/:id" , game);
+router.get("/onegame/:id" , onegame);
 router.get("/gameSearch", gameSearch);
-router.post("/EventId",FindGamesWithEventId);
+router.get("/EventId",FindGamesWithEventId);
 router.delete("/deleteGame/:id",deleteGame);
 
 

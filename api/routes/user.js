@@ -1,5 +1,5 @@
 const express = require("express");
-const { displayall, updateuser, deleteuser, FindbyNameAndEmail, displayallusers, getGropuMembers, paginationRecord, pagination, AddNewUsersToGroup, searchUser, updatecommittee, committeemember, AddNewUsersToCommittee, CommitteMember } = require("../controller/User");
+const { displayall, updateuser, deleteuser, FindbyNameAndEmail, displayallusers, getGropuMembers, paginationRecord, pagination, AddNewUsersToGroup, searchUser, updatecommittee, committeemember, AddNewUsersToCommittee } = require("../controller/User");
 const UserSchema = require('../models/UserTable')
 const { verifytoken, verifyuser, verifyadmin } = require("../utils/verifytoken");
 const router = express.Router();
@@ -29,7 +29,7 @@ let upload = multer({ storage: storage,
 router.put("/UpdatePic/:id", upload.array("image"), updateProfileImage);
 
 function updateProfileImage(req, res) {
-    const ImagePath = 'http://localhost:4006/images/'+req.files[0].filename
+    const ImagePath = Configuration.devUrl+'images/'+req.files[0].filename
 
     console.log(req.files);
         UserSchema.updateOne({ _id: req.params.id },
@@ -56,7 +56,7 @@ router.get('/group/members', getGropuMembers);
 router.get("/Display/AddUsersToNewGroup",AddNewUsersToGroup)
 router.get("/Display/AddUsersToNewCommittee",AddNewUsersToCommittee)
 router.get("/searchuser", searchUser)
-router.get("/getCommitteMember",CommitteMember)
+router.get("/getCommitteMember", committeemember)
 router.put("/committeeupdate/:id",updatecommittee)
 
 

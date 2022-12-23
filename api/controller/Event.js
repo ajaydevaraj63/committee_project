@@ -1,6 +1,9 @@
 const exp = require("express");
 const Event = require("../models/Event");
 const Game =  require("../models/GameTable");
+const GamePoint=require('../models/GamePointTable')
+const totalpoint = require('../models/TotalPoint')
+const Group = require("../models/Groups")
 const multer = require('multer');
 const { RDS } = require("aws-sdk");
 const app = exp();
@@ -9,6 +12,8 @@ const schedule = require('node-schedule');
   const mongoose=require('mongoose')
 const event = require('../models/Event.js');
 const { error } = require("@hapi/joi/lib/types/alternatives");
+const { readSync } = require("fs");
+const { log } = require("console");
 
 
 
@@ -123,59 +128,53 @@ exports.eventDelete = (req, res) => {
 })
 }
 
-// const job = schedule.scheduleJob('*/10 * * * * *', function(){
+const job = schedule.scheduleJob('*/01 * * * * *', function(){
+  const cd = new Date();
 
-//   const cd = new Date();
-//   const currentdate = cd.getTime()
-//   // let cd1 = cd.toLocaleDateString("en-US")
-//   // console.log(currentdate);
-//   Event.find((error, data) => { 
-//     console.log(data);
-//       data.forEach(element => { 
-       
-//           let beginDate = element.StartDate.getTime()
-         
-//           // let beginDate = element.StartDate.toLocaleDateString("en-US")
-//           // console.log("beginDate" + element.StartDate.toLocaleDateString("en-US"));
+  const currentdate = cd.setHours(0, 0, 0, 0);
+
+  Event.find((error, data) => { 
+      data.forEach(element => { 
+
+          let beginDate = element.StartDate.setHours(0, 0, 0, 0);
+
+          let closeDate = element.EndDate.setHours(0, 0, 0, 0);
 
 
-//           // let closeDate = element.EndDate.toLocaleDateString("en-US")
-//           let closeDate = element.EndDate.getTime()
-//           // console.log("closeDate" + element.EndDate.toLocaleDateString("en-US"));
+          if( beginDate == currentdate ) {
+              Event.updateOne({"_id":element._id.valueOf()}, {"Status": "1" },(error,data) => {
+                if(error){
+                  console.log(error);
+                }
+                else{
+                  // console.log("success -> Event Status Active")
+                  
+                }
+              })
 
-//           if( beginDate == currentdate ) {
-//             Event.updateOne({_id: element._id.toHexString()}, {$set: {"Status": 1} },(error,data) => {
-//                 if(error){
-//                   console.log(error);
-//                 }
-//                 else{
-//                   console.log("success -> Status Active")
-//                 }
-//               })
+          }
+          else if ( currentdate > closeDate ) {  
 
-//           }
-//           else if ( currentdate > closeDate ) {  
-//            console.log(element);
-//             // let result = element.replace("new", ""); 
-//             Event.updateOne( element.id, {$set: {"Status": 0} },(error,data) => {
-//                   if(error){
-//                       console.log(error);
-//                   }
-//                   else{
-//                       console.log("success -> Status Inactive")
-//                   }
-//                   })
-//                   }
+              Event.updateOne({"_id":element._id.valueOf()}, {"Status": "0" },(error,data) => {
+                  if(error){
+                      console.log(error);
+                  }
+                  else{
+                      // console.log("success -> Event Status Inactive")
+                  }
+                  })
+                  }
 
-//               })
-//           })
+              })
+          })
 
-//       })
+      })
+
 
 
 exports.getcurrentEvents = (req, res) => { 
 
-    Event.find( {Status: 1}, (error, data) => { 
+    Event.find( { Status: 1 }, (error, data) => { 
         if(!error) { 
             res.send(data)
         }
@@ -186,9 +185,11 @@ exports.getcurrentEvents = (req, res) => {
 
 }
 
-exports.geteventswithgroup = (req, res) => { 
+
+exports.getcurrenteventswithgroup = (req, res) => { 
             
   totalpoint.aggregate([
+
     {
         $match: {
             "GroupId" : mongoose.Types.ObjectId(req.body.GroupId)
@@ -202,21 +203,57 @@ exports.geteventswithgroup = (req, res) => {
 
       from: "events", localField: "EventId", foreignField: "_id", as: "eventlist"
       }
+    },
 
 
-
-    }
 ]).exec((error, result) => 
   {
+  try {
 
-    if(!error) { 
-      console.log(result);
-      res.send(result)
+      if (result[0].eventlist[0].Status == 1 )
+      {
+        res.send(result)
+      }
+      else {
+        res.send(error)
+      }
+    }
 
-    }
-    else {
-        console.log(error);
-    }
+    catch (error) { 
+
+     }
 
   });
+}
+
+exports.geteventswithgroup = (req, res) => { 
+            
+  totalpoint.aggregate([
+
+    {
+        $match: {
+            "GroupId" : mongoose.Types.ObjectId(req.body.GroupId)
+        },
+
+    },
+
+    {
+
+      $lookup: {
+
+      from: "events", localField: "EventId", foreignField: "_id", as: "eventlist"
+      }
+    },
+
+
+]).exec((error, result) => 
+  {
+    if (!error)  
+    {
+      res.send(result)
+    }
+    else { 
+      res.send(error)
+    }
+})
 }

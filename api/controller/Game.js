@@ -8,6 +8,7 @@ const schedule = require('node-schedule');
 const { updateMany, countDocuments } = require("../models/GameTable");
 app.use(bdyp.json())
 app.use(bodyParser.urlencoded({extended: false}))
+const mongoose = require('mongoose');
 
 
 exports.game = (req, res) => {
@@ -89,20 +90,14 @@ exports.gameactivation = (req, res) => {
 
 const job = schedule.scheduleJob('*/10 * * * * *', function(){
     const cd = new Date();
-    const currentdate = cd.getTime()
-    // let cd1 = cd.toLocaleDateString("en-US")
-    // console.log(currentdate);
+    const currentdate = cd.setHours(0, 0, 0, 0);
     Game.find((error, data) => { 
         data.forEach(element => { 
 
-            let beginDate = element.StartDate.getTime()
-            // let beginDate = element.StartDate.toLocaleDateString("en-US")
-            // console.log("beginDate" + element.StartDate.toLocaleDateString("en-US"));
+            let beginDate = element.StartDate.setHours(0, 0, 0, 0);
 
+            let closeDate = element.EndDate.setHours(0, 0, 0, 0);
 
-            // let closeDate = element.EndDate.toLocaleDateString("en-US")
-            let closeDate = element.EndDate.getTime()
-            // console.log("closeDate" + element.EndDate.toLocaleDateString("en-US"));
 
             if( beginDate == currentdate ) {
                 
@@ -111,7 +106,7 @@ const job = schedule.scheduleJob('*/10 * * * * *', function(){
                     console.log(error);
                   }
                   else{
-                    // console.log("success -> Game Status Active")
+                    console.log("success -> Game Status Active")
                     
                   }
                 })
@@ -124,7 +119,7 @@ const job = schedule.scheduleJob('*/10 * * * * *', function(){
                         console.log(error);
                     }
                     else{
-                        // console.log("success -> Game Status Inactive")
+                        console.log("success -> Game Status Inactive")
                     }
                     })
                     }
@@ -156,7 +151,6 @@ exports.gameSearch = async (req, res) => {
 }
 exports.FindGamesWithEventId=(async(req,res)=>{
     try {
-        console.log(req.body);
         await Game.find(req.body,(data,error) =>{
             if(!error){
                 res.send(data)
@@ -173,7 +167,7 @@ exports.FindGamesWithEventId=(async(req,res)=>{
 
 exports.deleteGame = (req, res) => {
 
-        Game.findByIdAndUpdate( req.params.id, { Delete: 1 }, (error, data) => { 
+        Game.findByIdAndUpdate( req.params.id, { $set: req.body }, (error, data) => { 
         try{
             res.send(data)
         }
@@ -184,4 +178,16 @@ exports.deleteGame = (req, res) => {
     
         }
 })
+}
+
+exports.onegame = (req, res) => { 
+    Game.findById(req.params.id, (error, data) => { 
+        try { 
+                res.send(data)
+        }
+        catch( error ){
+            console.log(error);
+
+        }
+    })
 }

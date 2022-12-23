@@ -245,7 +245,8 @@ exports.updatecommittee = (req, res) => {
     }
 }
 
-exports.CommitteMember = (req, res) => {
+exports.committeemember = (req, res) => {
+  
 
   User.find({ CommitteeRole: { $gte: 0 } }, (error, data) => {
     if (!error) {
