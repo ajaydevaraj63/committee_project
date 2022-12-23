@@ -794,16 +794,17 @@ export default function EnhancedTable() {
                 center
             >
                 <Box sx={{
-                    position: 'absolute',
-                    top: '51%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: 650,
-                    bgcolor: 'background.paper',
-                    border: '2px solid #000',
-                    boxShadow: 24,
-                    borderRadius:'20px',
-                    p: 4,
+                      position: 'absolute',
+                      top: '51%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: 650,
+                      bgcolor: 'background.paper',
+                      border: '2px solid #000',
+                      borderRadius: '20px',
+  
+                      boxShadow: 24,
+                      p: 4,
 
                 }}>
                     <span onClick={handleCloseUser} style={{
@@ -816,7 +817,7 @@ export default function EnhancedTable() {
                             transform: 'translate(0 %, -50 %)'
                         }}
                         ><CloseIcon/></span>
-                    <form sx={{ textAlign: 'left', }}>
+                    <form sx={{ textAlign: 'center', }}>
                         <h4>Add User</h4>
 
                         {/* <div className="form-floating mb-3 has-validation">
@@ -955,15 +956,15 @@ export default function EnhancedTable() {
 
             <Modal open={csvModal} onClose={handleModalClose} center>
                 <Box sx={{
-                    position: 'absolute',
-                    top: '51%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: 300,
-                    bgcolor: 'background.paper',
-                    border: '2px solid #000',
-                    boxShadow: 24,
-                    p: 4,
+                     position: 'absolute',
+                     top: '51%',
+                     left: '50%',
+                     transform: 'translate(-50%, -50%)',
+                     width: 300,
+                     bgcolor: 'background.paper',
+                     border: '2px solid #000',
+                     boxShadow: 24,
+                     p: 4,
                 }}
 
                 >
@@ -974,7 +975,7 @@ export default function EnhancedTable() {
                     </label>
                     {fileError != null ? <p style={{ color: "red" }}>{fileError}</p> : ''}
                     <br />
-                    <Button onClick={() => handleSubmission()}>Upload</Button>
+                    <Button sx={{ m: 2, width: '15%', height: 35,marginLeft:'3%' }} type='button' onClick={() => handleSubmission()} variant='contained' size="small" style={{ backgroundColor: '#144399' }} >Upload</Button>
                 </Box>
             </Modal>
 

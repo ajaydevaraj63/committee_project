@@ -220,29 +220,37 @@ export default function Groups() {
 
   const onEditChange = e => {
     e.preventDefault();
+
     const grname = e.target.value;
-    if (grname.trim().length > 30 || grname.trim().length==="" || grname.trim().length===null) {
-      setGrNameerror('Please enter a valid Group name');
+    if (grname.trim().length > 30) {
+      setGrNameerror('Please enter a value between 1 and 30');
+
+    }else if(grname.trim().length == 0){
+      setGrNameerror('This field is requied');
 
     } else {
       setGrNameerror(null);
       setEdituser({ ...editUser, [e.target.name]: e.target.value })
-
     }
-    
   }
 
   const EditSubmit = (e) => {
+    e.preventDefault();
     console.log("EditUser=======");
     const id = sessionStorage.getItem('id')
     console.log('check', id);
-    if (GroupName.trim().length == 0) {
-      setGrNameerror('This field is required')
-      groupNameeditRf.current.focus();
-    }
+
+    // if (GroupName.trim().length == 0) {
+    //   setGrNameerror('This field is required')
+    //   groupNameeditRf.current.focus();
+    // }
+     // setGrNameerror('This field is requied');
+    console.log("erreor",GrNameerror);
     if (GrNameerror != null) {
+      groupNameeditRf.current.focus();
       return;
     }
+
     axios.put("http://localhost:4006/Group/UpdateGroupDetails/".concat(id), editUser).then((response) => {
       console.log("check", response.data);
       listgroups();
@@ -503,7 +511,7 @@ export default function Groups() {
             </FormControl>
             {GrNameerror != null ? <p style={{ color: "red" }}>{GrNameerror}</p> : ''}
             <div>
-              <div className="col-3"><Button sx={{ m: 2, width: '41ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => EditSubmit()} >Submit</Button></div>
+              <div className="col-3"><Button sx={{ m: 2, width: '41ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={EditSubmit} >Submit</Button></div>
             </div>
           </form>
         </Box>
