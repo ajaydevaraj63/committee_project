@@ -58,7 +58,7 @@ let upload = multer({ storage: storage,
                 EndDate: req.body.EndDate,
                 UserId: req.body.UserId
             })
-            newevent.File = 'http://localhost:4006/' + req.files[0].path;
+            newevent.File = Configuration.devUrl+'images/' + req.files[0].path;
             newevent.save((error, data) => {
                     try {
 

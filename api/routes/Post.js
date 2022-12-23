@@ -13,7 +13,7 @@ app.use(bdyp.json());
 app.use(bodyParser.urlencoded({extended: false}));
 const joi=require('@hapi/joi')
 const Schema =joi.object().keys({
-    PostDescription: joi.string().min(3).max(30),
+    // PostDescription: joi.string().min(3).max(30),
     UserId: joi.string().alphanum()
   })
 
@@ -55,7 +55,7 @@ function postImage(req, res, next) {
 
                 })
 
-                newpost.PostImage = 'http://localhost:4006/' + req.files[0].path
+                newpost.PostImage =Configuration.devUrl+'images/' + req.files[0].path;
 
 
                 newpost.save((error, data) => {

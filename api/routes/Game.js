@@ -62,7 +62,7 @@ function postgame(req, res, next) {
                 EventId: req.body.EventId
                 
             })
-            newgame.RulesPdf = 'http://localhost:4006/'+ req.files[0].path
+            newgame.RulesPdf =Configuration.devUrl+'images/' + req.files[0].path;
             newgame.save((error, data) => {
                     try {
                     //   const newpoint = new TotalPoint({
