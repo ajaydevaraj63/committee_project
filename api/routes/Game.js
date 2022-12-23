@@ -136,7 +136,7 @@ router.put("/updategame/:id", upload.array('RulesPdf'), gameupdation)
 router.get("/allgame" , allgames);
 router.get("/game/:id" , game);
 router.get("/gameSearch", gameSearch);
-router.get("/EventId",FindGamesWithEventId);
+router.post("/EventId",FindGamesWithEventId);
 router.delete("/deleteGame/:id",deleteGame);
 
 

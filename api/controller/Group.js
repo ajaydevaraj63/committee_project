@@ -50,7 +50,7 @@ exports.UpdateCommitteeOfAllUsers = async (req, res) => {
         for (const element of ObjJson) {
             await UserSchema.findOneAndUpdate(
                 { _id: element },
-                { $set: { CommitteeId: CommitteeId } }
+                { $set: { CommitteeId: CommitteeId,Type:1 } }
             )
             console.log(element)
         }
@@ -127,22 +127,21 @@ exports.FindUsersOfACommitteeDelete = (req, res) => {
                 }
 
             })
-            GroupSchema.findByIdAndUpdate(req.params.id, { $set: { "Delete": 1 } }).then((reponse) => { res.send(response) })
+            GroupSchema.findByIdAndUpdate(req.params.id, { $set: { "Delete": 1 } }).then((response) => { res.send(response) })
 
         }
     })
 
 }
 exports.FindUsersOfACommittee = (req, res) => {
-
+         console.log(req.body.CommitteeId)
+         console.log("hello")
     UserSchema.find({ $and: [{ CommitteeId: req.params.id }, { Delete: 0 }] }, (error, data) => {
         if (error) {
             res.send(error)
         }
         else {
-            for (const element of data) {
-                console.log(element);
-            }
+          res.send(data)
         }
     })
 }

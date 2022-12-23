@@ -102,7 +102,7 @@ router.put("/Update/Multiple/UsersCommittee/:id", UpdateCommitteeOfAllUsers)
 router.get("/findAllGroup",FindAllGroups)
 router.get("/findGroupById/:id",findGroupById)
 router.get("/FindAllUser/inGroup/:id",FindUsersOfAGroup)
-router.put("/FindAllUser/inCommittee/:id",FindUsersOfACommittee)
+router.get("/FindAllUser/inCommittee/:id",FindUsersOfACommittee)
 router.put("/Delete/CommitteeOrGroup/:id",FindUsersOfACommitteeDelete)
 router.post("/FindCommittee",FindAllCommittee);
 router.put("/UpdateGroupDetails/:id",updateGroupDetails)

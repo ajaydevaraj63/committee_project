@@ -1,11 +1,12 @@
-const mongoose=require('mongoose')
+const mongoose = require('mongoose')
 
-const EventSchema=mongoose.Schema({
-    UserId:
-    { type: mongoose.Schema.Types.ObjectId, ref: "UserTable" }
+const EventSchema = mongoose.Schema({
+  GameId: { type: mongoose.Schema.Types.ObjectId, ref: "game" }
+
+
 
   ,
-    EventId:
+  EventId:
     { type: mongoose.Schema.Types.ObjectId, ref: "Event" }
 
   ,
@@ -19,8 +20,15 @@ const EventSchema=mongoose.Schema({
 
     type: Number
 
+  }, UniqueKeyGm: {
+    type: String
+  }, UniqueKeyGp: {
+    type: String
   },
-  GroupId: { type: mongoose.Schema.Types.ObjectId,ref: "Groups" }
-},{timestamps:true})
+  UniqueKeyEv: {
+    type: String
+  },
+  GroupId: { type: mongoose.Schema.Types.ObjectId, ref: "Groups" }
+}, { timestamps: true })
 
-module.exports=mongoose.model("TotalPoints",EventSchema);
+module.exports = mongoose.model("TotalPoints", EventSchema);
