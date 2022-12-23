@@ -301,12 +301,16 @@ export default function EnhancedTable() {
     // list members API calling//
 
     const [data, setData] = useState([]);
+    const [nodataErr, setNodataErr] = useState(null);
 
     const listusers = () => {
         toast.success("Deleted Successfully !");
         console.log("ap call====================");
         axios.get('http://localhost:4006/users/display/All/user').then((response) => {
             console.log("sucess", response.data);
+            if (response.data.length == 0) {
+                setNodataErr("No data Available");
+            }
             setData(response.data)
         });
         toast.success("Deleted Successfully !");
@@ -366,7 +370,7 @@ export default function EnhancedTable() {
                         'success'
                     )
                     listusers();
-                    
+
                     console.log(id);
                     console.log("check", response);
                 })
@@ -432,26 +436,25 @@ export default function EnhancedTable() {
         }
 
 
-            if (e.target.name === "DOB" && e.target.value === '') {
-                console.log("inside if of dob");
-                setDobError("Date of Bith is required");
+        if (e.target.name === "DOB" && e.target.value === '') {
+            console.log("inside if of dob");
+            setDobError("Date of Bith is required");
+        }
+        else {
+            console.log("date", e.target.value);
+            if (e.target.name === "DOB") {
+                setDobError(null)
+                setUser({ ...user, [e.target.name]: e.target.value })
             }
-            else 
-            {
-                console.log("date",e.target.value);
-                if (e.target.name === "DOB") {
-                    setDobError(null)
-                    setUser({ ...user, [e.target.name]: e.target.value })
-                }
+        }
+        if (e.target.name === "Designation" && e.target.value === '') {
+            setDesignationError("Designation is required");
+        }
+        else {
+            if (e.target.name === "Designation") {
+                setDesignationError(null)
+                setUser({ ...user, [e.target.name]: e.target.value })
             }
-            if (e.target.name === "Designation" && e.target.value === '') {
-                setDesignationError("Designation is required");
-            }
-            else {
-                if (e.target.name === "Designation") {
-                    setDesignationError(null)
-                    setUser({ ...user, [e.target.name]: e.target.value })
-                }
         }
     }
 
@@ -466,7 +469,7 @@ export default function EnhancedTable() {
             setTimeout(() => {
                 listusers();
             }, 1500);
-            
+
             // <Alert severity="error">This is an error alert — check it out!</Alert>
 
         })
@@ -475,6 +478,7 @@ export default function EnhancedTable() {
     // add single user API//
 
     const handleSubmit = (e) => {
+        e.preventDefault();
         console.log("kkkk", user.DOB);
 
         if (user.UserName.trim().length == 0) {
@@ -490,7 +494,8 @@ export default function EnhancedTable() {
             setDobError('This field is required')
             dobRef.current.focus();
         }
-        if (user.Designation.value == null) {
+        console.log(user.Designation);
+        if (user.Designation == null || user.Designation == '') {
             console.log("in side if of desig");
             setDesignationError('This field is required')
             designationRef.current.focus();
@@ -513,8 +518,8 @@ export default function EnhancedTable() {
                 title: 'Your work has been saved',
                 showConfirmButton: false,
                 timer: 1500
-              })
-            
+            })
+
             // listusers();
         })
     }
@@ -599,7 +604,13 @@ export default function EnhancedTable() {
         setUserOpens(true);
         handleClose();
     }
-    const handleCloseUser = () => setUserOpens(false);
+    const handleCloseUser = () => {
+        setUserOpens(false);
+        setNameError(null);
+        setEmailError(null);
+        setDobError(null);
+        setDesignationError(null);
+    }
 
     const isSelected = (_id) => selected.indexOf(_id) !== -1;
 
@@ -668,7 +679,7 @@ export default function EnhancedTable() {
                             <TableBody>
                                 {/* if you don't need to support IE11, you can replace the `stableSort` call with:
  rows.sort(getComparator(order, orderBy)).slice() */}
-                                {stableSort(data, getComparator(order, orderBy))
+                                {data.length > 0 ? stableSort(data, getComparator(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => {
                                         const isItemSelected = isSelected(row._id);
@@ -725,7 +736,7 @@ export default function EnhancedTable() {
                                                 </Stack>
                                             </TableRow>
                                         );
-                                    })}
+                                    }) : ''}
                                 {emptyRows > 0 && (
                                     <TableRow
                                         style={{
@@ -736,8 +747,17 @@ export default function EnhancedTable() {
                                     </TableRow>
                                 )}
                             </TableBody>
+                            {data.length == 0 && (
+                                <TableRow
+
+                                >
+                                    <p style={{ 'textAlign': 'center' }}>{nodataErr}</p>
+                                </TableRow>
+                            )
+                            }
                         </Table>
                     </TableContainer>
+                    {data.length > 0 ?
                     <TablePagination
                         rowsPerPageOptions={[5, 10, 25]}
                         component="div"
@@ -747,11 +767,14 @@ export default function EnhancedTable() {
                         onPageChange={handleChangePage}
                         onRowsPerPageChange={handleChangeRowsPerPage}
                     />
+                    :''}
                 </Paper>
+                {data.length > 0 ?
                 <FormControlLabel
                     control={<Switch checked={dense} onChange={handleChangeDense} />}
                     label="Dense padding"
                 />
+                :''}
             </Box>
 
             {/* New use Popover */}
@@ -794,29 +817,29 @@ export default function EnhancedTable() {
                 center
             >
                 <Box sx={{
-                      position: 'absolute',
-                      top: '51%',
-                      left: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      width: 650,
-                      bgcolor: 'background.paper',
-                      border: '2px solid #000',
-                      borderRadius: '20px',
-  
-                      boxShadow: 24,
-                      p: 4,
+                    position: 'absolute',
+                    top: '51%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 650,
+                    bgcolor: 'background.paper',
+                    border: '2px solid #000',
+                    borderRadius: '20px',
+
+                    boxShadow: 24,
+                    p: 4,
 
                 }}>
                     <span onClick={handleCloseUser} style={{
-                            cursor: 'pointer',
-                            position: 'absolute',
-                            top: '50 %',
-                            right: '0 %',
-                            padding: '0px 0px',
-                            marginLeft:'70%',
-                            transform: 'translate(0 %, -50 %)'
-                        }}
-                        ><CloseIcon/></span>
+                        cursor: 'pointer',
+                        position: 'absolute',
+                        top: '50 %',
+                        right: '0 %',
+                        padding: '0px 0px',
+                        marginLeft: '70%',
+                        transform: 'translate(0 %, -50 %)'
+                    }}
+                    ><CloseIcon /></span>
                     <form sx={{ textAlign: 'center', }}>
                         <h4>Add User</h4>
 
@@ -903,7 +926,7 @@ export default function EnhancedTable() {
                                 autoComplete="off" size="small" id="exampleFormControlInput1" name='Designation' onChange={e => onInputChange(e)} label="Designation" />
                         </FormControl> */}
                         <div>
-                        <Button sx={{ m: 2, width: '15%', height: 35,marginLeft:'80%' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={(e) => handleSubmit(e)} >Submit</Button>
+                            <Button sx={{ m: 2, width: '15%', height: 35, marginLeft: '80%' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={(e) => handleSubmit(e)} >Submit</Button>
                         </div>
                     </form>
                 </Box>
@@ -956,15 +979,15 @@ export default function EnhancedTable() {
 
             <Modal open={csvModal} onClose={handleModalClose} center>
                 <Box sx={{
-                     position: 'absolute',
-                     top: '51%',
-                     left: '50%',
-                     transform: 'translate(-50%, -50%)',
-                     width: 300,
-                     bgcolor: 'background.paper',
-                     border: '2px solid #000',
-                     boxShadow: 24,
-                     p: 4,
+                    position: 'absolute',
+                    top: '51%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 300,
+                    bgcolor: 'background.paper',
+                    border: '2px solid #000',
+                    boxShadow: 24,
+                    p: 4,
                 }}
 
                 >
@@ -975,7 +998,7 @@ export default function EnhancedTable() {
                     </label>
                     {fileError != null ? <p style={{ color: "red" }}>{fileError}</p> : ''}
                     <br />
-                    <Button sx={{ m: 2, width: '15%', height: 35,marginLeft:'3%' }} type='button' onClick={() => handleSubmission()} variant='contained' size="small" style={{ backgroundColor: '#144399' }} >Upload</Button>
+                    <Button sx={{ m: 2, width: '15%', height: 35, marginLeft: '3%' }} type='button' onClick={() => handleSubmission()} variant='contained' size="small" style={{ backgroundColor: '#144399' }} >Upload</Button>
                 </Box>
             </Modal>
 

@@ -71,7 +71,9 @@ export default function Groups() {
   };
 
   const handleClose = () => {
-    setOpensAddGroup(false);
+    setOpensAddGroup(false)
+    setNameerror(null)  
+    setFileError(null);
   };
 
   const onInputFIlechange = e => {
@@ -216,7 +218,10 @@ export default function Groups() {
   }
 
 
-  const handleeditClose = () => setEditopen(false);
+  const handleeditClose = () => {
+    setEditopen(false)
+    setGrNameerror(null);
+  }
 
   const onEditChange = e => {
     e.preventDefault();
@@ -265,7 +270,10 @@ export default function Groups() {
     console.log('changepic', id);
     setUpdatepicOpen(true);
   }
-  const handleUpdatepicClose = () => setUpdatepicOpen(false);
+  const handleUpdatepicClose = () => {
+    setUpdatepicOpen(false);
+    setFileError(null);
+  }
 
   function changePic() {
     console.log('changepic', editpicId);

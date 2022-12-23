@@ -66,9 +66,12 @@ export default function History() {
     function EventClick(eId) {
         console.log("Hello");
         console.log(eId);
+        let obj= {
+            "EventId" : eId
+        }
         
         console.log("GameTable  Api Call===============")
-        axios.get('http://localhost:4006/game/EventId', eId).then((response) => {
+        axios.post('http://localhost:4006/game/EventId', obj).then((response) => {
             console.log("Response", response.data);
             setGameList(response.data)
             console.log("========", gameList);

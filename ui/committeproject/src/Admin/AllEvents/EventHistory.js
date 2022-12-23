@@ -1,4 +1,3 @@
-
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
@@ -120,8 +119,8 @@ export default function EventHistory() {
         console.log(eId);
         let obj = { "EventId": eId }
         console.log("GameTable  Api Call===============")
-        axios.get('http://localhost:4006/game/EventId', obj).then((response) => {
-            console.log("Response", response.data);
+        axios.post('http://localhost:4006/game/EventId', obj).then((response) => {
+            console.log("Response", response);
             setGameList(response.data)
 
             console.log("========", gameList);
@@ -163,11 +162,12 @@ export default function EventHistory() {
         });
     }
 
-    function getEditGameId(eGameId) {
-        sessionStorage.setItem("EditGameId", eGameId);
-        console.log("EditGroupId", eGameId);
+    function getEditGameId(value,gameId) {
+        sessionStorage.setItem("EditGameId", gameId);
+        console.log("value", value );
+        console.log("EditGameI", gameId );
+    
     }
-
 
     //on change values
 
@@ -216,7 +216,7 @@ export default function EventHistory() {
             handleModalClose();
         })
     }
-
+    
 
 
     // edit point
@@ -235,7 +235,7 @@ export default function EventHistory() {
         e.preventDefault();
     }
     useEffect(() => {
-        console.log("GAME Data Edited");
+        console.log("GAME Data Edited",);
         console.log(gameEditData);
     }, [gameEditData])
 
@@ -243,12 +243,12 @@ export default function EventHistory() {
 
     const handleEditSubmit = (e) => {
         e.preventDefault();
-        console.log("Add Points ======= on submitt",sessionStorage.getItem("eventId"));
+        console.log("Edit Points ======= on submitt",sessionStorage.getItem("eventId"));
         setEditPoint({ ...editPoint, EventId: sessionStorage.getItem("eventId") })
         setEditPoint({ ...editPoint, GroupId: sessionStorage.getItem("EditGroupId") })
         const gpId = sessionStorage.getItem("EditGroupId")
         let dataset = []
-        console.log(gameEditData)
+        console.log("111",gameEditData)
 
         for (const [key, value] of Object.entries(gameEditData)) {
             dataset.push({ "GameId": key, "TotalPoint": value })
@@ -457,7 +457,7 @@ export default function EventHistory() {
                                             return (
                                                 <TableRow key={row._id}>
                                                     <TableCell>{row.gamelist[0].GameName}</TableCell>
-                                                    <TableCell><Input type='number' placeholder='Score' onChange={e => { onInputChangeEdit(e); getEditGameId(row._id); console.log(e.target.value); setEditGameData({ ...gameEditData, [row._id]: e.target.value }) }} defaultValue={row.TotalPoint} /></TableCell>
+                                                    <TableCell><Input type='number' placeholder='Score' onChange={e => { onInputChangeEdit(e); getEditGameId(e.target.value,row.gamelist[0]._id); console.log(e.target.value); setEditGameData({ ...gameEditData, [row.gamelist[0]._id]: e.target.value }) }} defaultValue={row.TotalPoint} /></TableCell>
                                                 </TableRow>
                                             );
                                         }):<div>No Data Available</div>}
@@ -466,7 +466,6 @@ export default function EventHistory() {
                         </TableContainer>
                         <Button sx={{ m: 2, width: '15%', height: 35, marginLeft: '80%' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={handleEditSubmit} >Update</Button>
                     </form>
-
                 </Box>
             </Modal>
 

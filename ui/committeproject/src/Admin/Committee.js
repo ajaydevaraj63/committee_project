@@ -26,13 +26,13 @@ import {
 } from '@mui/material';
 axios.interceptors.request.use(
     config => {
-      config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
-          return config;
-      },
-      error => {
-          return Promise.reject(error);
-      }
-  );
+        config.headers.Authorization = JSON.parse(localStorage.getItem("Profile")).Token;
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
 
 
 function descendingComparator(a, b, orderBy) {
@@ -235,32 +235,52 @@ export default function EnhancedTable() {
     async function checkgrouptype() {
         const body = {
             GroupType: 1,
-            Delete:0
+            Delete: 0
         }
         await axios.post("http://localhost:4006/Group/FindCommittee", body).then((response) => {
-            console.log("llllll", response);
-            setGetGroupId(response.data[0]._id);
+            if (response) {
+                console.log("llllll", response);
+                setGetGroupId(response.data[0]._id);
+                if (response.data[0]._id) {
+                    console.log(GetGroupType)
+                    axios.get('http://localhost:4006/Group/FindAllUser/inCommittee/'.concat(response.data[0]._id)).then((response) => {
+                        console.log("sucess", response.data);
+                        if (response.data.length == 0) {
+                            setNodataErr("No data Available");
+                        }
+                        setData(response.data)
+                    });
+                    // if(GetGroupType != undefined)
+                    // listcommitteemember();
+                }
+            }
+
+
 
         })
     }
 
     // list members API calling//
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        if (GetGroupType) {
-            console.log("committeee");
-            listcommitteemember();
-        }
-    }, [GetGroupType])
+    //     if (GetGroupType) {
+    //         console.log("committeee");
+    //         listcommitteemember();
+    //     }
+    // }, [GetGroupType])
 
 
     const [data, setData] = useState([]);
+    const [nodataErr, setNodataErr] = useState(null);
 
-    const listcommitteemember = () => {
+    const listcommitteemember = async () => {
         console.log("ap call====================", GetGroupType);
-        axios.get('http://localhost:4006/Group/FindAllUser/inCommittee/'.concat(GetGroupType)).then((response) => {
+        await axios.get('http://localhost:4006/Group/FindAllUser/inCommittee/'.concat(GetGroupType)).then((response) => {
             console.log("sucess", response.data);
+            if (response.data.length == 0) {
+                setNodataErr("No data Available");
+            }
             setData(response.data)
         });
     }
@@ -270,7 +290,8 @@ export default function EnhancedTable() {
 
     const deleteUser = (id) => {
         const body = {
-            CommitteeId: 0
+            CommitteeId: 0, Type: 0
+
         }
         console.log("delete==========");
         console.log(id);
@@ -286,15 +307,19 @@ export default function EnhancedTable() {
         }).then((response) => {
             if (response.isConfirmed) {
                 axios.post("http://localhost:4006/auth/delete/user/".concat(id), body).then((response) => {
-                    Swal.fire(
-                        'Deleted!',
-                        'Your file has been deleted.',
-                        'success'
-                    )
-                    console.log(id);
-                    console.log("check", response);
-                    checkgrouptype();
+                    if (response) {
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        )
+                        console.log(id);
+                        console.log("check", response);
+                        checkgrouptype();
+                    }
+
                 })
+                //checkgrouptype();
             }
         })
     }
@@ -413,6 +438,7 @@ export default function EnhancedTable() {
     }
     const handleAddmemberclose = () => {
         setOpen(false);
+        setGroupmembererror(null);
     }
 
     const [groupMember, setGroupmemebr] = useState('select');
@@ -430,6 +456,9 @@ export default function EnhancedTable() {
         const data = e;
         console.log('data', e);
         setMaillist(data);
+        if (data.length > 0) {
+            setGroupmembererror(null);
+        }
     }
 
     ////  list filterd users ////
@@ -488,18 +517,18 @@ export default function EnhancedTable() {
         });
         console.log('success', employeelist);
         console.log(emplist, GetGroupType);
-        if (groupMember.trim().length == 0) {
+        if (emplist.length == 0) {
             setGroupmembererror('This field is required')
             groupmemberref.current.focus();
-
+            return;
         }
-        if (groupmembererror != null)
-            if (groupmembererror != null) {
-                return;
-            }
+        if (groupmembererror != null) {
+            return;
+        }
         axios.put("http://localhost:4006/group/Update/Multiple/UsersCommittee/".concat(GetGroupType), emplist).then((response) => {
             console.log("check", response);
             handleAddmemberclose();
+            // checkgrouptype();
 
         })
         checkgrouptype();
@@ -562,7 +591,7 @@ export default function EnhancedTable() {
                             <TableBody>
                                 {/* if you don't need to support IE11, you can replace the `stableSort` call with:
  rows.sort(getComparator(order, orderBy)).slice() */}
-                                {stableSort(data, getComparator(order, orderBy))
+                                {data.length > 0 ? stableSort(data, getComparator(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => {
                                         const isItemSelected = isSelected(row._id);
@@ -621,7 +650,7 @@ export default function EnhancedTable() {
                                                 </Stack>
                                             </TableRow>
                                         );
-                                    })}
+                                    }) : ''}
                                 {emptyRows > 0 && (
                                     <TableRow
                                         style={{
@@ -632,22 +661,34 @@ export default function EnhancedTable() {
                                     </TableRow>
                                 )}
                             </TableBody>
+                            {data.length == 0 && (
+                                <TableRow
+
+                                >
+                                    <p style={{ 'textAlign': 'center' }}>{nodataErr}</p>
+                                </TableRow>
+                            )
+                            }
                         </Table>
                     </TableContainer>
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={data.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
+                    {data.length > 0 ?
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 25]}
+                            component="div"
+                            count={data.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                        : ''}
                 </Paper>
-                <FormControlLabel
-                    control={<Switch checked={dense} onChange={handleChangeDense} />}
-                    label="Dense padding"
-                />
+                {data.length > 0 ?
+                    <FormControlLabel
+                        control={<Switch checked={dense} onChange={handleChangeDense} />}
+                        label="Dense padding"
+                    />
+                    : ''}
             </Box>
             <Modal open={open} onClose={handleAddmemberclose} center>
                 <Box sx={{

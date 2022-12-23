@@ -186,9 +186,10 @@ function EnhancedTableToolbar(props) {
     }
     const handleAddmemberclose = () => {
         setOpen(false);
+        setGroupmembererror(null);
     }
 
-    const [groupMember, setGroupmemebr] = useState('select');
+    const [groupMember, setGroupmemebr] = useState([]);
     const [userList, setUserlist] = useState([]);
     const [objects, setObjects] = useState([]);
     const [mailist, setMaillist] = useState([]);
@@ -202,6 +203,10 @@ function EnhancedTableToolbar(props) {
         const data = e;
         console.log('data', e);
         setMaillist(data);
+        if(data.length > 0){
+            setGroupmembererror(null);
+        }
+
     }
 
 
@@ -227,6 +232,20 @@ function EnhancedTableToolbar(props) {
 
     }, []);
 
+
+
+    // const listgroupmember = () => {
+    //     const Gid = sessionStorage.getItem('Gid')
+    //     console.log("ap call====================");
+    //     axios.get('http://localhost:4006/Group/FindAllUser/inGroup/'.concat(Gid)).then((response) => {
+    //         console.log("sucess", response.data);
+    //         if(response.data.length == 0){
+    //             setNodataErr("No data Available");
+    //         }
+    //         setData(response.data)
+    //     });
+    // }
+
     const Groupmembersubmit = async () => {
         const emplist = []
         console.log('nnnnnnnnnnnnnnnnnnnnnnnn', mailist);
@@ -251,18 +270,19 @@ function EnhancedTableToolbar(props) {
         const Gid = sessionStorage.getItem('Gid')
         console.log("AddUserto group=======", Gid);
         console.log(emplist);
-        if (groupMember.trim().length == 0) {
+        if (emplist.length == 0) {
             setGroupmembererror('This field is required')
             groupmemberref.current.focus();
+            return;
 
         }
-        if (groupmembererror != null)
-            if (groupmembererror != null) {
+        if (groupmembererror != null){
                 return;
             }
         axios.put("http://localhost:4006/group/Update/Multiple/UsersGroup/".concat(Gid), emplist).then((response) => {
             console.log("check", response);
             handleAddmemberclose();
+            //  listgroupmember();
         })
     }
 
@@ -377,16 +397,25 @@ export default function EnhancedTable() {
     // list members API calling//
 
     const [data, setData] = useState([]);
+    const [nodataErr,setNodataErr] = useState(null);
 
     useEffect(() => {
+        listgroupmember();
+    }, [])
+
+      const listgroupmember = () => {
         const Gid = sessionStorage.getItem('Gid')
         console.log("ap call====================");
         axios.get('http://localhost:4006/Group/FindAllUser/inGroup/'.concat(Gid)).then((response) => {
             console.log("sucess", response.data);
+            if(response.data.length == 0){
+                setNodataErr("No data Available");
+            }
             setData(response.data)
         });
+    }
 
-    }, [])
+    
 
     // Delete API //
 
@@ -416,7 +445,7 @@ export default function EnhancedTable() {
                     )
                     console.log(id);
                     console.log("check", response);
-                    window.location.reload();
+                    listgroupmember();
                 })
             }
         })
@@ -497,7 +526,7 @@ export default function EnhancedTable() {
                         <TableBody>
                             {/* if you don't need to support IE11, you can replace the `stableSort` call with:
  rows.sort(getComparator(order, orderBy)).slice() */}
-                            {stableSort(data, getComparator(order, orderBy))
+                            {data.length>0 ? stableSort(data, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
                                     const isItemSelected = isSelected(row._id);
@@ -554,7 +583,7 @@ export default function EnhancedTable() {
                                         </TableRow>
 
                                     );
-                                })}
+                                }):''}
                             {emptyRows > 0 && (
                                 <TableRow
                                     style={{
@@ -564,9 +593,19 @@ export default function EnhancedTable() {
                                     <TableCell colSpan={6} />
                                 </TableRow>
                             )}
+                            
                         </TableBody>
+                        {data.length == 0 && (
+                                <TableRow
+                                    
+                                >
+                                    <p style={{'textAlign':'center'}}>{nodataErr}</p>
+                                </TableRow>
+                            )
+                        }
                     </Table>
                 </TableContainer>
+                {data.length > 0 ?
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
@@ -576,11 +615,14 @@ export default function EnhancedTable() {
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
+                :''}
             </Paper>
+            {data.length > 0 ?
             <FormControlLabel
                 control={<Switch checked={dense} onChange={handleChangeDense} />}
                 label="Dense padding"
             />
+            :''}
         </Box>
     );
 
