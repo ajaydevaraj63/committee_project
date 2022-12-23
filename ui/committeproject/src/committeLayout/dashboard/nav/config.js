@@ -8,26 +8,26 @@ const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ 
 const navConfig = [
   {
     title: 'Home',
-    path: '/dashboardCommitte/app',
+    path: '/dashboardCommitte/Home',
     icon: icon('home'),
   },
-  {
-    title: 'Create Games',
-    path: '/dashboardCommitte/Games',
-    icon: icon('groups'),
-  },
-  {
-    title: 'Create Event',
-    path: '/dashboardCommitte/Event',
-    icon: icon('event'),
-  },
+  // {
+  //   title: 'Create Games',
+  //   path: '/dashboardCommitte/Games',
+  //   icon: icon('groups'),
+  // },
+  // {
+  //   title: 'Create Event',
+  //   path: '/dashboardCommitte/Event',
+  //   icon: icon('event'),
+  // },
   {
     title: 'ListGames',
     path: '/dashboardCommitte/ListGames',
     icon: icon('meeting'),
   },
   {
-    title: 'Committee',
+    title: 'Manage Committee',
     path: '/dashboardCommitte/CommitteeRole',
     icon: icon('point_table'),
   },

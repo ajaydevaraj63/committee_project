@@ -1,12 +1,11 @@
-import React, { useState } from 'react'
-
+import React, { useState ,useEffect} from 'react'
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import axios from 'axios';
+import Configuration from "../Configuration";
 import Button from '@mui/material/Button';
-import { CardContent, Input } from '@mui/material';
+import { CardContent, Input, Modal } from '@mui/material';
 import { Typography } from '@material-ui/core';
-import Configuration from '../Configuration'
 
 axios.interceptors.request.use(
     config => {
@@ -20,16 +19,32 @@ axios.interceptors.request.use(
 
 
 
-const Event = () => {
+const Event = ({handleCloseModal,openModal}) => {
     
     const [file, setFile] = useState('')
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
+    const [startDate,setStartDate] = useState('')
+    const [endDate,setEndDate] = useState('')
 
     function handleChange(event) {
         setFile(event.target.files[0])
 
     }
+    const [value, setValue] = useState(null);
+
+    useEffect(() => {
+      const storedValue = window.localStorage.getItem("Profile");
+      const pasedValue = JSON.parse(storedValue);
+      setValue(pasedValue._id);
+    }, []);
+
+    const handleName = (e) =>{
+        setName(e.target.value)
+    }
+
+
+    console.log(value);
 
     async function handleSubmits(event) {
         event.preventDefault()
@@ -39,7 +54,10 @@ const Event = () => {
         formData.append('File', file);
         formData.append('EventName', name);
         formData.append('EventDescription', description);
-        formData.append('UserId', "124235365463125");
+        formData.append('StartDate', startDate);
+        formData.append('EndDate', endDate);
+        formData.append('UserId', value);
+        
         console.log(formData);
         alert('success');
         const config = {
@@ -64,11 +82,10 @@ const Event = () => {
         }
     }
     
-
-
     return (
 
           <div >
+            <Modal open={openModal} onClose={handleCloseModal}>
             <card sx={{ maxWidth: 900 }}
                 style={{ borderRadius:'25px',
                     position:'absolute',
@@ -93,15 +110,16 @@ const Event = () => {
               <form className='' onSubmit={handleSubmits}>
             <FormControl fullWidth sx={{ m: 3 }} variant="filled">
             <TextField id="outlined-basic" label="Event Name" variant="outlined"
-                              
                         sx={{ ml:9,
                              width: { sm: 200, md: 200, lg: 300, xl: 400 },
                              "& .MuiInputBase-root": {
                                  height: 60
                                  }
                                 }}
-                                onChange={(e) => setDescription(e.target.value)} />
-
+                                onChange={(e) => handleName(e)}
+                               
+                                 />
+                               
                          </FormControl>
                         <FormControl fullWidth sx={{ m: 3}} variant="filled">
                         <TextField id="outlined-basic" label="Event Description" variant="outlined"
@@ -112,7 +130,8 @@ const Event = () => {
                                         height: 60
                                     }
                                 }}
-                                onChange={(e) => setName(e.target.value)} />
+                                onChange={(e) => setDescription(e.target.value)}
+                                 />
                                  </FormControl> 
                                  <FormControl fullWidth sx={{ m: 3 }} variant="filled">
                                                         <TextField type="Date"  
@@ -122,7 +141,7 @@ const Event = () => {
                                                                 height: 60
                                                             }
                                                         }}
-                                                         autoComplete="off" name='Date' size="small" id="exampleFormControlInput1"  onChange={(e) => setName(e.target.value)} label="Start Date" InputLabelProps={{
+                                                         autoComplete="off" name='Date' size="small" id="exampleFormControlInput1"  onChange={(e) => setStartDate(e.target.value)}  label="Start Date" InputLabelProps={{
                                                             shrink: true,
                                                         }} />
                                                      </FormControl>         
@@ -134,7 +153,7 @@ const Event = () => {
                                                                 height: 60
                                                             }
                                                         }}
-                                                         autoComplete="off" name='Date' size="small" id="exampleFormControlInput1"  onChange={(e) => setName(e.target.value)} label="End Date" InputLabelProps={{
+                                                         autoComplete="off" name='Date' size="small" id="exampleFormControlInput1"  onChange={(e) => setEndDate(e.target.value)} label="End Date" InputLabelProps={{
                                                             shrink: true,
                                                         }} />
                                                   </FormControl>
@@ -143,11 +162,13 @@ const Event = () => {
                                     <Input type="file" onChange={handleChange} sx={{ml:9}}/>
                                  </FormControl>
                                  <Button size="md" onClick={handleSubmits} color="primary"sx={{mt:3}} >
-                                    Upload
+                                    Submit
                                     </Button>      
                             </form>
               </CardContent>
             </card>
+            
+            </Modal>
           </div>
     )
 }

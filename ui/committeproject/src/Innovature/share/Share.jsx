@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 import FormControl from "@mui/material/FormControl";
-import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { Grid, Input } from "@mui/material";
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import "./share.css";
 import { Box, useTheme } from "@mui/system";
+import Configuration from '../Configuration';
 
 export default function AddPost() {
   const theme = useTheme();
@@ -59,18 +60,11 @@ export default function AddPost() {
             <Input
               onChange={(e) => setDescription(e.target.value)}
               multiline
-              rows="2"
               disableUnderline
               type="text"
               placeholder="What's On Your Mind Innovator"
               sx={{ width: "100%" }}
-            />
-            <FormControl sx={{ m: 3 }}>
-              <div class="upload-btn-wrapper">
-                <button class="btn">Upload a file</button>
-                <input onChange={handleChange} type="file" name="myfile" />
-              </div>
-            </FormControl>
+            />  
           </Box>
           <Box
             textAlign="right"
@@ -78,6 +72,12 @@ export default function AddPost() {
             paddingTop=".5rem"
             borderTop="1px solid #ccc"
           >
+             <FormControl sx={{ m: -0.6 }}>
+            <div class="upload-btn-wrapper">
+              <button class="btn"><AddPhotoAlternateIcon /></button>
+              <input className="input-btn" onChange={handleChange} type="file" name="myfile" accept="image/x-png,image/jpeg" />
+            </div>
+          </FormControl>
             <Button
               onClick={handleSubmit}
               variant="contained"

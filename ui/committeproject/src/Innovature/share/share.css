@@ -168,9 +168,9 @@ margin-left: auto;
 }
 
 .btn {
-  border: 2px solid gray;
-  color: gray;
-  background-color: white;
+  border: 2px solid#f9fafb;
+  color: rgb(0, 0, 0);
+  background-color:#f9fafb;
   padding: 6px 9px;
   border-radius: 8px;
   font-size: 12px;
@@ -183,4 +183,9 @@ margin-left: auto;
   left: 0;
   top: 0;
   opacity: 0;
+}
+.input-btn{
+
+  width: 30px;
+  height: 30px;
 }

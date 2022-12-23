@@ -15,7 +15,6 @@
     background-color: #edeff2;
 
     border-radius: 40px;
-    /* width: 55px; */
   }
 
   .post-title {
@@ -31,7 +30,7 @@
   .image-wid {
     width: 40px;
     height: 40px;
-    border-radius: 40px;
+    border-radius: 50%;
   }
   .flex-container {
     width: 18vw;
@@ -235,5 +234,6 @@
 .post-sub {
   width: 98%;
 }
-.group-sub {
+.notAdded{
+text-align: center;
 }

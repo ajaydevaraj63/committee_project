@@ -10,7 +10,6 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import Configuration from "./Configuration";
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
@@ -23,12 +22,7 @@ import moment from 'moment';
 
 
 
-const TABLE_HEAD = [
-    { id: "", label: "", alignRight: false },
-    { id: "", label: "GroupName", alignRight: false },
-    { id: "", label: "point", alignRight: false },
 
-];
 
 
 function descendingComparator(a, b, orderBy) {
@@ -64,16 +58,16 @@ function stableSort(array, comparator) {
 
 const headCells = [
     {
-        id: 'GameName',
+        id: 'EventName',
         numeric: false,
         disablePadding: true,
-        label: 'GameName',
+        label: 'EventName',
     },
     {
-        id: 'GameDescription',
+        id: 'EventDescription',
         numeric: false,
         disablePadding: true,
-        label: 'GameDescription',
+        label: 'EventDescription',
     },
     {
         id: 'StartDate',
@@ -100,8 +94,9 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
-        props;
+
+    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
@@ -143,9 +138,6 @@ EnhancedTableHead.propTypes = {
     orderBy: PropTypes.string.isRequired,
     rowCount: PropTypes.number.isRequired,
 };
-
-
-
 
 const handleAddMembers = () => {
     console.log('loooo');
@@ -190,7 +182,7 @@ export default function EnhancedTable() {
     function handleEditOpen(id) {
         sessionStorage.setItem('id', id);
         console.log("idddd", id);
-        axios.get(Configuration.devUrl+"game/onegame/".concat(id)).then((response) => {
+        axios.get(Configuration.devUrl+"Event/events".concat(id)).then((response) => {
             console.log("datas", response.data);
             const editData = response.data;
             setEditpatchvalues(editData);
@@ -207,23 +199,23 @@ export default function EnhancedTable() {
         setEditGame({ ...editGame, [e.target.name]: e.target.value })
     }
 
-    const EditSubmits = (e) => {
-        console.log("edit=====");
-        const id = sessionStorage.getItem('id')
-        console.log('update'.id);
-        axios.put(Configuration.devUrl+"game/updategame/".concat(id), editGame).then((response) => {
-            console.log("check", response.data);
-            handleEditClose();
+    // const EditSubmits = (e) => {
+    //     console.log("edit=====");
+    //     const id = sessionStorage.getItem('id')
+    //     console.log('update'.id);
+    //     axios.put("".concat(id), editGame).then((response) => {
+    //         console.log("check", response.data);
+    //         handleEditClose();
 
-        })
-    }
+    //     })
+    // }
 
 
 
     const [data, setData] = useState([]);
     useEffect(() => {
         console.log("api cal====");
-        axios.get(Configuration.devUrl+'game/allgame').then((response) => {
+        axios.get(Configuration.devUrl+'Event/events').then((response) => {
             console.log("sucess", response.data.data);
             setData(response.data.data)
         });
@@ -296,23 +288,10 @@ export default function EnhancedTable() {
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
 
 
-    const [value, setValue] = useState([]);
-
-    const handlePoint = (id) => {
-        console.log("game id : " + id)
-        sessionStorage.setItem('id', id);
-        axios.get(Configuration.devUrl+"game/game/63a32b1d32b497191c33ffdf").then((response) => {
-            console.log("sucesspppppppppppppppp", response.data.data);
-            setValue(response.data);
-            setPointopen(true);
-        });
-
-    }
-    console.log("sucessssssssssssssssssss", value);
 
     return (
         <>
-            <Box sx={{ width: '98%' }} justifyContent="center">
+            <Box sx={{ width: '100%' }} justifyContent="center">
                 <Paper sx={{ width: '100%', mb: 2 }}>
                     <EnhancedTableToolbar numSelected={selected.length} />
                     <TableContainer>
@@ -353,20 +332,20 @@ export default function EnhancedTable() {
                                                     scope="row"
                                                     padding="none"
 
-                                                    onClick={() => handlePoint(row._id)}
+                                                    
                                                 >
 
-                                                    {row.GameName}
+                                                    {row.EventName}
                                                 </TableCell>
-                                                <TableCell align='left'>{row.GameDesc}</TableCell>
+                                                <TableCell align='left'>{row.EventDescription}</TableCell>
                                                 <TableCell align='left'>{moment(row.StartDate).format('DD/MM/YYYY')}</TableCell>
                                                 <TableCell align='left'>{moment(row.EndDate).format('DD/MM/YYYY')}</TableCell>
                                                 <TableCell align="left">
-                                                    <Label className={row.Status ? "labelcolorgreen" : "labelcolorred"} >{row.Status ? "Active" : 'InActive'}</Label>
+                                                    {/* <Label className={row.Status ? "labelcolorgreen" : "labelcolorred"} >{row.Status ? "Active" : 'InActive'}</Label> */}
                                                 </TableCell>
                                                 <TableCell align='right'>
                                                     <Stack direction="row" spacing={2}>
-                                                        {/* <button variant="outlined" className='btn btn-primary' onClick={() => handleEditOpen(row._id)}><EditIcon/></button> */}
+
                                                         <EditIcon onClick={() => handleEditOpen(row._id)} />
                                                     </Stack>
                                                 </TableCell>
@@ -456,68 +435,11 @@ export default function EnhancedTable() {
                         </FormControl>
 
                         <div className="row mt-5 ">
-                            <div className="col-3"><Button sx={{ m: 2, width: '13ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => EditSubmits()}>Submit</Button></div>
+                            {/* <div className="col-3"><Button sx={{ m: 2, width: '13ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => EditSubmits()}>Submit</Button></div> */}
                         </div>
                     </form>
                 </Box>
             </Modal>
-
-            <Modal open={pointlist} onClose={handlePointClose} >
-                <Box sx={{
-                    position: 'absolute',
-                    top: '40%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: 650,
-                    bgcolor: 'background.paper',
-                    border: '2px solid #000',
-                    boxShadow: 24,
-                    p: 4,
-                }}
-                >
-                    <Table>
-
-
-
-
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Groups</TableCell>
-
-                                <TableCell>Points</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {value.map((point) =>(
-                                    <TableRow>
-                                         {point.grouplist.map((point) =>(
-                                        
-                                <TableCell>{point.GroupName}</TableCell>
-                                )
-                                )
-                            }
-                                <TableCell>{point.GamePoint}</TableCell>
-
-                            </TableRow>
-                                )
-                                )
-                            }
-       
-                        </TableBody>
-                    </Table>
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={data.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                </Box>
-            </Modal>
-
-
         </>
     );
 }

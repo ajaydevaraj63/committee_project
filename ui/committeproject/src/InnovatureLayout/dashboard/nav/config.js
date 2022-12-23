@@ -21,11 +21,7 @@ const navConfig = [
     path: '/dashboardInno/eventPoints',
     icon: icon('point_table'),
   },
-  { 
-    title: 'Game',
-    path: '/dashboardInno/gamePoint',
-    icon: icon('point_table'),
-  }
+
 ];
 
 export default navConfig;

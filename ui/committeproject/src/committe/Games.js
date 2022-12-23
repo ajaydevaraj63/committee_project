@@ -3,18 +3,24 @@ import React, { useState, useEffect } from 'react'
 import FormControl from '@mui/material/FormControl';
 import axios from 'axios';
 import TextField from '@mui/material/TextField';
-import { Card, CardContent, Input, MenuItem } from '@mui/material';
+import { Card, CardContent, Input, MenuItem ,Modal} from '@mui/material';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
+import Configuration from "./Configuration";
 import { Typography } from '@material-ui/core';
 import Button from '@mui/material/Button';
-import Configuration from './Configuration'
 
 
-const Games = () => {
+
+const Games = ({handleCloseModals,openModals}) => {
+
     const [file, setFile] = useState('')
     const [name, setName] = useState('')
+    const [startDate,setStartDate] = useState('')
+    const [endDate,setEndDate] = useState('')
     const [description, setDescription] = useState('')
+     const [eventid,setEventId] = useState('')
+    // const [ename,setEname] = useState('')
 
 
     const [data, setData] = useState([]);
@@ -46,19 +52,27 @@ const Games = () => {
 
     }
 
-    async function handleSubmit(event) {
+    const [value, setValue] = useState(null);
+
+    useEffect(() => {
+        const storedValue = window.localStorage.getItem("Profile");
+        const pasedValue = JSON.parse(storedValue);
+        setValue(pasedValue._id);
+      }, []);
+
+ function handleSubmit(event) {
         event.preventDefault()
-
-
-
+        console.log("sdfg"+eventid)
         const url = Configuration.devUrl+'game/postgame';
         const formData = new FormData();
         formData.append('RulesPdf', file);
         formData.append('GameName', name);
         formData.append('GameDesc', description);
-        formData.append('UserId', "124235");
-        formData.append('StartDate', new Date);
-        formData.append('EndDate', new Date);
+        formData.append('StartDate', startDate);
+        formData.append('EndDate', endDate);
+         formData.append('UserId',value);
+        formData.append('EventId',eventid);
+        
 
         alert("success");
 
@@ -70,7 +84,7 @@ const Games = () => {
             },
         };
         try {
-            await axios
+             axios
                 .post(url, formData)
                 .then((res) => {
                     console.log(res);
@@ -84,13 +98,18 @@ const Games = () => {
             console.log(error);
         }
 
-    }
-
+            }
+        const handleEventChange = event =>{
+            event.preventDefault();
+            setEventId(event.target.value);
+        }
 
     return (
 
 
         <div>
+        {/* <Modal open={openModals} onClose={handleCloseModals}> */}
+        <Modal open={openModals} onClose={handleCloseModals}>
             <Card sx={{ maxWidth: 900 }}
                 style={{
                     borderRadius: '25px',
@@ -113,8 +132,8 @@ const Games = () => {
                 <Typography color="textSecondary" align="center" variant="h4">
                          Create Games
                            </Typography>
-                    <hr />
-                    <form className='' onSubmit={handleSubmit}>
+                    <hr/>
+                    <form >
                         <FormControl fullWidth sx={{ m: 3 }} >
                             <InputLabel id="demo-simple-select-label" sx={{ml:9,}}>Event Name</InputLabel>
                             <Select labelId="demo-simple-select-label"
@@ -126,17 +145,20 @@ const Games = () => {
                                         height: 60
                                     }
                                 }}
-                                >
+                                value={eventid}
+                                onChange={handleEventChange} >
                                 {
                                     data.map(event=>{
                                         return (
-                                            <MenuItem value={event.EventName}>{event.EventName}</MenuItem>
+                                            <MenuItem key={data.id} value={event._id}>
+                                                {event.EventName}
+                                                </MenuItem>
 
                                         )
                                     })
 
                                 }
-                                
+                                 
 
                             </Select>
                         </FormControl>
@@ -174,19 +196,19 @@ const Games = () => {
                                         height: 60
                                     }
                                 }}
-                                autoComplete="off" name='Date' size="small" id="exampleFormControlInput1" onChange={(e) => setName(e.target.value)} label="Start Date" InputLabelProps={{
+                                autoComplete="off" name='Date' size="small" id="exampleFormControlInput1" onChange={(e) => setStartDate(e.target.value)} label="Start Date" InputLabelProps={{
                                     shrink: true,
                                 }} />
                         </FormControl>
                         <FormControl fullWidth sx={{ m: 3 }} variant="filled">
-                            <TextField type="Date"
+                            <TextField type="Date" 
                                 sx={{ ml:9,
                                     width: { sm: 200, md: 200, lg: 300, xl: 400 },
                                     "& .MuiInputBase-root": {
                                         height: 60
                                     }
                                 }}
-                                autoComplete="off" name='Date' size="small" id="exampleFormControlInput1" onChange={(e) => setName(e.target.value)} label="End Date" InputLabelProps={{
+                                autoComplete="off" name='Date' size="small" id="exampleFormControlInput1" onChange={(e) => setEndDate(e.target.value)} label="End Date" InputLabelProps={{
                                     shrink: true,
                                 }} />
                         </FormControl>
@@ -198,11 +220,14 @@ const Games = () => {
                             {/* <input className='form-control' type="file" accept='.pdf' onChange={handleChange} /> */}
                         </FormControl>
                         <Button size="md" onClick={handleSubmit} color="primary" sx={{mt:3,ml:3}} >
-                        Upload
+                       Submit
                         </Button>
                     </form>
                 </CardContent>
+                
             </Card>
+            </Modal>
+            {/* </Modal> */}
         </div>
     )
 }

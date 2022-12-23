@@ -4,7 +4,7 @@ import "./Dashboard.css";
 import { Helmet } from "react-helmet-async";
 import Post from "./Imagepost";
 import Share from "./share/Share";
-
+import Configuration from "../Configuration";
 // import { Users } from "./dummyData";
 
 // import { Posts } from "./dummyData";
@@ -12,15 +12,6 @@ import Share from "./share/Share";
 // @mui
 // import { useTheme } from "@mui/material/styles";
 import { Box, Grid, Container, Typography } from "@mui/material";
-axios.interceptors.request.use(
-  config => {
-    config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
-        return config;
-    },
-    error => {
-        return Promise.reject(error);
-    }
-);
 
 export default function DashboardAppPage() {
   // const theme = useTheme();
@@ -91,64 +82,7 @@ export default function DashboardAppPage() {
         <div class="group">
         <div class="group-sub">
 
-          <Grid className="Grid2" item xs={1} sm={6} md={2.8}>
-            <div className="flex-container">
-              <div className="Icons2">
-                <h4 className="heading">Kalakachi</h4>
-                {posts.map((post) => {
-                  return (
-                    <div className="container-fluid  ">
-                      <div className="row">
-                        <div className="col-lg-4 col-md-5">
-                          <div className="post-card" key={post.id}>
-                            <div>
-                              {post.UserImage === "" ? (
-                                <img
-                                  className="imagess"
-                                  src={post.UserImage}
-                                  alt=""
-                                />
-                              ) : (
-                                <img
-                                  className="imagess"
-                                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhW0hzwECDKq0wfUqFADEJaNGESHQ8GRCJIg&usqp=CAU"
-                                  alt=""
-                                />
-                              )}
-                            </div>
-                            <img
-                              className="imagess"
-                              src={post.UserImage}
-                              alt=""
-                            />
-                          </div>
-                        </div>
-                        <div className="col-1 ">
-                          {/* <div className="row"> */}
-                          <h2 className="post-title">{post.UserName}</h2>
-
-                          <div>
-                            {post.GroupRole === 1 ? (
-                              <p className="post-body">Captain</p>
-                            ) : (
-                              <p className="post-body"><br></br></p>
-                            )}
-                            {/* {post.GroupRole === 2 ? (
-                              <p className="post-body">Vice Captain</p>
-                            ) : (
-                              <p></p>
-                            )} */}
-                          </div>
-
-                          {/* </div> */}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </Grid>
+          
         </div>
         </div>
         {/* </Container> */}

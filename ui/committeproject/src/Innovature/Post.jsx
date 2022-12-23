@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./post.css";
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
+import Configuration from './Configuration';
 
 // import {Users} from "./dummyData"
 

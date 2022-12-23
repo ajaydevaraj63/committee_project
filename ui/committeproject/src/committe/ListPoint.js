@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Helmet } from "react-helmet-async";
 import { filter } from "lodash";
-import Configuration from './Configuration';
 // @mui
 import {
   Card,
@@ -24,18 +23,15 @@ import Iconify from "../components/iconify";
 import Scrollbar from "../components/scrollbar";
 // sections
 import { UserListHead, UserListToolbar } from "../sections/@dashboard/user";
-// mock
-// import USERLIST from "../_mock/user";
+
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: "", label: "", alignRight: false },
-
-  { id: "", label: "Game", alignRight: false },
-  { id: "", label: "Event", alignRight: false },
+  { id: "", label: "GroupName", alignRight: false },
   { id: "", label: "point", alignRight: false },
-  { id: "", label: "createDate", alignRight: false },
+  
 ];
 
 // ----------------------------------------------------------------------
@@ -70,8 +66,7 @@ export default function UserPage() {
   const [filterName, setFilterName] = useState("");
 
   const [rowsPerPage, setRowsPerPage] = useState(3);
-
- 
+   
 
   const handleCloseMenu = () => {
     setOpen(null);
@@ -85,13 +80,28 @@ export default function UserPage() {
 
   const [data, setData] = useState([]);
 
+
   useEffect(() => {
-    console.log("ap call====================");
-    axios.get(Configuration.devUrl+"Point/getAll").then((response) => {
-      console.log("sucess", response.data);
-      setData(response.data);
-    });
-  }, []);
+    handlePoint("63a32b1d32b497191c33ffdf");
+
+}, []);
+
+  const handlePoint = (id) => {
+  
+console.log("game id : "+ id)
+sessionStorage.setItem('id', id);
+axios.get(Configuration.devUrl+"game/game/".concat(id)).then((response) => {
+console.log("sucess", response.data);
+setData(response.data);
+});
+
+}
+
+
+
+
+
+
 
   function applySortFilter(array, comparator, query) {
     const stabilizedThis = array.map((el, index) => [el, index]);
@@ -118,8 +128,6 @@ export default function UserPage() {
     }
     setSelected([]);
   };
-
-
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -167,7 +175,7 @@ export default function UserPage() {
           mb={5}
         >
           <Typography variant="h4" gutterBottom>
-            Games
+          Points Details
           </Typography>
         </Stack>
 
@@ -194,67 +202,13 @@ export default function UserPage() {
                   {filteredUsers
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const {
-                        id,
-                        GameId,
-                        // role,
-                        Eventlist,
-                        createdAt,
-                        gameList,
-                        GamePoint,
-                        // avatarUrl,
-                      } = row;
-                      const selectedUser = selected.indexOf(GameId) !== -1;
+                      return(
+                        <TableRow key={row._id}>
+                          <TableCell>{row.GroupName}</TableCell>
+                          <TableCell>{row.GamePoint}</TableCell>
 
-                      return (
-                        <TableRow
-                          hover
-                          key={id}
-                          tabIndex={-1}
-                          role="checkbox"
-                          selected={selectedUser}
-                        >
-                          <TableCell padding="checkbox"></TableCell>
-
-                          <TableCell component="th" scope="row" padding="">
-                            {/* <Stack
-                              direction="row"
-                              alignItems="center"
-                              spacing={2}
-                            > */}
-                            {/* <Avatar alt={UserName} src={avatarUrl} /> */}
-                            {gameList.map((value) => (
-                            <Typography variant="subtitle2" noWrap>
-                              {value.GameName}
-                            </Typography>))}
-                            {/* </Stack> */}
-                          </TableCell>
-                          
-                          <TableCell component="th" scope="row" padding="">
-                            {/* <Stack
-                              direction="row"
-                              alignItems="center"
-                              spacing={2}
-                            > */}
-                            {/* <Avatar alt={UserName} src={avatarUrl} /> */}
-                            {Eventlist.map((value) => (
-                            <Typography variant="subtitle2" noWrap>
-                              {value.EventName}
-                            </Typography>
-                            ))}
-                            {/* </Stack> */}
-                          </TableCell>
-                          
-
-                          <TableCell align="left">{GamePoint}</TableCell>
-                          <TableCell align="left">
-                            {new Date(createdAt).toLocaleDateString(
-                              "en-us",
-                              options
-                            )}
-                          </TableCell>
                         </TableRow>
-                      );
+                      )
                     })}
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
@@ -276,12 +230,12 @@ export default function UserPage() {
                             Not found
                           </Typography>
 
-                          <Typography variant="body2">
+                          {/* <Typography variant="body2">
                             No results found for &nbsp;
                             <strong>&quot;{filterName}&quot;</strong>.
                             <br /> Try checking for typos or using complete
                             words.
-                          </Typography>
+                          </Typography> */}
                         </Paper>
                       </TableCell>
                     </TableRow>
@@ -308,7 +262,7 @@ export default function UserPage() {
         anchorEl={open}
         onClose={handleCloseMenu}
         anchorOrigin={{ vertical: "top", horizontal: "left" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right"}}
         PaperProps={{
           sx: {
             p: 1,
@@ -320,16 +274,7 @@ export default function UserPage() {
             },
           },
         }}
-      >
-        <MenuItem>
-          <Iconify icon={"eva:edit-fill"} sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
-
-        <MenuItem sx={{ color: "error.main" }}>
-          <Iconify icon={"eva:trash-2-outline"} sx={{ mr: 2 }} />
-          Delete
-        </MenuItem>
+      >  
       </Popover>
     </>
   );
