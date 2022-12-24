@@ -2,7 +2,7 @@ const router = require("express").Router();
 const { request } = require("express");
 const passport = require("passport");
 
-const CLIENT_URL = "http://localhost:3000/";
+const CLIENT_URL = "https://dev-recreation.innovaturelabs.com/";
 const exp = require('express');
 require('dotenv').config();
 

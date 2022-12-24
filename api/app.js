@@ -14,7 +14,11 @@ const Desig=require('./routes/Designation.js')
 const dotenv = require('dotenv');
 dotenv.config();
 //////////////////////
-
+const Host = process.env.Host
+const Port = process.env.Port
+const Dbname = process.env.Dbname
+const Username=process.env.Username
+const Password= process.env.Password
 const mongoose = require('mongoose')
 const bdyp = require('body-parser')
 const { urlencoded } = require('body-parser')
@@ -45,7 +49,7 @@ const connect = async () => {
     try {
 
 
-        await mongoose.connect("mongodb+srv://ajay1600:ajaykumard@cluster0.wpagudr.mongodb.net/newdb", { useNewUrlParser: true }, (err, db) => {
+        await mongoose.connect(`mongodb://${Username}:${Password}@${Host}:${Port}/${Dbname}`, { useNewUrlParser: true }, (err, db) => {
             if (err) {
                 console.log(err);
             }
@@ -101,7 +105,12 @@ app.use("/Designation",Desig);
 
 
 
-app.listen(PORT||4006, () => {
+app.listen(Port, () => {
     connect();
-    console.log("port is running")
+    console.log("port is running",process.env.tk1)
+    console.log("port is running",process.env.Dbname)
+    console.log("port is running",process.env.Username)
+    console.log("port is running",process.env.Password)
+    console.log("port is running",process.env.Host)
+    console.log("port is running",process.env.Port)
 })

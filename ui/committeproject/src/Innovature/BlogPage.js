@@ -9,7 +9,7 @@ import Share from "./share/Share";
 import { Box, Grid, Container, Typography } from "@mui/material";
 
 export default function DashboardAppPage() {
-  const API = axios.create({ baseURL: "http://localhost:4006" });
+  const API = axios.create({ baseURL: "https://dev-recreation.innovaturelabs.com/api/" });
 
   API.interceptors.request.use((req) => {
     if (localStorage.getItem("Profile")) {

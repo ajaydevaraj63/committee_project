@@ -7,7 +7,7 @@ import Post from "./Imagepost";
 import Share from "./share/Share";
 import { Box, Grid, Container, Typography } from "@mui/material";
 import { DisplayAllPost } from "src/api";
-const API = axios.create({ baseURL: "http://localhost:4006" });
+const API = axios.create({ baseURL: "https://dev-recreation.innovaturelabs.com/api/" });
 
 export default function DashboardAppPage() {
   const [posts, setPosts] = useState([]);

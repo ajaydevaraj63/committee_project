@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://dev-recreation.innovaturelabs.com/",
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   })

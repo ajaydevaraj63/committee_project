@@ -1,7 +1,7 @@
 import axios from "axios";
 
 //axios instance
-const API = axios.create({ baseURL: "http://localhost:4006" });
+const API = axios.create({ baseURL: "https://dev-recreation.innovaturelabs.com/api" });
 
 //for adding the json token to the middleware,
  API.interceptors.request.use((req) => {
