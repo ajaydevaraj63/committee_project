@@ -11,7 +11,10 @@ import {
 import FormControlLabel from '@mui/material/FormControlLabel';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { alpha } from '@mui/material/styles';
+import CloseIcon from '@mui/icons-material/Close';
 import Switch from '@mui/material/Switch';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
@@ -21,6 +24,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Configuration from '../Configuration'
 import { visuallyHidden } from '@mui/utils';
+import { Helmet } from 'react-helmet-async';
 import axios from 'axios';
 import Multiselect from 'multiselect-react-dropdown';
 import PropTypes from 'prop-types';
@@ -29,13 +33,13 @@ import { useEffect, useState, useRef } from 'react';
 import Swal from 'sweetalert2';
 axios.interceptors.request.use(
     config => {
-      config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
-          return config;
-      },
-      error => {
-          return Promise.reject(error);
-      }
-  );
+        config.headers.Authorization = JSON.parse(localStorage.getItem("Profile")).Token;
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
 
 
 function createData(UserName, GroupRole, Designation, Email) {
@@ -204,7 +208,7 @@ function EnhancedTableToolbar(props) {
         const data = e;
         console.log('data', e);
         setMaillist(data);
-        if(data.length > 0){
+        if (data.length > 0) {
             setGroupmembererror(null);
         }
 
@@ -216,7 +220,7 @@ function EnhancedTableToolbar(props) {
         const listobject = []
         const getUserlist = async () => {
             console.log("ap call====================");
-            const reqData = await axios.get(Configuration.devUrl+'users/Display/AddUsersToNewGroup');
+            const reqData = await axios.get(Configuration.devUrl + 'users/Display/AddUsersToNewGroup');
             const reqsData = await reqData.data;
             console.log("reqData", reqsData);
 
@@ -277,10 +281,10 @@ function EnhancedTableToolbar(props) {
             return;
 
         }
-        if (groupmembererror != null){
-                return;
-            }
-        axios.put(Configuration.devUrl+"group/Update/Multiple/UsersGroup/".concat(Gid), emplist).then((response) => {
+        if (groupmembererror != null) {
+            return;
+        }
+        axios.put(Configuration.devUrl + "group/Update/Multiple/UsersGroup/".concat(Gid), emplist).then((response) => {
             console.log("check", response);
             handleAddmemberclose();
             //  listgroupmember();
@@ -289,89 +293,6 @@ function EnhancedTableToolbar(props) {
 
     return (
         <>
-            <Toolbar
-                sx={{
-                    pl: { sm: 2 },
-                    pr: { xs: 1, sm: 1 },
-                    ...(numSelected > 0 && {
-                        bgcolor: (theme) =>
-                            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-                    }),
-                }}
-            >
-                {/* {numSelected > 0 ? (
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    color="inherit"
-                    variant="subtitle1"
-                    component="div"
-                >
-                    {numSelected} selected
-                </Typography>
-            ) : ( */}
-                <Typography
-                    sx={{ flex: '1 1 100%' }}
-                    variant="h6"
-                    id="tableTitle"
-                    component="div"
-                >
-                    Group members
-                </Typography>
-                {/* )} */}
-
-                {/* {numSelected > 0 ? (
-                <Tooltip title="Delete">
-                    <IconButton>
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
-            ) : ( */}
-                <Tooltip title="Add Group Member">
-                    <IconButton onClick={(e) => handleAddMembers(e)} >
-                        <PersonAddAltIcon />
-                    </IconButton>
-                </Tooltip>
-                {/* )} */}
-            </Toolbar>
-            <Modal open={open} onClose={handleAddmemberclose} center>
-                <Box sx={{
-                    position: 'absolute',
-                    top: '51%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: 650,
-                    bgcolor: 'background.paper',
-                    border: '2px solid #000',
-                    boxShadow: 24,
-                    p: 4,
-                }}
-
-                >
-                    <Container>
-                        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-
-                            <Typography variant="h4" gutterBottom>
-                                Add Group Member
-                            </Typography>
-                        </Stack>
-                        <Stack spacing={6}>
-                            <Multiselect
-                                ref={groupmemberref}
-                                value={groupMember}
-                                isObject={false}
-                                onRemove={(event) => { disp(event) }}
-                                onSelect={(event) => { disp(event) }}
-                                options={userList}
-                                showCheckbox
-                            />
-                            {groupmembererror != null ? <p style={{ color: "red" }}>{groupmembererror}</p> : ''}
-                            <Button variant="contained" sx={{ m: 2, width: '15ch' }} onClick={() => Groupmembersubmit()} >
-                                Submit
-                            </Button>
-                        </Stack>
-                    </Container>
-                </Box>
-            </Modal>
         </>
 
     );
@@ -395,28 +316,145 @@ export default function EnhancedTable() {
         setopen(true);
     }
 
+    const [Addopen, setAddopen] = useState(false);
+    const handleAddMembers = (e) => {
+        setAddopen(true);
+    }
+    const handleAddmemberclose = () => {
+        setAddopen(false);
+        setGroupmembererror(null);
+    }
+
+    const [groupMember, setGroupmemebr] = useState([]);
+    const [userList, setUserlist] = useState([]);
+    const [objects, setObjects] = useState([]);
+    const [mailist, setMaillist] = useState([]);
+    const [employeelist, setEmployeelist] = useState([]);
+    const groupmemberref = useRef();
+    const [groupmembererror, setGroupmembererror] = useState(null)
+
+    const disp = (e) => {
+
+        console.log("efewfwef", e)
+        const data = e;
+        console.log('data', e);
+        setMaillist(data);
+        if (data.length > 0) {
+            setGroupmembererror(null);
+        }
+
+    }
+
+    const UserlistT0AddGroup = () => {
+        const listgroupusers = []
+        const listobject = []
+        const getUserlist = async () => {
+            console.log("ap call====================");
+            const reqData = await axios.get(Configuration.devUrl + 'users/Display/AddUsersToNewGroup');
+            const reqsData = await reqData.data;
+            console.log("reqData", reqsData);
+
+            for (let i = 0; i < reqsData.length; i += 1) {
+                listgroupusers.push(reqsData[i].Email);
+                listobject.push(reqsData[i]);
+                console.log('kk', listobject);
+            }
+            setUserlist(listgroupusers);
+            setObjects(listobject);
+
+        }
+        getUserlist();
+    }
+
+
+
+
+
+    // const listgroupmember = () => {
+    //     const Gid = sessionStorage.getItem('Gid')
+    //     console.log("ap call====================");
+    //     axios.get(Configuration.devUrl+'Group/FindAllUser/inGroup/'.concat(Gid)).then((response) => {
+    //         console.log("sucess", response.data);
+    //         if(response.data.length == 0){
+    //             setNodataErr("No data Available");
+    //         }
+    //         setData(response.data)
+    //     });
+    // }
+
+    const Groupmembersubmit = async () => {
+        const emplist = []
+        console.log('nnnnnnnnnnnnnnnnnnnnnnnn', mailist);
+        console.log('ooooooooooooooooo', objects)
+        const promise1 = new Promise((resolve, reject) => {
+
+            for (let i = 0; i < mailist.length; i += 1) {
+                for (let j = 0; j < objects.length; j += 1) {
+                    if (mailist[i] === objects[j].Email) {
+                        console.log(objects[i]._id)
+                        emplist.push(objects[j]._id);
+                        console.log('bbbbbbbbbbbb', emplist);
+                    }
+                }
+            }
+            resolve();
+        });
+        promise1.then(() => {
+            setEmployeelist(emplist);
+        });
+        console.log('success', employeelist);
+        const Gid = sessionStorage.getItem('Gid')
+        console.log("AddUserto group=======", Gid);
+        console.log(emplist);
+        if (emplist.length == 0) {
+            setGroupmembererror('This field is required')
+            groupmemberref.current.focus();
+            return;
+
+        }
+        if (groupmembererror != null) {
+            return;
+        }
+        axios.put(Configuration.devUrl + "group/Update/Multiple/UsersGroup/".concat(Gid), emplist).then((response) => {
+            console.log("check", response);
+            toast.success('Members added successfully!', {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                });
+            handleAddmemberclose();
+            listgroupmember();
+        })
+    }
+
     // list members API calling//
 
     const [data, setData] = useState([]);
-    const [nodataErr,setNodataErr] = useState(null);
+    const [nodataErr, setNodataErr] = useState(null);
 
     useEffect(() => {
+        UserlistT0AddGroup();
         listgroupmember();
     }, [])
 
-      const listgroupmember = () => {
+    const listgroupmember = () => {
         const Gid = sessionStorage.getItem('Gid')
         console.log("ap call====================");
-        axios.get(Configuration.devUrl+'Group/FindAllUser/inGroup/'.concat(Gid)).then((response) => {
+        axios.get(Configuration.devUrl + 'Group/FindAllUser/inGroup/'.concat(Gid)).then((response) => {
             console.log("sucess", response.data);
-            if(response.data.length == 0){
+            if (response.data.length == 0) {
                 setNodataErr("No data Available");
             }
             setData(response.data)
         });
     }
 
-    
+
 
     // Delete API //
 
@@ -438,7 +476,7 @@ export default function EnhancedTable() {
             confirmButtonText: 'Yes, delete it!'
         }).then((response) => {
             if (response.isConfirmed) {
-                axios.put(Configuration.devUrl+"Group/Update/Single/UserGroup/".concat(id), body).then((response) => {
+                axios.put(Configuration.devUrl + "Group/Update/Single/UserGroup/".concat(id), body).then((response) => {
                     Swal.fire(
                         'Deleted!',
                         'Your file has been deleted.',
@@ -446,7 +484,18 @@ export default function EnhancedTable() {
                     )
                     console.log(id);
                     console.log("check", response);
+                    toast.success('Member deleted successfully!', {
+                        position: "top-center",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        });
                     listgroupmember();
+                    UserlistT0AddGroup();
                 })
             }
         })
@@ -507,43 +556,60 @@ export default function EnhancedTable() {
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
 
     return (
-        <Box sx={{ width: '100%' }}>
-            <Paper sx={{ width: '100%', mb: 2 }}>
-                <EnhancedTableToolbar numSelected={selected.length} />
-                <TableContainer>
-                    <Table
-                        sx={{ minWidth: 750 }}
-                        aria-labelledby="tableTitle"
-                        size={dense ? 'small' : 'medium'}
-                    >
-                        <EnhancedTableHead
-                            numSelected={selected.length}
-                            order={order}
-                            orderBy={orderBy}
-                            onSelectAllClick={handleSelectAllClick}
-                            onRequestSort={handleRequestSort}
-                            rowCount={data.length}
-                        />
-                        <TableBody>
-                            {/* if you don't need to support IE11, you can replace the `stableSort` call with:
+        <>
+            <Helmet>
+                <title> Innovatures </title>
+            </Helmet>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Typography variant="h4" gutterBottom>
+                    Group Members
+                </Typography>
+                {/* <Button variant="contained" onClick={handleOpen} startIcon={<Iconify icon="eva:plus-fill" />}>
+            New User
+        </Button> */}
+                <Tooltip title="Add User">
+                    <IconButton onClick={(e) => handleAddMembers(e)} >
+                        <PersonAddAltIcon color="secondary" />
+                    </IconButton>
+                </Tooltip>
+            </Stack>
+            <Box sx={{ width: '100%' }}>
+                <Paper sx={{ width: '100%', mb: 2 }}>
+                    <EnhancedTableToolbar numSelected={selected.length} />
+                    <TableContainer>
+                        <Table
+                            sx={{ minWidth: 750 }}
+                            aria-labelledby="tableTitle"
+                            size={dense ? 'small' : 'medium'}
+                        >
+                            <EnhancedTableHead
+                                numSelected={selected.length}
+                                order={order}
+                                orderBy={orderBy}
+                                onSelectAllClick={handleSelectAllClick}
+                                onRequestSort={handleRequestSort}
+                                rowCount={data.length}
+                            />
+                            <TableBody>
+                                {/* if you don't need to support IE11, you can replace the `stableSort` call with:
  rows.sort(getComparator(order, orderBy)).slice() */}
-                            {data.length>0 ? stableSort(data, getComparator(order, orderBy))
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row, index) => {
-                                    const isItemSelected = isSelected(row._id);
-                                    const labelId = `enhanced-table-checkbox-${index}`;
+                                {data.length > 0 ? stableSort(data, getComparator(order, orderBy))
+                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    .map((row, index) => {
+                                        const isItemSelected = isSelected(row._id);
+                                        const labelId = `enhanced-table-checkbox-${index}`;
 
-                                    return (
-                                        <TableRow
-                                            hover
-                                            onClick={(event) => handleClick(event, row._id)}
-                                            role="checkbox"
-                                            aria-checked={isItemSelected}
-                                            tabIndex={-1}
-                                            key={row._id}
-                                            selected={isItemSelected}
-                                        >
-                                            {/* <TableCell padding="checkbox">
+                                        return (
+                                            <TableRow
+                                                hover
+                                                onClick={(event) => handleClick(event, row._id)}
+                                                role="checkbox"
+                                                aria-checked={isItemSelected}
+                                                tabIndex={-1}
+                                                key={row._id}
+                                                selected={isItemSelected}
+                                            >
+                                                {/* <TableCell padding="checkbox">
                                                 <Checkbox
                                                     color="primary"
                                                     checked={isItemSelected}
@@ -552,79 +618,138 @@ export default function EnhancedTable() {
                                                     }}
                                                 />
                                             </TableCell> */}
-                                            <TableCell
-                                                component="th"
-                                                id={labelId}
-                                                scope="row"
-                                                padding="none"
+                                                <TableCell
+                                                    component="th"
+                                                    id={labelId}
+                                                    scope="row"
+                                                    padding="none"
 
-                                            >
-                                                {row.UserName}
-                                            </TableCell>
+                                                >
+                                                    {row.UserName}
+                                                </TableCell>
 
-                                            <TableCell align='left'>
-                                                <div>
-                                                    {row.GroupRole === 1 ? (
-                                                        <p className="post-body">Captain</p>
-                                                    ) : row.GroupRole === 2 ? (
-                                                        <p className="post-body">Vice captain</p>
-                                                    ) : (
-                                                        <p> Group member</p>
-                                                    )}
-                                                </div>
+                                                <TableCell align='left'>
+                                                    <div>
+                                                        {row.GroupRole === 1 ? (
+                                                            <p className="post-body">Captain</p>
+                                                        ) : row.GroupRole === 2 ? (
+                                                            <p className="post-body">Vice captain</p>
+                                                        ) : (
+                                                            <p> Group member</p>
+                                                        )}
+                                                    </div>
 
-                                            </TableCell>
-                                            <TableCell align='left'>{row.Designation}</TableCell>
-                                            <TableCell align='left'>{row.Email}</TableCell>
-                                            <Tooltip title="Delete" sx={{ mb: 2 }}>
-                                                <IconButton onClick={() => deleteUser(row._id)} color="error">
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </TableRow>
+                                                </TableCell>
+                                                <TableCell align='left'>{row.Designation}</TableCell>
+                                                <TableCell align='left'>{row.Email}</TableCell>
+                                                <Tooltip title="Delete" sx={{ mb: 2 }}>
+                                                    <IconButton onClick={() => deleteUser(row._id)} color="error">
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </TableRow>
 
-                                    );
-                                }):''}
-                            {emptyRows > 0 && (
+                                        );
+                                    }) : ''}
+                                {emptyRows > 0 && (
+                                    <TableRow
+                                        style={{
+                                            height: (dense ? 33 : 53) * emptyRows,
+                                        }}
+                                    >
+                                        <TableCell colSpan={6} />
+                                    </TableRow>
+                                )}
+
+                            </TableBody>
+                            {data.length == 0 && (
                                 <TableRow
-                                    style={{
-                                        height: (dense ? 33 : 53) * emptyRows,
-                                    }}
+
                                 >
-                                    <TableCell colSpan={6} />
-                                </TableRow>
-                            )}
-                            
-                        </TableBody>
-                        {data.length == 0 && (
-                                <TableRow
-                                    
-                                >
-                                    <p style={{'textAlign':'center'}}>{nodataErr}</p>
+                                    <p style={{ 'textAlign': 'center' }}>{nodataErr}</p>
                                 </TableRow>
                             )
-                        }
-                    </Table>
-                </TableContainer>
+                            }
+                        </Table>
+                    </TableContainer>
+                    {data.length > 0 ?
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 25]}
+                            component="div"
+                            count={data.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                        : ''}
+                </Paper>
                 {data.length > 0 ?
-                <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={data.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-                :''}
-            </Paper>
-            {data.length > 0 ?
-            <FormControlLabel
-                control={<Switch checked={dense} onChange={handleChangeDense} />}
-                label="Dense padding"
-            />
-            :''}
-        </Box>
+                    <FormControlLabel
+                        control={<Switch checked={dense} onChange={handleChangeDense} />}
+                        label="Dense padding"
+                    />
+                    : ''}
+            </Box>
+            <Modal open={Addopen} onClose={handleAddmemberclose} center>
+                <Box sx={{
+                    position: 'absolute',
+                    top: '51%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 590,
+                    bgcolor: 'background.paper',
+                    border: '2px solid #000',
+                    borderRadius: '20px',
+
+                    boxShadow: 24,
+                    p: 4,
+
+                }}
+
+                >
+                    <span onClick={handleAddmemberclose} style={{
+                        cursor: 'pointer',
+                        position: 'absolute',
+                        top: '50 %',
+                        right: '0 %',
+                        padding: '0px 0px',
+                        marginLeft: '80%',
+                        transform: 'translate(0 %, -50 %)'
+                    }}
+                    ><CloseIcon /></span>
+                    <Container>
+                        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+
+                            <Typography variant="h5" gutterBottom>
+                                Add Group Member
+                            </Typography>
+                        </Stack>
+                        <Stack spacing={6}>
+                            <Multiselect
+                                ref={groupmemberref}
+                                value={groupMember}
+                                isObject={false}
+                                onRemove={(event) => { disp(event) }}
+                                onSelect={(event) => { disp(event) }}
+                                options={userList}
+                                showCheckbox
+                            />
+                            {groupmembererror != null ? <p style={{ color: "red" }}>{groupmembererror}</p> : ''}
+                            {/* <Button variant="contained" sx={{ m: 2, width: '15ch' }} onClick={() => Groupmembersubmit()} >
+                                Submit
+                            </Button> */}
+                            <div>
+                                <Button sx={{ m: 2, width: '15%', height: 35, marginLeft: '85%' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => Groupmembersubmit()}>Submit</Button>
+                            </div>
+                        </Stack>
+                    </Container>
+                </Box>
+            </Modal>
+            <ToastContainer />
+
+        </>
     );
+
 
 }

@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import { alpha } from '@mui/material/styles';
 import TableContainer from '@mui/material/TableContainer';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableSortLabel from '@mui/material/TableSortLabel';
@@ -28,7 +30,6 @@ import IconButton from '@mui/material/IconButton';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Swal from 'sweetalert2';
-import { toast } from "react-toastify";
 import validator from 'validator'
 import { Link } from 'react-router-dom/dist';
 import {
@@ -291,6 +292,16 @@ export default function EnhancedTable() {
         axios.post(Configuration.devUrl+"Auth/upload", formData).then((response) => {
             console.log("============================");
             console.log("Response", response.error);
+            toast.success('File Uploaded!', {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                });
         })
             .catch((error) => {
                 console.log(error);
@@ -303,9 +314,9 @@ export default function EnhancedTable() {
 
     const [data, setData] = useState([]);
     const [nodataErr, setNodataErr] = useState(null);
+    const [date,setDate]=useState(null);
 
     const listusers = () => {
-        toast.success("Deleted Successfully !");
         console.log("ap call====================");
         axios.get(Configuration.devUrl+'users/display/All/user').then((response) => {
             console.log("sucess", response.data);
@@ -313,8 +324,11 @@ export default function EnhancedTable() {
                 setNodataErr("No data Available");
             }
             setData(response.data)
+            const current = new Date();
+            const dates = `${current.getDate()}-${current.getMonth()+1}-${current.getFullYear()}`;
+            setDate(dates);
+            console.log(date);
         });
-        toast.success("Deleted Successfully !");
 
     }
     const listdesignation = async () => {
@@ -343,6 +357,7 @@ export default function EnhancedTable() {
 
 
     const deleteUser = (id) => {
+        console.log(date);
         const body = {
             Delete: 1,
             GroupId: 0,
@@ -370,6 +385,16 @@ export default function EnhancedTable() {
                         'Your file has been deleted.',
                         'success'
                     )
+                    toast.success('User Deleted Successfully', {
+                        position: "top-center",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        });
                     listusers();
 
                     console.log(id);
@@ -409,7 +434,7 @@ export default function EnhancedTable() {
 
         if (e.target.name === "UserName" && e.target.value === '') {
             setNameError("Name is required");
-        } else if (e.target.name === "UserName" && e.target.value >= 30) {
+        } else if (e.target.name === "UserName" && e.target.value.length >= 20) {
             setNameError("Please enter a name between 1 and 30")
         }
         else {
@@ -420,7 +445,7 @@ export default function EnhancedTable() {
         }
         if (e.target.name === "Email") {
             let email = e.target.value
-            let emailCheck = new RegExp(/^[\w-]+@([\w-])+[\w-]{2,4}$/g).test(email);
+            let emailCheck = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g).test(email);
             if (email === '') {
                 setEmailError("Email is required")
             }
@@ -509,19 +534,17 @@ export default function EnhancedTable() {
             console.log(user);
             console.log("check", response.data);
             handleCloseUser();
-            toast.success("Registered Successfully !");
-            setTimeout(() => {
-                listusers();
-            }, 1500);
-            Swal.fire({
-                position: 'top-end',
-                icon: 'success',
-                title: 'Your work has been saved',
-                showConfirmButton: false,
-                timer: 1500
-            })
-
-            // listusers();
+            toast.success('User added successfully!', {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                });
+             listusers();
         })
     }
 
@@ -822,7 +845,7 @@ export default function EnhancedTable() {
                     top: '51%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: 650,
+                    width: 590,
                     bgcolor: 'background.paper',
                     border: '2px solid #000',
                     borderRadius: '20px',
@@ -837,7 +860,7 @@ export default function EnhancedTable() {
                         top: '50 %',
                         right: '0 %',
                         padding: '0px 0px',
-                        marginLeft: '70%',
+                        marginLeft: '80%',
                         transform: 'translate(0 %, -50 %)'
                     }}
                     ><CloseIcon /></span>
@@ -876,7 +899,7 @@ export default function EnhancedTable() {
                             <TextField type="Date" sx={{ m: 2, width: '35ch' }} className="form-control" autoComplete="off" name='DOB' size="small" id="exampleFormControlInput1" onChange={e => onInputChange(e)} label="Dob" InputLabelProps={{ shrink: true }} />
                         </div> */}
                         <FormControl fullwidth sx={{ m: 2 }} >
-                            <TextField ref={dobRef} type="Date" sx={{
+                            <TextField inputProps={{ max:"2022-12-26" }} ref={dobRef} type="Date" sx={{
                                 width: { sm: 200, md: 200, lg: 480, xl: 400 },
                                 "& .MuiInputBase-root": {
                                     height: 54
@@ -1002,6 +1025,7 @@ export default function EnhancedTable() {
                     <Button sx={{ m: 2, width: '15%', height: 35, marginLeft: '3%' }} type='button' onClick={() => handleSubmission()} variant='contained' size="small" style={{ backgroundColor: '#144399' }} >Upload</Button>
                 </Box>
             </Modal>
+            <ToastContainer />
 
         </>
     );

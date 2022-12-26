@@ -7,6 +7,9 @@ import CardContent from '@mui/material/CardContent';
 import IconButton from '@mui/material/IconButton';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
+import CloseIcon from '@mui/icons-material/Close';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { styled } from '@mui/material/styles';
 import Tooltip from '@mui/material/Tooltip';
 import axios from 'axios';
@@ -20,12 +23,12 @@ import { Link } from 'react-router-dom/dist';
 // mock
 axios.interceptors.request.use(
   config => {
-    config.headers.Authorization =JSON.parse(localStorage.getItem("Profile")).Token;
-        return config;
-    },
-    error => {
-        return Promise.reject(error);
-    }
+    config.headers.Authorization = JSON.parse(localStorage.getItem("Profile")).Token;
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
 );
 
 
@@ -50,7 +53,7 @@ export default function Groups() {
   const groupNameRef = useRef();
   const groupNameeditRf = useRef();
   const [filelength, setfilelength] = useState(0);
-  const [GrNameerror,setGrNameerror] = useState(null);
+  const [GrNameerror, setGrNameerror] = useState(null);
 
 
   // filter modal open //
@@ -73,7 +76,7 @@ export default function Groups() {
 
   const handleClose = () => {
     setOpensAddGroup(false)
-    setNameerror(null)  
+    setNameerror(null)
     setFileError(null);
   };
 
@@ -144,8 +147,18 @@ export default function Groups() {
       if (Nameerror != null) {
         return;
       }
-    axios.post(Configuration.devUrl+"Group/create", formdata).then((response) => {
+    axios.post(Configuration.devUrl + "Group/create", formdata).then((response) => {
       console.log("check", response.data);
+      toast.success('Group Created Successfully', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        });
       listgroups();
       handleClose();
     })
@@ -158,7 +171,7 @@ export default function Groups() {
 
   const listgroups = () => {
     console.log("ap call====================");
-    axios.get(Configuration.devUrl+'Group/findAllGroup').then((response) => {
+    axios.get(Configuration.devUrl + 'Group/findAllGroup').then((response) => {
       console.log("Response", response.data);
       setData(response.data)
       console.log(response.data.GroupName);
@@ -184,7 +197,7 @@ export default function Groups() {
       confirmButtonText: 'Yes, delete it!'
     }).then((response) => {
       if (response.isConfirmed) {
-        axios.put(Configuration.devUrl+"Group/Delete/CommitteeOrGroup/".concat(id)).then((response) => {
+        axios.put(Configuration.devUrl + "Group/Delete/CommitteeOrGroup/".concat(id)).then((response) => {
           Swal.fire(
             'Deleted!',
             'Your file has been deleted.',
@@ -209,7 +222,7 @@ export default function Groups() {
   function handleeditOpen(id) {
     sessionStorage.setItem('id', id);
     console.log("vvvvv", id);
-    axios.get(Configuration.devUrl+"Group/findGroupById/".concat(id)).then((response) => {
+    axios.get(Configuration.devUrl + "Group/findGroupById/".concat(id)).then((response) => {
       console.log("check", response.data);
       const editData = response.data;
       setEditpatchvalue(editData);
@@ -231,7 +244,7 @@ export default function Groups() {
     if (grname.trim().length > 30) {
       setGrNameerror('Please enter a value between 1 and 30');
 
-    }else if(grname.trim().length == 0){
+    } else if (grname.trim().length == 0) {
       setGrNameerror('This field is requied');
 
     } else {
@@ -250,15 +263,25 @@ export default function Groups() {
     //   setGrNameerror('This field is required')
     //   groupNameeditRf.current.focus();
     // }
-     // setGrNameerror('This field is requied');
-    console.log("erreor",GrNameerror);
+    // setGrNameerror('This field is requied');
+    console.log("erreor", GrNameerror);
     if (GrNameerror != null) {
       groupNameeditRf.current.focus();
       return;
     }
 
-    axios.put(Configuration.devUrl+"Group/UpdateGroupDetails/".concat(id), editUser).then((response) => {
+    axios.put(Configuration.devUrl + "Group/UpdateGroupDetails/".concat(id), editUser).then((response) => {
       console.log("check", response.data);
+      toast.success('Group Name Edited successsfully!', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        });
       listgroups();
       handleeditClose();
     })
@@ -289,8 +312,18 @@ export default function Groups() {
       if (Nameerror != null) {
         return;
       }
-    axios.put(Configuration.devUrl+"Group/UpdatePic/".concat(editpicId), formdata).then((response) => {
+    axios.put(Configuration.devUrl + "Group/UpdatePic/".concat(editpicId), formdata).then((response) => {
       console.log("check", response.data);
+      toast.success('Group Image Changed!', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        });
       handleUpdatepicClose();
       listgroups();
     })
@@ -303,7 +336,7 @@ export default function Groups() {
       GroupType: 1,
       Delete: 0
     }
-    await axios.post(Configuration.devUrl+"Group/FindCommittee", body).then((response) => {
+    await axios.post(Configuration.devUrl + "Group/FindCommittee", body).then((response) => {
       console.log("llllll", response.data);
       setCheckGroupType(response.data)
 
@@ -411,16 +444,29 @@ export default function Groups() {
           top: '51%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 650,
+          width: 590,
           bgcolor: 'background.paper',
           border: '2px solid #000',
+          borderRadius: '20px',
+
           boxShadow: 24,
           p: 4,
+
         }}
 
         >
+          <span onClick={handleClose} style={{
+            cursor: 'pointer',
+            position: 'absolute',
+            top: '50 %',
+            right: '0 %',
+            padding: '0px 0px',
+            marginLeft: '80%',
+            transform: 'translate(0 %, -50 %)'
+          }}
+          ><CloseIcon /></span>
           <form id='regForm'>
-            <h4>Add Group</h4>
+            <h5>Add Group</h5>
             <FormControl fullwidth sx={{ m: 2 }} >
               <TextField
                 ref={groupNameRef}
@@ -469,7 +515,7 @@ export default function Groups() {
             <FormControl fullwidth sx={{ m: 2 }} >
 
 
-              <input type="file" accept='image/png,image/jpg,image/jpeg '
+              <TextField type="file" accept='image/png,image/jpg,image/jpeg '
                 sx={{
                   width: { sm: 200, md: 200, lg: 480, xl: 400 },
                   "& .MuiInputBase-root": {
@@ -481,13 +527,13 @@ export default function Groups() {
             </FormControl>
             {fileError != null ? <p style={{ color: "red" }}>{fileError}</p> : ''}
             <div>
-              <div className="col-3"><Button sx={{ m: 2, width: '41ch', height: 40 }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={(e) => handleSubmit(e)}  >Submit</Button></div>
+              <Button sx={{ m: 2, width: '15%', height: 35, marginLeft: '80%' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={(e) => handleSubmit(e)}  >Submit</Button>
             </div>
           </form>
         </Box>
       </Modal>
 
-      
+
 
       <Modal open={editopen} onClose={handleeditClose} center>
         <Box sx={{
@@ -495,32 +541,44 @@ export default function Groups() {
           top: '51%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 650,
+          width: 400,
           bgcolor: 'background.paper',
           border: '2px solid #000',
+          borderRadius: '20px',
           boxShadow: 24,
           p: 4,
+
         }}
         >
+          <span onClick={handleeditClose} style={{
+            cursor: 'pointer',
+            position: 'absolute',
+            top: '50 %',
+            right: '0 %',
+            padding: '0px 0px',
+            marginLeft: '74%',
+            transform: 'translate(0 %, -50 %)'
+          }}
+          ><CloseIcon /></span>
           <form id='regForm'>
-            <h4>Edit Group</h4>
+            <h5>Edit Group</h5>
             {/* <div className="form-floating mb-3 has-validation">
               <TextField type="text" sx={{ m: 2, width: '35ch' }} defaultValue={EditPatchValue.GroupName} className="form-control" autoComplete="off" id="validationServerUsername" variant="outlined" size="small" name='GroupName' onChange={e => onEditChange(e)} />
             </div> */}
             <FormControl fullwidth sx={{ m: 2 }} >
-              <TextField 
-              ref={groupNameeditRf}
-              type="text" sx={{
-                width: { sm: 200, md: 200, lg: 300, xl: 400 },
-                "& .MuiInputBase-root": {
-                  height: 60
-                }
-              }}
+              <TextField
+                ref={groupNameeditRf}
+                type="text" sx={{
+                  width: { sm: 200, md: 200, lg: 300, xl: 400 },
+                  "& .MuiInputBase-root": {
+                    height: 60
+                  }
+                }}
                 autoComplete="off" size="small" id="exampleFormControlInput1" defaultValue={EditPatchValue.GroupName} name='GroupName' onChange={e => onEditChange(e)} label="GroupName" />
             </FormControl>
             {GrNameerror != null ? <p style={{ color: "red" }}>{GrNameerror}</p> : ''}
             <div>
-              <div className="col-3"><Button sx={{ m: 2, width: '41ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={EditSubmit} >Submit</Button></div>
+              <Button sx={{ m: 2, width: '15%', height: 35, marginLeft: '76%' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={EditSubmit} >Submit</Button>
             </div>
           </form>
         </Box>
@@ -532,23 +590,35 @@ export default function Groups() {
           top: '51%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 350,
+          width: 400,
           bgcolor: 'background.paper',
           border: '2px solid #000',
+          borderRadius: '20px',
           boxShadow: 24,
           p: 4,
+
         }}
         >
+          <span onClick={handleUpdatepicClose} style={{
+            cursor: 'pointer',
+            position: 'absolute',
+            top: '50 %',
+            right: '0 %',
+            padding: '0px 0px',
+            marginLeft: '74%',
+            transform: 'translate(0 %, -50 %)'
+          }}
+          ><CloseIcon /></span>
           <form id='regForm'>
-            <h4>Change Group Icon</h4>
+            <h5>Change Group Icon</h5>
             <div>
               {/* <div className='col col-3'>
                 <TextField sx={{ m: 2, width: '35ch' }} className='form-control' onChange={e => onInputFIlechange(e)} type="file" name='GroupImage' label="Group Image" InputLabelProps={{ shrink: true }} />
               </div> */}
               <FormControl fullwidth sx={{ m: 2 }} >
-                <input ref={fileedittyperef}
+                <TextField ref={fileedittyperef}
                   type="file" accept='image/png,image/jpg,image/jpeg' sx={{
-                    width: { sm: 200, md: 200, lg: 480, xl: 400 },
+                    width: { sm: 200, md: 200, lg: 300, xl: 400 },
                     "& .MuiInputBase-root": {
                       height: 54
                     }
@@ -557,12 +627,16 @@ export default function Groups() {
               </FormControl>
               {fileError != null ? <p style={{ color: "red" }}>{fileError}</p> : ''}
             </div>
-            <div>
+            {/* <div>
               <div className="col-3"><Button sx={{ m: 2, width: '13ch' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => changePic()} >Submit</Button></div>
+            </div> */}
+            <div>
+              <Button sx={{ m: 2, width: '15%', height: 35, marginLeft: '76%' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => changePic()} >Submit</Button>
             </div>
           </form>
         </Box>
       </Modal>
+      <ToastContainer />
     </>
   );
 }

@@ -9,8 +9,11 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Tooltip from '@mui/material/Tooltip';
+import CloseIcon from '@mui/icons-material/Close';  
 import { visuallyHidden } from '@mui/utils';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 import PropTypes from 'prop-types';
@@ -217,7 +220,7 @@ export default function EnhancedTable() {
     }
 
     const onSearch = () => {
-        axios.get(Configuration.devUrl+'Users/Display/FilteredUser', Searchuser).then((response) => {
+        axios.get(Configuration.devUrl + 'Users/Display/FilteredUser', Searchuser).then((response) => {
             console.log("sucessssssssssssssssss", response.data);
 
         });
@@ -238,14 +241,14 @@ export default function EnhancedTable() {
             GroupType: 1,
             Delete: 0
         }
-        console.log("Strating api call"+Configuration.devUrl);
-        await axios.post(Configuration.devUrl+"Group/FindCommittee", body).then((response) => {
+        console.log("Strating api call" + Configuration.devUrl);
+        await axios.post(Configuration.devUrl + "Group/FindCommittee", body).then((response) => {
             if (response) {
                 console.log("llllll", response);
                 setGetGroupId(response.data[0]._id);
                 if (response.data[0]._id) {
                     console.log(GetGroupType)
-                    axios.get(Configuration.devUrl+'Group/FindAllUser/inCommittee/'.concat(response.data[0]._id)).then((response) => {
+                    axios.get(Configuration.devUrl + 'Group/FindAllUser/inCommittee/'.concat(response.data[0]._id)).then((response) => {
                         console.log("sucess", response.data);
                         if (response.data.length == 0) {
                             setNodataErr("No data Available");
@@ -278,7 +281,7 @@ export default function EnhancedTable() {
 
     const listcommitteemember = async () => {
         console.log("ap call====================", GetGroupType);
-        await axios.get(Configuration.devUrl+'Group/FindAllUser/inCommittee/'.concat(GetGroupType)).then((response) => {
+        await axios.get(Configuration.devUrl + 'Group/FindAllUser/inCommittee/'.concat(GetGroupType)).then((response) => {
             console.log("sucess", response.data);
             if (response.data.length == 0) {
                 setNodataErr("No data Available");
@@ -308,7 +311,7 @@ export default function EnhancedTable() {
             confirmButtonText: 'Yes, delete it!'
         }).then((response) => {
             if (response.isConfirmed) {
-                axios.post(Configuration.devUrl+"auth/delete/user/".concat(id), body).then((response) => {
+                axios.post(Configuration.devUrl + "auth/delete/user/".concat(id), body).then((response) => {
                     if (response) {
                         Swal.fire(
                             'Deleted!',
@@ -317,6 +320,16 @@ export default function EnhancedTable() {
                         )
                         console.log(id);
                         console.log("check", response);
+                        toast.success('Committee members added!', {
+                            position: "top-center",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "light",
+                            });
                         checkgrouptype();
                     }
 
@@ -473,7 +486,7 @@ export default function EnhancedTable() {
 
         const getUserlist = async () => {
             console.log("apa of  call====================");
-            const reqData = await axios.get(Configuration.devUrl+"Users/Display/AddUsersToNewCommittee").then((response) => {
+            const reqData = await axios.get(Configuration.devUrl + "Users/Display/AddUsersToNewCommittee").then((response) => {
                 console.log('........', response)
                 console.log('filterd user', response.data);
                 const reqsData = response.data;
@@ -527,8 +540,18 @@ export default function EnhancedTable() {
         if (groupmembererror != null) {
             return;
         }
-        axios.put(Configuration.devUrl+"group/Update/Multiple/UsersCommittee/".concat(GetGroupType), emplist).then((response) => {
+        axios.put(Configuration.devUrl + "group/Update/Multiple/UsersCommittee/".concat(GetGroupType), emplist).then((response) => {
             console.log("check", response);
+            toast.success('Committee members added!', {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                });
             handleAddmemberclose();
             // checkgrouptype();
 
@@ -698,18 +721,31 @@ export default function EnhancedTable() {
                     top: '51%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: 650,
+                    width: 590,
                     bgcolor: 'background.paper',
                     border: '2px solid #000',
+                    borderRadius: '20px',
+
                     boxShadow: 24,
                     p: 4,
+
                 }}
 
                 >
+                    <span onClick={handleAddmemberclose} style={{
+                        cursor: 'pointer',
+                        position: 'absolute',
+                        top: '50 %',
+                        right: '0 %',
+                        padding: '0px 0px',
+                        marginLeft: '80%',
+                        transform: 'translate(0 %, -50 %)'
+                    }}
+                    ><CloseIcon /></span>
                     <Container>
                         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
 
-                            <Typography variant="h4" gutterBottom>
+                            <Typography variant="h5" gutterBottom>
                                 Add Committee Member
                             </Typography>
                         </Stack>
@@ -723,13 +759,17 @@ export default function EnhancedTable() {
                                 showCheckbox
                             />
                             {groupmembererror != null ? <p style={{ color: "red" }}>{groupmembererror}</p> : ''}
-                            <Button variant="contained" sx={{ m: 2, width: '15ch' }} onClick={() => Groupmembersubmit()} >
+                            {/* <Button variant="contained" sx={{ m: 2, width: '15ch' }} onClick={() => Groupmembersubmit()} >
                                 Submit
-                            </Button>
+                            </Button> */}
+                            <div>
+                            <Button sx={{ m: 2, width: '15%', height: 35, marginLeft: '85%' }} type='button' variant='contained' size="small" style={{ backgroundColor: '#144399' }} onClick={() => Groupmembersubmit()} >Submit</Button>
+                        </div>
                         </Stack>
                     </Container>
                 </Box>
             </Modal>
+            <ToastContainer />
 
 
             {/* New use Popover */}
