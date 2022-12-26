@@ -2,6 +2,7 @@ const TotalPoint = require("../models/TotalPoint")
 const mongoose = require('mongoose')
 const joi = require('@hapi/joi')
 const { request } = require("express")
+const FinalSumTable = require("../models/FinalSumTable")
 const Schema = joi.object().keys({
     GroupId: joi.string(),
     GroupPoint: joi.number(),
@@ -17,8 +18,17 @@ exports.AddPoint = (req, res) => {
 }
 exports.AddPointAll = (req, res) => {
     const list = req.body.Data;
-    const data = req.body;
+  
     const listForJson = [];
+    let sum=0;
+    let JsonDAta={
+        "EventId": "",
+        "GroupId": "",
+        "GameId":"",
+        "TotalPoint":"0"
+
+
+       }
 
     for (const element of list) {
         const data1 = {
@@ -32,6 +42,13 @@ exports.AddPointAll = (req, res) => {
 
 
         }
+        sum=sum+element.TotalPoint;
+        
+       JsonDAta.EventId=req.body.EventId;
+       JsonDAta.EventId=req.body.GroupId;
+       JsonDAta.GameId=element.GameId;
+       JsonDAta.TotalPoint=sum
+
 
 
 
@@ -41,7 +58,9 @@ exports.AddPointAll = (req, res) => {
 
     TotalPoint.insertMany(listForJson, (data, error) => {
         if (!error) {
+            FinalSumTable.save(JsonDAta);
             console.log(data)
+
             res.send(data)
         }
         else {
