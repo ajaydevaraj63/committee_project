@@ -1,7 +1,7 @@
 const Configuration={
     
-        // devUrl:"https://dev-recreation.innovaturelabs.com/"
-        devUrl:"http://localhost:4006/"
+        devUrl:"https://dev-recreation.innovaturelabs.com/"
+        // devUrl:"http://localhost:4006/"
 
        
 
