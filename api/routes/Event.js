@@ -10,7 +10,10 @@ const bodyParser = require('body-parser');
 const router=express.Router();
 module.exports=router;
 app.use(bodyParser.urlencoded({extended: false}))
-
+const dotenv = require('dotenv');
+dotenv.config();
+//////////////////////
+const devUrl=process.env.devUrl
 const joi=require('@hapi/joi')
 const Schema =joi.object().keys({
     EventName: joi.string().alphanum().min(3).max(30),
@@ -58,7 +61,7 @@ let upload = multer({ storage: storage,
                 EndDate: req.body.EndDate,
                 UserId: req.body.UserId
             })
-            newevent.File = Configuration.devUrl+'images/' + req.files[0].path;
+            newevent.File = devUrl+'images/' + req.files[0].path;
             newevent.save((error, data) => {
                     try {
 

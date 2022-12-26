@@ -11,6 +11,10 @@ const bodyParser = require('body-parser');
 const TotalPoint = require('../models/TotalPoint.js')
 const { error, log } = require('console');
 app.use(bdyp.json());
+const dotenv = require('dotenv');
+dotenv.config();
+//////////////////////
+const devUrl=process.env.devUrl
 app.use(bodyParser.urlencoded({extended: false}));
 const joi=require('@hapi/joi')
 const Schema =joi.object().keys({
@@ -62,7 +66,7 @@ function postgame(req, res, next) {
                 EventId: req.body.EventId
                 
             })
-            newgame.RulesPdf =Configuration.devUrl+'images/' + req.files[0].path;
+            newgame.RulesPdf =devUrl+'images/' + req.files[0].path;
             newgame.save((error, data) => {
                     try {
                     //   const newpoint = new TotalPoint({

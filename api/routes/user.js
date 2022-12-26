@@ -6,7 +6,10 @@ const router = express.Router();
 const multer = require('multer');
 const auth = require("../middleware/auth");
 const app=express();
-
+const dotenv = require('dotenv');
+dotenv.config();
+//////////////////////
+const devUrl=process.env.devUrl
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, './images');
@@ -29,7 +32,7 @@ let upload = multer({ storage: storage,
 router.put("/UpdatePic/:id", upload.array("image"), updateProfileImage);
 
 function updateProfileImage(req, res) {
-    const ImagePath = Configuration.devUrl+'images/'+req.files[0].filename
+    const ImagePath = devUrl+'images/'+req.files[0].filename
 
     console.log(req.files);
         UserSchema.updateOne({ _id: req.params.id },

@@ -10,6 +10,10 @@ const bdyp = require('body-parser');
 const bodyParser = require('body-parser');
 const { error } = require('console');
 app.use(bdyp.json());
+const dotenv = require('dotenv');
+dotenv.config();
+//////////////////////
+const devUrl=process.env.devUrl
 app.use(bodyParser.urlencoded({extended: false}));
 const joi=require('@hapi/joi')
 const Schema =joi.object().keys({
@@ -55,7 +59,7 @@ function postImage(req, res, next) {
 
                 })
 
-                newpost.PostImage =Configuration.devUrl+'images/' + req.files[0].path;
+                newpost.PostImage =devUrl+'images/' + req.files[0].path;
 
 
                 newpost.save((error, data) => {

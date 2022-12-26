@@ -11,7 +11,10 @@ const GroupTable = require('../models/Groups.js');
 const { updatesingleuser, UpdateGroupOfAllUsers, FindAllGroups, findGroupById, FindUsersOfAGroup, updateGroupDetails, GroupDelete, FindAllCommittee, findCommity, UpdateCommitteeOfAllUsers, FindUsersOfACommittee, FindUsersOfACommitteeDelete } = require('../controller/Group.js');
 const { verify } = require('crypto');
 const Joi = require('@hapi/joi');
-
+const dotenv = require('dotenv');
+dotenv.config();
+//////////////////////
+const devUrl=process.env.devUrl
 const schema = Joi.object().keys({
   GroupName: Joi.string().max(30).required(),
   GroupType: Joi.string().max(30)
@@ -49,7 +52,7 @@ async function uploadFiles(req, res) {
     const Validation = schema.validate(req.body);
     if (!Validation.error) {
 
-      req.body.GroupImage = Configuration.devUrl+'images/' + req.files[0].filename
+      req.body.GroupImage =devUrl+'images/' + req.files[0].filename
 
       console.log(req.body);
       console.log(req.files);
@@ -81,7 +84,7 @@ async function uploadFiles(req, res) {
 router.put("/UpdatePic/:id", upload.array("image"), updateProfileImage);
 
 function updateProfileImage(req, res) {
-  const ImagePath = Configuration.devUrl+'images/' + req.files[0].filename
+  const ImagePath = devUrl+'images/' + req.files[0].filename
 
   console.log(req.files);
   const updateGroup = GroupTable.updateOne({ _id: req.params.id },
