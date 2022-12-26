@@ -35,6 +35,8 @@ export default function Post({ post }) {
           </div>
         </div>
         <div className="postCenter">
+        <h4>{post.EventName}</h4>
+
           <span className="postText">{post.EventDescription}</span><br />
           <img className="postImg" src={post.File} alt="" download/>
           <a  href={post.File} download><InsertDriveFileRoundedIcon  className="svg_icons"/></a>

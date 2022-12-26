@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { filter } from "lodash";
 import Configuration from './Configuration';
 import { sentenceCase } from "change-case";
+import PointTable from "./pointTable2"
 // @mui
 import {
   Card,
@@ -146,7 +147,7 @@ export default function UserPage() {
     setValue(pasedValue.GroupId);
     console.log(value);
     axios
-      .post(Configuration.devUrl+"event/eventswithgroupame", {
+      .post(Configuration.devUrl+"event/currenteventswithgroupame", {
         GroupId: value,
       })
       .then((response) => {
@@ -391,123 +392,7 @@ export default function UserPage() {
             </Card>
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <Card>
-              <Scrollbar>
-                <TableContainer>
-                  <Table>
-                    <UserListHead
-                      order={order}
-                      headLabel={TABLE_HEAD}
-                      rowCount={USERLIST.length}
-                      numSelected={selected.length}
-                      onRequestSort={handleRequestSort}
-                      onSelectAllClick={handleSelectAllClick}
-                    />
-                    <TableBody>
-                      {filteredUsers
-                        .slice(
-                          page * rowsPerPage,
-                          page * rowsPerPage + rowsPerPage
-                        )
-                        .map((row) => {
-                          const { _id, TotalPoint, eventlist, createdAt } = row;
-                          const selectedUser = selected.indexOf(_id) !== -1;
-
-                          return (
-                            <TableRow
-                              hover
-                              key={_id}
-                              tabIndex={-1}
-                              role="checkbox"
-                              selected={selectedUser}
-                            >
-                              <TableCell padding="checkbox"></TableCell>
-                              <TableCell padding="checkbox"></TableCell>
-
-                              <TableCell
-                                component="th"
-                                scope="row"
-                                padding="none"
-                              >
-                                <Stack
-                                  direction="row"
-                                  alignItems="center"
-                                  spacing={2}
-                                >
-                                  {eventlist.map((value) => (
-                                    <Typography
-                                      key={eventlist.id}
-                                      variant="subtitle2"
-                                      noWrap
-                                    >
-                                      {value.EventName}
-                                    </Typography>
-                                  ))}
-                                </Stack>
-                              </TableCell>
-                              {/* {eventlist.map((value) => (
-                                <TableCell key={eventlist.id} align="left">
-                                  {value.EventDescription}
-                                </TableCell>
-                              ))} */}
-
-                              <TableCell align="left">{TotalPoint}</TableCell>
-                              <TableCell align="left"></TableCell>
-
-                              <TableCell align="left">
-                                {new Date(createdAt).toLocaleDateString(
-                                  "en-us",
-                                  options
-                                )}
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      {emptyRows > 0 && (
-                        <TableRow style={{ height: 53 * emptyRows }}>
-                          <TableCell colSpan={6} />
-                        </TableRow>
-                      )}
-                    </TableBody>
-
-                    {isNotFound && (
-                      <TableBody>
-                        <TableRow>
-                          <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                            <Paper
-                              sx={{
-                                textAlign: "center",
-                              }}
-                            >
-                              <Typography variant="h6" paragraph>
-                                Not found
-                              </Typography>
-
-                              <Typography variant="body2">
-                                No results found for &nbsp;
-                                <strong>&quot;{filterName}&quot;</strong>.
-                                <br /> Try checking for typos or using complete
-                                words.
-                              </Typography>
-                            </Paper>
-                          </TableCell>
-                        </TableRow>
-                      </TableBody>
-                    )}
-                  </Table>
-                </TableContainer>
-              </Scrollbar>
-
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={USERLIST.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </Card>
+            <PointTable />
           </TabPanel>
         </Box>
       </Stack>

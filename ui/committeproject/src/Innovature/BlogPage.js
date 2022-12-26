@@ -9,7 +9,7 @@ import Share from "./share/Share";
 import { Box, Grid, Container, Typography } from "@mui/material";
 
 export default function DashboardAppPage() {
-  const API = axios.create({ baseURL: "https://dev-recreation.innovaturelabs.com/api/" });
+  const API = axios.create({ baseURL: "http://localhost:4006" });
 
   API.interceptors.request.use((req) => {
     if (localStorage.getItem("Profile")) {
@@ -93,11 +93,8 @@ export default function DashboardAppPage() {
             <Grid className="Grid2" item xs={1} sm={6} md={2.8}>
               <div className="flex-container">
                 <div className="Icons2">
-                  {value === 0 ? (
-                    <h6>
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Not added to a
-                      group yet!
-                    </h6>
+                  {Number(value) === 0 ? (
+                   <h6 className="notAdded">Not added to a group yet!</h6>
                   ) : (
                     <div>
                       <h2 className="heading">Members</h2>

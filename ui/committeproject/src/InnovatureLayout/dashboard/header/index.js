@@ -57,7 +57,7 @@ export default function Header({ onOpenNav }) {
           <Iconify icon="eva:menu-2-fill" />
         </IconButton>
 
-        {/* <Searchbar /> */}
+        <h2 style={{ color: 'black' }} >Recreation</h2>
         <Box sx={{ flexGrow: 1 }} />
 
         <Stack
