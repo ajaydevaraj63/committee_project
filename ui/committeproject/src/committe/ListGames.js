@@ -19,6 +19,7 @@ import Paper from '@mui/material/Paper';
 import { FormControl, TextField, Button, Modal } from '@mui/material';
 
 import EditIcon from '@mui/icons-material/Edit';
+import  DeleteIcon from '@mui/icons-material/Delete'
 import moment from 'moment';
 
 
@@ -190,7 +191,7 @@ export default function EnhancedTable() {
     function handleEditOpen(id) {
         sessionStorage.setItem('id', id);
         console.log("idddd", id);
-        axios.get(Configuration.devUrl+"game/onegame/".concat(id)).then((response) => {
+        axios.get(Configuration.devUrl+"game/game/".concat(id)).then((response) => {
             console.log("datas", response.data);
             const editData = response.data;
             setEditpatchvalues(editData);
@@ -223,12 +224,16 @@ export default function EnhancedTable() {
     const [data, setData] = useState([]);
     useEffect(() => {
         console.log("api cal====");
-        axios.get(Configuration.devUrl+'game/allgame').then((response) => {
+        getdatafirst()
+
+    }, []);
+
+    const getdatafirst =()=>{
+        axios.get(Configuration.devUrl+"game/allgame").then((response) => {
             console.log("sucess", response.data.data);
             setData(response.data.data)
         });
-
-    }, []);
+    }
 
 
     axios.interceptors.request.use(
@@ -301,7 +306,7 @@ export default function EnhancedTable() {
     const handlePoint = (id) => {
         console.log("game id : " + id)
         sessionStorage.setItem('id', id);
-        axios.get(Configuration.devUrl+"game/game/63a32b1d32b497191c33ffdf").then((response) => {
+        axios.get(Configuration.devUrl+`game/game/${id}`).then((response) => {
             console.log("sucesspppppppppppppppp", response.data.data);
             setValue(response.data);
             setPointopen(true);
@@ -309,6 +314,16 @@ export default function EnhancedTable() {
 
     }
     console.log("sucessssssssssssssssssss", value);
+
+
+    const deletegame =(id)=>{
+let DataStatus={"Delete":1}
+        axios.delete(Configuration.devUrl+`game/deleteGame/${id}`,{ data: { Delete: 1 } }).then((response) => {
+           console.log(response);
+            getdatafirst()
+
+        });
+    }
 
     return (
         <>
@@ -368,6 +383,8 @@ export default function EnhancedTable() {
                                                     <Stack direction="row" spacing={2}>
                                                         {/* <button variant="outlined" className='btn btn-primary' onClick={() => handleEditOpen(row._id)}><EditIcon/></button> */}
                                                         <EditIcon onClick={() => handleEditOpen(row._id)} />
+
+                                                        <DeleteIcon  onClick={() => deletegame(row._id)} />
                                                     </Stack>
                                                 </TableCell>
                                             </TableRow>

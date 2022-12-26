@@ -5,6 +5,9 @@ import Configuration from "./Configuration";
 import FormControl from "@material-ui/core/FormControl";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
+import Button from '@mui/material/Button';
+
+
 import {
   Card,
   CardContent,
@@ -12,7 +15,7 @@ import {
   Modal,
   Typography,
   Box,
-  Button,
+  // Button,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import TableCell from "@mui/material/TableCell";
@@ -148,15 +151,14 @@ export default function Committee() {
       });
   }, []);
   const roleSubmit = () => {
-    // user
-    //role
-    // const id = sessionStorage.getItem("id");
-    // axios
-    //   .put(Configuration.devUrl+"users/UpdateUser/GroupRole/".concat(id), role)
-    //   .then((response) => {
-    //     console.log("check", response.data);
-    //     handleCommitteeModaClose();
-    //   });
+   
+    console.log({role:role.GroupRole});
+    axios
+      .put(Configuration.devUrl+"users/committeeupdate/".concat(user), {role:role.GroupRole})
+      .then((response) => {
+        console.log("check", response.data);
+        handleCommitteeModaClose();
+      });
   };
   return (
     <div>
@@ -217,7 +219,12 @@ export default function Committee() {
           }}
         >
           <CardContent>
+
+
+<div style={{display:"flex",flexDirection:"column"}}>
             <FormControl className={classes.formControl}>
+
+
               <InputLabel id="demo-simple-select-label">Users</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -225,14 +232,21 @@ export default function Committee() {
                 value={user}
                 onChange={handleChange}
               >
-                {data.map((value, key) => {
+                {data.map((value) => {
                   return (
-                    <MenuItem value={value.UserName}>{value.UserName}</MenuItem>
+                    <MenuItem value={value._id} key={value._id}>{value.UserName}</MenuItem>
                   );
                 })}
               </Select>
+
+
             </FormControl>
-            {user !== "" ? (
+
+
+            
+
+
+
               <FormControl className={classes.formControl}>
                 <InputLabel id="demo-simple-select-label">Role</InputLabel>
                 <Select
@@ -249,17 +263,22 @@ export default function Committee() {
                   <MenuItem value={1}>Vice Captain</MenuItem>
                 </Select>
               </FormControl>
-            ) : (
-              <span>select a user</span>
-            )}
+
+
+
+          
 
             {user !== "" && role.GroupRole !== "" ? (
-              <button onClick={roleSubmit}>set role</button>
+              // <button onClick={roleSubmit}>set role</button>
+              <Button variant="contained" onClick={roleSubmit} style={{mt:1}}>set role</Button>
             ) : (
               <>select the role</>
             )}
+            
+     </div>       
             {/* {data.map((value, key) => {
               return (
+                
                 <TableRow key={data.id}>
                   <Avatar sx={{ bgcolor: deepOrange[500] }}></Avatar>
                   <TableCell align="left" onClick={handleOpen}>

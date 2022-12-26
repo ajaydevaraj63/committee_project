@@ -49,7 +49,7 @@ const Event = ({handleCloseModal,openModal}) => {
     async function handleSubmits(event) {
         event.preventDefault()
         
-        const url = Configuration.devUrl+'event/postevent';
+        const url = Configuration.devUrl+"event/postevent";
         const formData = new FormData();
         formData.append('File', file);
         formData.append('EventName', name);
@@ -59,7 +59,7 @@ const Event = ({handleCloseModal,openModal}) => {
         formData.append('UserId', value);
         
         console.log(formData);
-        alert('success');
+        
         const config = {
             headers: {
                 'content-type': 'multipart/form-data',
@@ -161,9 +161,10 @@ const Event = ({handleCloseModal,openModal}) => {
                                  
                                     <Input type="file" onChange={handleChange} sx={{ml:9}}/>
                                  </FormControl>
-                                 <Button size="md" onClick={handleSubmits} color="primary"sx={{mt:3}} >
+                                 {/* <Button size="md" onClick={handleSubmits} color="primary"sx={{mt:3}} >
                                     Submit
-                                    </Button>      
+                                    </Button>    */}
+                                    <Button variant="contained" size="md" onClick={handleSubmits} sx={{mt:10,ml:15}}>Submit</Button>   
                             </form>
               </CardContent>
             </card>

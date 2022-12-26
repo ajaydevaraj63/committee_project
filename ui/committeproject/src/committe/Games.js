@@ -60,7 +60,9 @@ const Games = ({handleCloseModals,openModals}) => {
         setValue(pasedValue._id);
       }, []);
 
- function handleSubmit(event) {
+ function 
+ 
+ handleSubmit(event) {
         event.preventDefault()
         console.log("sdfg"+eventid)
         const url = Configuration.devUrl+'game/postgame';
@@ -74,7 +76,7 @@ const Games = ({handleCloseModals,openModals}) => {
         formData.append('EventId',eventid);
         
 
-        alert("success");
+       
 
         console.log(formData);
         const config = {
@@ -219,9 +221,11 @@ const Games = ({handleCloseModals,openModals}) => {
                             {/* <InputLabel type="file" accept='.pdf' onChange={handleChange}/> */}
                             {/* <input className='form-control' type="file" accept='.pdf' onChange={handleChange} /> */}
                         </FormControl>
-                        <Button size="md" onClick={handleSubmit} color="primary" sx={{mt:3,ml:3}} >
+                        {/* <Button size="md" onClick={handleSubmit} color="primary" sx={{mt:3,ml:3}} >
                        Submit
-                        </Button>
+                        </Button> */}
+                                    <Button variant="contained"size="md" onClick={handleSubmit} sx={{mt:10,ml:15}}>Submit</Button>   
+
                     </form>
                 </CardContent>
                 
